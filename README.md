@@ -17,6 +17,13 @@ Stopping:
 ```powershell
 docker compose down
 ```
+Using Makefile (requires make)
+
+```
+git clonehttps://github.com/gflapana/Young-Software-Engineers-Inventory-System
+cd Young-Software-Engineers-Inventory-System
+make
+```
 
 Notes:
 - This repository is using pnpm instead of npm(sabi ni robbie) inside Docker images. Locally you can use pnpm as well.
