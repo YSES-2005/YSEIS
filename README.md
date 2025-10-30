@@ -20,7 +20,7 @@ docker compose down
 Using Makefile (requires make)
 
 ```
-git clonehttps://github.com/gflapana/Young-Software-Engineers-Inventory-System
+git clone https://github.com/gflapana/Young-Software-Engineers-Inventory-System
 cd Young-Software-Engineers-Inventory-System
 make
 ```
