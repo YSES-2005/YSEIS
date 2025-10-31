@@ -42,4 +42,4 @@ pnpm install
 pnpm run dev
 ```
 
-For linux users kaya nyo na yan
+For linux users kaya nyo na yan!
