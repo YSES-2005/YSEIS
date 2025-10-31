@@ -11,12 +11,14 @@ Make sure you install Docker first
 docker compose up --build
 ```
 
-2. Open the frontend at http://localhost:3000 and the backend API health at http://localhost:5000/api/health. Use localhost:5173 when actively developing.
+2. Open the frontend at <http://localhost:3000> and the backend API health at <http://localhost:5000/api/health>. Use localhost:5173 when actively developing.
 
 Stopping:
+
 ```powershell
 docker compose down
 ```
+
 Using Makefile (requires make)
 
 ```
@@ -26,8 +28,9 @@ make
 ```
 
 Notes:
+
 - This repository is using pnpm instead of npm(sabi ni robbie) inside Docker images. Locally you can use pnpm as well.
-- To install and run locally without Docker, install pnpm (Node 16+ includes corepack; enable it with `corepack enable`), then:
+- To install and run locally without Docker, install pnpm (Node 20+ includes corepack; enable it with `corepack enable`), then:
 
 ```powershell
 cd backend
