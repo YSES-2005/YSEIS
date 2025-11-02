@@ -6,7 +6,7 @@ export enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }
-
+// Pang test lng magbabago pa once na nasetup na database
 export const authenticate = (
   req: express.Request,
   res: express.Response,
@@ -21,11 +21,8 @@ export const authenticate = (
 
   try {
     // attach token and derived fields for downstream handlers
-    // @ts-ignore
     req.token = token;
-    // @ts-ignore
     req.userId = userIdFromJWT(token);
-    // @ts-ignore
     req.userRole = roleFromJWT(token);
     next();
   } catch (error) {
