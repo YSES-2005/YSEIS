@@ -5,12 +5,13 @@
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "sourceMap": false
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

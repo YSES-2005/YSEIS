@@ -2,15 +2,20 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-# Copy package manifest and pnpm lockfile so installs are deterministic
-COPY package.json pnpm-lock.yaml* ./
+# Copy package manifest and pnpm lockfile for reproducible installs
+COPY package.json pnpm-lock.yaml ./
+
+# Enable pnpm and install all dependencies (including dev)
 RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --silent
 
-# Copy source code for development (mounted by docker-compose during dev)
+# Copy source code for development
 COPY . .
 
 # Expose development port
 EXPOSE 5000
 
 ENV NODE_ENV=development
-CMD ["pnpm", "run", "dev"]
+
+# Run the TypeScript app in dev mode using ts-node-dev
+CMD ["pnpm", "dev"]
+
