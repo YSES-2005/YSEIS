@@ -1,10 +1,6 @@
 import { Request, Response } from 'express';
 
-// Minimal controller implementations to match the API contract described by the team.
-// These are simple stubs that return predictable shapes for front-end development.
-
 export const getItems = async (req: Request, res: Response) => {
-	// Optional: support query filters in the future
 	res.json({ data: [] });
 };
 

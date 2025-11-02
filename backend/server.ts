@@ -17,7 +17,7 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 // mount feature routers
-app.use('/api/inventory/items', itemsRouter);
+app.use('/api/items', itemsRouter);
 app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 

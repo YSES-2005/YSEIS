@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 
-// In-memory users store for development. Replace with DB-backed model later.
+// Placeholder lng den wala pang database e
 const USERS: Record<string, any> = {
 	user_1: { id: 'user_1', name: 'Alice', role: 'admin' },
 	user_2: { id: 'user_2', name: 'Bob', role: 'user' },
 };
 
 export const me = (req: Request, res: Response) => {
-	// @ts-ignore
+
 	const id = req.userId ?? null;
 	const user = id ? USERS[id] ?? { id } : null;
 	res.json({ user });

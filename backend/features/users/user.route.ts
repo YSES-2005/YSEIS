@@ -4,10 +4,10 @@ import { me, getUsers, getUserById } from './user.controller';
 
 const usersRouter = express.Router();
 
-// Authenticated user profile
+// endpoint for authenticated user to get own info
 usersRouter.get('/me', authenticate, me);
 
-// Admin endpoints
+// endpoints for the admin
 usersRouter.get('/', authenticate, authorize(Role.ADMIN), getUsers);
 usersRouter.get('/:id', authenticate, authorize(Role.ADMIN), getUserById);
 

@@ -2,11 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json* ./
+# Copy package manifest and pnpm lockfile so installs are deterministic
+COPY package.json pnpm-lock.yaml* ./
 RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --silent
 
+# Copy source code for development (mounted by docker-compose during dev)
 COPY . .
-# PORT 5000
+
+# Expose development port
 EXPOSE 5000
 
 ENV NODE_ENV=development
