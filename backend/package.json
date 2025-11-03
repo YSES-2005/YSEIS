@@ -2,10 +2,11 @@
   "name": "inventory-backend",
   "version": "0.1.0",
   "description": "Simple Express and MongoDB API for the YSEIS",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node dist/server.js",
+  "dev": "nodemon --watch . --ext ts --exec \"node -r ts-node/register server.ts\"",
+    "build": "tsc -p tsconfig.json"
   },
   "engines": {
     "node": ">=20"
@@ -17,7 +18,12 @@
     "mongoose": "^8.16.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "typescript": "^5.3.0",
+    "ts-node-dev": "^2.0.0",
+    "@types/node": "^20.5.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17"
   },
   "keywords": [],
   "author": "",

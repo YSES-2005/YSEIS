@@ -1,7 +1,7 @@
 {
   "watch": ["."],
-  "ext": "js,json",
+  "ext": "ts,js,json",
   "delay": "250",
   "legacyWatch": true,
-  "ignore": ["node_modules/*"]
+  "ignore": ["node_modules/*", "dist/*"]
 }
