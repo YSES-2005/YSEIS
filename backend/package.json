@@ -5,27 +5,33 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
-  "dev": "nodemon --watch . --ext ts --exec \"node -r ts-node/register server.ts\"",
+    "dev": "nodemon ./server.ts",
     "build": "tsc -p tsconfig.json"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@schemas": "file:../shared/schemas/",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
-    "mongoose": "^8.16.0"
+    "mongoose": "^8.16.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "typescript": "^5.3.0",
-    "ts-node-dev": "^2.0.0",
+    "@schemas": "file:../shared/schemas/",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
     "@types/node": "^20.5.0",
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17"
+    "install": "^0.13.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.0"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d"
 }
