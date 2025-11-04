@@ -8,8 +8,11 @@ export const authorize = (role: Role) => {
     throw new BadRequestError(`Role ${role} does not exist.`);
   }
 
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-
+  return (
+    req: express.Request,
+    _: express.Response,
+    next: express.NextFunction
+  ) => {
     const userRole = req.userRole as Role | undefined;
 
     if (!userRole) {
@@ -17,7 +20,9 @@ export const authorize = (role: Role) => {
     }
 
     if (userRole !== role) {
-      return next(new ForbiddenError('Access denied. Insufficient permissions.'));
+      return next(
+        new ForbiddenError('Access denied. Insufficient permissions.')
+      );
     }
 
     next();

@@ -9,11 +9,13 @@ export enum Role {
 // Pang test lng magbabago pa once na nasetup na database
 export const authenticate = (
   req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
+  _: express.Response,
+  next: express.NextFunction
 ) => {
   const authHeader = req.header('Authorization') || req.header('authorization');
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+  const token = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : authHeader;
 
   if (!token) {
     return next(new UnauthorizedError('Access denied. No token provided.'));
@@ -31,8 +33,11 @@ export const authenticate = (
 };
 
 export const authorize = (required: Role) => {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    // @ts-ignore
+  return (
+    req: express.Request,
+    _: express.Response,
+    next: express.NextFunction
+  ) => {
     const role = req.userRole as Role | undefined;
 
     if (!role) {
