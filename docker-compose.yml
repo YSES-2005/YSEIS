@@ -1,4 +1,11 @@
 services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - .:/workspace:cached
+    network_mode: service:mongo
+    command: sleep infinity
+
   mongo:
     image: mongo:7
     restart: unless-stopped
@@ -18,15 +25,15 @@ services:
     ports:
       - '5000:5000'
     volumes:
-      - ./backend:/usr/src/app:z,cached
-      - ./backend/node_modules:/usr/src/app/node_modules
+      - ./backend:/app:z,cached
+      - backend_node_modules:/usr/src/app/node_modules
     depends_on:
       - mongo
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./frontend/Dockerfile.dev
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true

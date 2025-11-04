@@ -33,3 +33,7 @@ docker-compose.override.yml
 .cache
 
 .vscode/**/workspaceStorage
+.aider*
+
+package.json
+pnpm-lock.yaml
