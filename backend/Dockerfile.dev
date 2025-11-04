@@ -10,7 +10,7 @@ COPY shared /usr/src/shared
 RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
 
 # Copy source code for development
-COPY backend/. .
+COPY backend/ .
 
 # Expose development port
 EXPOSE 5000

@@ -3,11 +3,12 @@ FROM node:20-alpine
 WORKDIR /usr/src/app
 
 # Use pnpm lockfile when present
-COPY package.json pnpm-lock.yaml* ./
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+COPY shared /usr/src/shared
 
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install
+RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
 
-COPY . .
+COPY frontend/ .
 
 EXPOSE 5173
 
