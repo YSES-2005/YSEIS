@@ -3,13 +3,14 @@ FROM node:20-alpine
 WORKDIR /usr/src/app
 
 # Copy package manifest and pnpm lockfile for reproducible installs
-COPY package.json pnpm-lock.yaml ./
+COPY backend/package.json backend/pnpm-lock.yaml ./
+COPY shared /usr/src/shared
 
 # Enable pnpm and install all dependencies (including dev)
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --silent
+RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
 
 # Copy source code for development
-COPY . .
+COPY backend/. .
 
 # Expose development port
 EXPOSE 5000
