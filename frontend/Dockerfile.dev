@@ -4,7 +4,8 @@ WORKDIR /usr/src/app
 
 # Use pnpm lockfile when present
 COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --silent
+
+RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install
 
 COPY . .
 
