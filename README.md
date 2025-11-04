@@ -4,9 +4,7 @@ Requirements: [Docker Desktop (Windows)](https://docs.docker.com/desktop/setup/i
 
 ### Development with VSCode Dev Containers
 
-This project has a pre-configured Dev Container, which  
-allows you to use a container as a full-featured  
-development environment.
+This project has a pre-configured Dev Container, which allows you to use a container as a full-featured development environment.
 
 1.  Make sure you have the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed in VSCode.
 2.  When you open this repository in VSCode, you should see a pop-up in the bottom right corner asking if you want to "Reopen in Container". Click it.
