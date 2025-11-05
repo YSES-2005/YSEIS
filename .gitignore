@@ -35,5 +35,4 @@ docker-compose.override.yml
 .vscode/**/workspaceStorage
 .aider*
 
-package.json
 pnpm-lock.yaml

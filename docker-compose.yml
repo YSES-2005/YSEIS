@@ -25,7 +25,7 @@ services:
     ports:
       - '5000:5000'
     volumes:
-      - ./backend:/app:z,cached
+      - ./backend:/usr/src/app:z,cached
       - backend_node_modules:/usr/src/app/node_modules
     depends_on:
       - mongo
