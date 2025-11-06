@@ -9,6 +9,7 @@
     "start": "serve -s dist -l 3000"
   },
   "dependencies": {
+    "@schemas": "file:../shared/dist/",
     "axios": "^1.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
