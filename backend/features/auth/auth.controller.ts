@@ -47,8 +47,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const logout = (req: Request, res: Response) => {
-  // This is a placeholder. JWTs are stateless.
-  // Client-side should handle token removal.
-  // For stateful sessions, you might blocklist the token here.
+
   res.json({ message: 'Logged out successfully' });
 };
