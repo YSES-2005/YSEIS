@@ -8,7 +8,7 @@ ENV CI=true
 # Use pnpm lockfile when present
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
-
+ENV CI=true
 RUN corepack enable && corepack prepare pnpm@latest --activate && \
     (cd /usr/src/shared && pnpm install --frozen-lockfile && pnpm build) && \
     pnpm install --frozen-lockfile
