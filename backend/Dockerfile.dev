@@ -8,6 +8,7 @@ ENV CI=true
 # Copy package manifest and pnpm lockfile for reproducible installs
 COPY backend/package.json backend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
+ENV CI=true
 
 # Enable pnpm, build shared, and install backend dependencies
 RUN corepack enable && corepack prepare pnpm@latest --activate && \
