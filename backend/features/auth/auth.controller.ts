@@ -2,8 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { UserModel } from '../users/user.model';
 import { BadRequestError, UnauthorizedError } from '../../errors';
 import jwt from 'jsonwebtoken';
-import { object } from 'zod/v4/classic/external.cjs';
-
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 
