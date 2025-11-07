@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import itemsRouter from './features/items/item.route';
 import transactionRouter from './features/transactions/transaction.route';
 import usersRouter from './features/users/user.route';
+import authRouter from './features/auth/auth.route';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/api/items', itemsRouter);
 app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 
 const MONGO_URI =
   process.env.MONGO_URI || 'mongodb://localhost:27017/inventory';
