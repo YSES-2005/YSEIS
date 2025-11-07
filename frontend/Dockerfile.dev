@@ -6,7 +6,9 @@ WORKDIR /usr/src/app
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
 
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
+RUN corepack enable && corepack prepare pnpm@latest --activate && \
+    (cd /usr/src/shared && pnpm install --frozen-lockfile && pnpm build) && \
+    pnpm install --frozen-lockfile
 
 COPY frontend/ .
 

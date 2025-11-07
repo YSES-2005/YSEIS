@@ -6,8 +6,10 @@ WORKDIR /usr/src/app
 COPY backend/package.json backend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
 
-# Enable pnpm and install all dependencies (including dev)
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
+# Enable pnpm, build shared, and install backend dependencies
+RUN corepack enable && corepack prepare pnpm@latest --activate && \
+    (cd /usr/src/shared && pnpm install --frozen-lockfile && pnpm build) && \
+    pnpm install --frozen-lockfile
 
 # Copy source code for development
 COPY backend/ .
