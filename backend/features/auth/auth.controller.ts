@@ -53,7 +53,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       throw new UnauthorizedError('Invalid credentials');
     }
     const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '15',
     });
     res.json({ token });
   } catch (error) {
@@ -67,6 +67,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 // @returns object 200 - JSON object with a success message: 'Logged out successfully' 
 
 export const logout = (req: Request, res: Response) => {
-  // This is a placeholder palang 
+  // placeholder palang 
   res.json({ message: 'Logged out successfully' });
 };
