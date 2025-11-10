@@ -5,11 +5,16 @@ import itemsRouter from './features/items/item.route';
 import transactionRouter from './features/transactions/transaction.route';
 import usersRouter from './features/users/user.route';
 import authRouter from './features/auth/auth.route';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+// swagger ui for docs purposes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/api/health', (_req: Request, res: Response) =>
   res.json({ status: 'ok' })
