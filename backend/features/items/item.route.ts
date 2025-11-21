@@ -73,7 +73,7 @@ itemsRouter.post(
   createItem
 );
 
-itemsRouter.put('/:id', authenticate, authorize(Role.ADMIN), updateItem);
+itemsRouter.put('/:id', authenticate, authorize(Role.ADMIN), validate(itemSchema), updateItem);
 itemsRouter.delete('/:id', authenticate, authorize(Role.ADMIN), deleteItem);
 
 export default itemsRouter;
