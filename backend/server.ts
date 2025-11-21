@@ -7,6 +7,7 @@ import usersRouter from './features/users/user.route';
 import authRouter from './features/auth/auth.route';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import { errorHandler } from './middleware/error';
 
 dotenv.config();
 
@@ -29,6 +30,10 @@ app.use('/api/items', itemsRouter);
 app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+
+app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
+  errorHandler(err, res);
+});
 
 const MONGO_URI =
   process.env.MONGO_URI || 'mongodb://localhost:27017/inventory';
