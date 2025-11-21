@@ -5,6 +5,7 @@ import { me, getUsers, getUserById } from './user.controller';
 const usersRouter = express.Router();
 
 // endpoint for authenticated user to get own info
+
 usersRouter.get('/me', authenticate, me);
 
 // endpoints for the admin

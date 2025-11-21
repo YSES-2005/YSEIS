@@ -36,29 +36,6 @@ const itemsRouter = express.Router();
  */
 itemsRouter.get('/', getItems);
 
-/**
- * @swagger
- * /items/{id}:
- *   get:
- *     summary: Get an item by ID
- *     tags: [Items]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Mongo ObjectId of the item
- *     responses:
- *       '200':
- *         description: The requested item
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Item'
- *       '404':
- *         description: Item not found
- */
 itemsRouter.get('/:id', getItemById);
 
 // Admin-only mutating endpoints
