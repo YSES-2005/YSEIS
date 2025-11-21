@@ -7,6 +7,8 @@ import {
   updateTransaction,
 } from './transaction.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
+import { validate } from '../../middleware/validate';
+import { transactionCreateSchema, transactionUpdateSchema } from '@schemas/transactionSchema';
 
 const transactionRouter = express.Router();
 
@@ -128,7 +130,7 @@ transactionRouter.get(
  *       '401':
  *         description: Unauthorized
  */
-transactionRouter.post('/', authenticate, createTransaction);
+transactionRouter.post('/', authenticate, validate(transactionCreateSchema), createTransaction);
 
 /**
  * @swagger
@@ -163,7 +165,7 @@ transactionRouter.post('/', authenticate, createTransaction);
  *       '404':
  *         description: Transaction not found
  */
-transactionRouter.put('/:id', authenticate, updateTransaction);
+transactionRouter.put('/:id', authenticate, validate(transactionUpdateSchema), updateTransaction);
 
 export default transactionRouter;
 
