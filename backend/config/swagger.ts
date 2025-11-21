@@ -11,7 +11,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/api',
+        url: 'http://localhost:5000',
         description: 'Development server',
       },
     ],
@@ -23,6 +23,49 @@ const options: swaggerJsdoc.Options = {
           bearerFormat: 'JWT',
         },
       },
+      schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'The user ID',
+              example: '60f7b3b3b3b3b3b3b3b3b3b3',
+            },
+            email: {
+              type: 'string',
+              description: "The user's email address",
+              example: 'user@example.com',
+            },
+            role: {
+              type: 'string',
+              enum: ['admin', 'user'],
+              description: "The user's role",
+              example: 'user',
+            },
+            avatar: {
+              type: 'string',
+              description: "URL to the user's avatar image",
+              example: 'https://example.com/avatar.png',
+            },
+            urgent_borrow_uses: {
+              type: 'number',
+              description: 'Number of urgent borrow uses left',
+              example: 0,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'The timestamp of when the user was created',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'The timestamp of when the user was last updated',
+            },
+          },
+        },
+      },
     },
     security: [
       {
@@ -30,7 +73,7 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ['./features/**/*.ts', './features/**/*.route.ts'], // Path to the API docs
+  apis: ['./features/**/*.route.ts'], // Path to the API docs
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
