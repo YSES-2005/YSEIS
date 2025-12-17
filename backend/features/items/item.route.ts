@@ -20,7 +20,7 @@ const itemsRouter = express.Router();
 
 /**
  * @swagger
- * /items:
+ * /api/items:
  *   get:
  *     summary: List all items
  *     tags: [Items]
@@ -41,7 +41,7 @@ itemsRouter.get('/:id', getItemById);
 // Admin-only mutating endpoints
 /**
  * @swagger
- * /items:
+ * /api/items:
  *   post:
  *     summary: Create a new item
  *     tags: [Items]
@@ -80,7 +80,7 @@ export default itemsRouter;
 
 /**
  * @swagger
- * /items/{id}:
+ * /api/items/{id}:
  *   put:
  *     summary: Update an existing item
  *     tags: [Items]
@@ -114,7 +114,7 @@ export default itemsRouter;
 
 /**
  * @swagger
- * /items/{id}:
+ * /api/items/{id}:
  *   delete:
  *     summary: Delete an item
  *     tags: [Items]
@@ -146,6 +146,7 @@ export default itemsRouter;
  *         id:
  *           type: string
  *           description: Item ID (Mongo ObjectId)
+ *           readOnly: true
  *         avatar:
  *           type: string
  *           format: uri
@@ -159,6 +160,7 @@ export default itemsRouter;
  *         custodian:
  *           type: string
  *           description: User ID (Mongo ObjectId)
+ *           pattern: '^[0-9a-fA-F]{24}$'
  *         location:
  *           type: string
  *         status:
@@ -167,9 +169,11 @@ export default itemsRouter;
  *         created_at:
  *           type: string
  *           format: date-time
+ *           readOnly: true
  *         updated_at:
  *           type: string
  *           format: date-time
+ *           readOnly: true
  *       required: [name, type, quantity, custodian, location, status, avatar]
  *     ItemInput:
  *       type: object
@@ -187,6 +191,7 @@ export default itemsRouter;
  *         custodian:
  *           type: string
  *           description: User ID (Mongo ObjectId)
+ *           pattern: '^[0-9a-fA-F]{24}$'
  *         location:
  *           type: string
  *         status:

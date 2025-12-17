@@ -21,7 +21,7 @@ const transactionRouter = express.Router();
 
 /**
  * @swagger
- * /transactions:
+ * /api/transactions:
  *   get:
  *     summary: List all transactions (Admin only)
  *     tags: [Transactions]
@@ -50,7 +50,7 @@ transactionRouter.get(
 
 /**
  * @swagger
- * /transactions/me:
+ * /api/transactions/me:
  *   get:
  *     summary: List my own transactions
  *     tags: [Transactions]
@@ -72,7 +72,7 @@ transactionRouter.get('/me', authenticate, getTransactionsForMe);
 
 /**
  * @swagger
- * /transactions/{id}:
+ * /api/transactions/{id}:
  *   get:
  *     summary: Get a transaction by ID (Admin only)
  *     tags: [Transactions]
@@ -106,7 +106,7 @@ transactionRouter.get(
 
 /**
  * @swagger
- * /transactions:
+ * /api/transactions:
  *   post:
  *     summary: Create a new transaction (borrow request)
  *     tags: [Transactions]
@@ -134,7 +134,7 @@ transactionRouter.post('/', authenticate, validate(transactionCreateSchema), cre
 
 /**
  * @swagger
- * /transactions/{id}:
+ * /api/transactions/{id}:
  *   put:
  *     summary: Update a transaction (e.g., approve/disapprove, mark returned)
  *     tags: [Transactions]
@@ -191,11 +191,11 @@ export default transactionRouter;
  *         urgency:
  *           type: boolean
  *           description: Whether this is an urgent borrow
- *         return date:
+ *         returnDate:
  *           type: string
  *           format: date-time
- *           description: Expected return date
- *         approval_status:
+ *           description: Expected return date (ISO 8601)
+ *         approvalStatus:
  *           type: string
  *           enum: [approved, disapproved, pending]
  *           description: Current approval status
@@ -205,7 +205,7 @@ export default transactionRouter;
  *         created_at:
  *           type: string
  *           format: date-time
- *       required: [item, borrower, purpose, urgency, return date, approval_status]
+ *       required: [item, borrower, purpose, urgency, returnDate, approvalStatus]
  *     TransactionInput:
  *       type: object
  *       properties:
@@ -221,15 +221,15 @@ export default transactionRouter;
  *         urgency:
  *           type: boolean
  *           description: Whether this is an urgent borrow
- *         return date:
+ *         returnDate:
  *           type: string
  *           format: date-time
- *           description: Expected return date
- *         approval_status:
+ *           description: Expected return date (ISO 8601)
+ *         approvalStatus:
  *           type: string
  *           enum: [approved, disapproved, pending]
  *           description: Initial status (typically pending)
- *       required: [item, borrower, purpose, urgency, return date, approval_status]
+ *       required: [item, borrower, purpose, urgency, returnDate, approvalStatus]
  *     TransactionUpdate:
  *       type: object
  *       properties:
@@ -237,7 +237,7 @@ export default transactionRouter;
  *           type: string
  *           enum: [approved, disapproved, pending]
  *           description: Updated approval status
- *         return date:
+ *         returnDate:
  *           type: string
  *           format: date-time
  *           description: Updated return date

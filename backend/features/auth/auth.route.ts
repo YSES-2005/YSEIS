@@ -14,7 +14,7 @@ const authRouter = Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -23,7 +23,7 @@ const authRouter = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             $ref: '#/components/schemas/UserInput'
  *     responses:
  *       '201':
  *         description: User created successfully
@@ -34,7 +34,7 @@ authRouter.post('/register', validate(userSchema), register);
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
  *     summary: Log in a user
  *     tags: [Auth]
@@ -71,7 +71,7 @@ authRouter.post('/login', validate(loginSchema), login);
 
 /**
  * @swagger
- * /auth/logout:
+ * /api/auth/logout:
  *   post:
  *     summary: Log out a user
  *     tags: [Auth]
@@ -89,7 +89,7 @@ export default authRouter;
  * @swagger
  * components:
  *   schemas:
- *     User:
+ *     UserInput:
  *       type: object
  *       required:
  *         - email
