@@ -60,7 +60,7 @@ export const login = async (
       throw new UnauthorizedError('Invalid credentials');
     }
     const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: '15m',
+      expiresIn: '120m',
     });
     res.json({ token });
   } catch (error) {
