@@ -233,7 +233,7 @@ export default transactionRouter;
  *     TransactionUpdate:
  *       type: object
  *       properties:
- *         approval_status:
+ *         approvalStatus:
  *           type: string
  *           enum: [approved, disapproved, pending]
  *           description: Updated approval status
