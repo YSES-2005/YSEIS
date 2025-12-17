@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import itemsRouter from './features/items/item.route';
 import transactionRouter from './features/transactions/transaction.route';
 import usersRouter from './features/users/user.route';
@@ -12,6 +13,7 @@ import { errorHandler } from './middleware/error';
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // swagger ui for docs purposes
