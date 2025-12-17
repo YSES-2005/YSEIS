@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserModel } from '../users/user.model';
 import { BadRequestError, UnauthorizedError } from '../../errors';
 import jwt from 'jsonwebtoken';
-const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
+import { JWT_SECRET } from '../../config/jwt';
 
 //  @desc    Register a new user
 //  @route   POST /api/auth/register
