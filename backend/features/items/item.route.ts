@@ -11,6 +11,15 @@ import { validate } from '../../middleware/validate';
 import { itemSchema } from '@schemas/itemSchema';
 
 const itemsRouter = express.Router();
+
+// If user didn't include a custodian, add the authenticated user's id
+const fillCustodianFromAuth = (req: any, _res: any, next: any) => {
+  if (!req.body) req.body = {};
+  if (!req.body.custodian && req.userId) {
+    req.body.custodian = req.userId;
+  }
+  next();
+};
 /**
  * @swagger
  * tags:
@@ -69,6 +78,7 @@ itemsRouter.post(
   '/',
   authenticate,
   authorize(Role.ADMIN),
+  fillCustodianFromAuth,
   validate(itemSchema),
   createItem
 );
