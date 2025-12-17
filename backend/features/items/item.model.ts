@@ -9,7 +9,7 @@ const ItemsSchema = new mongoose.Schema(
     location: { type: String, required: true },
     custodian: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
       required: true,
     },
     status: {
