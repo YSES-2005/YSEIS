@@ -4,22 +4,25 @@ const TransactionsSchema = new mongoose.Schema(
   {
     item: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'items',
+      ref: 'Item',
       required: true,
     },
     borrower: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'User',
       required: true,
     },
     purpose: { type: String, required: true },
     urgency: { type: Boolean, required: true },
-    return_date: { type: Date, required: true },
-    approval_staus: {
+    returnDate: { type: Date, required: true },
+    approvalStatus: {
       type: String,
       enum: ['approved', 'disapproved', 'pending'],
+      default: 'pending',
       required: true,
     },
+    returned: { type: Boolean, default: false },
+    returnedAt: { type: Date },
   },
   {
     timestamps: {
@@ -29,4 +32,4 @@ const TransactionsSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('transactions', TransactionsSchema);
+export default mongoose.model('Transaction', TransactionsSchema);
