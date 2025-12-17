@@ -12,6 +12,6 @@ export const userSchema = z.object({
   urgent_borrow_uses: z
     .number()
     .int()
-    .nonnegative('Urgent borrow uses must be 0 or more')
+    .min(0, 'Urgent borrow uses must be 0 or more')
     .optional(),
 });
