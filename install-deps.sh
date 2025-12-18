@@ -4,13 +4,13 @@ set -e
 echo "--- Installing dependencies ---"
 
 echo "Installing shared dependencies..."
-(cd shared && pnpm install && pnpm build)
+(cd shared && pnpm install --frozen-lockfile && pnpm build)
 
 echo "Installing backend dependencies..."
-(cd backend && pnpm install)
+(cd backend && pnpm install --frozen-lockfile)
 
 echo "Installing frontend dependencies..."
-(cd frontend && pnpm install)
+(cd frontend && pnpm install --frozen-lockfile)
 
 echo "Installing Prettier..."
 (pnpm install --save-dev --save-exact prettier)

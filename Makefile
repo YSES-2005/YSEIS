@@ -1,11 +1,11 @@
 dev:
-	COMPOSE_BAKE=true docker compose up --build
+	COMPOSE_BAKE=true docker compose up --build & cd shared && pnpm watch
 
 down:
-	COMPOSE_BAKE=true docker compose down
+	 docker compose down -v
 
 rebuild:
-	COMPOSE_BAKE=true docker compose build --no-cache
+	 docker compose build --no-cache
 
 clean: down
 	docker system prune -f

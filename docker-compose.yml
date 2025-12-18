@@ -19,8 +19,9 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile.dev
     environment:
-      - NODE_ENV=development
-      - MONGO_URI=mongodb://mongo:27017/inventory
+      - NODE_ENV=${NODE_ENV}
+      - MONGO_URI=${MONGO_URI}
+      - FRONTEND_URL=${FRONTEND_URL}
       - PORT=5000
     ports:
       - '5000:5000'
@@ -36,8 +37,9 @@ services:
       context: .
       dockerfile: ./frontend/Dockerfile.dev
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV}
       - CHOKIDAR_USEPOLLING=true
+      - API_URL=${API_URL}
     ports:
       - '5173:5173'
     volumes:
