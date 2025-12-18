@@ -16,3 +16,5 @@ export const itemSchema = z.object({
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
 });
+
+export type Item = z.infer<typeof itemSchema>;
