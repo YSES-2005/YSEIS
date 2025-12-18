@@ -33,11 +33,11 @@ export const register = async (
   }
 };
 
-// @desc    Authenticate user and get token
+// @desc    Authenticate user, gets token, and sends the token to the client through cookies
 // @route   POST /api/auth/login
 // @access  Public
 // @param
-// @returns object 200 - JSON object with the JWT: { token: '...' }
+// @returns object 200 - JSON object with success message
 // @returns Error 400 - If email or password are missing
 // @returns Error 401 - If credentials are invalid
 
@@ -62,7 +62,15 @@ export const login = async (
     const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: '120m',
     });
-    res.json({ token });
+
+    res.cookie('jwt', token, {
+      httpOnly: true, // JS cannot read this
+      secure: process.env.NODE_ENV !== 'development', // HTTPS only in production
+      sameSite: 'strict', // Protects against CSRF
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
+    res.status(200).json({ message: 'Logged in successfully' });
   } catch (error) {
     next(error);
   }
@@ -74,6 +82,9 @@ export const login = async (
 // @returns object 200 - JSON object with a success message: 'Logged out successfully'
 
 export const logout = (req: Request, res: Response) => {
-  // placeholder palang
-  res.json({ message: 'Logged out successfully' });
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: 'Logged out' });
 };

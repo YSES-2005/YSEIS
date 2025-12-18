@@ -13,7 +13,12 @@ import { errorHandler } from './middleware/error';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // swagger ui for docs purposes
@@ -33,9 +38,11 @@ app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 
-app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
-  errorHandler(err, res);
-});
+app.use(
+  (err: Error, req: Request, res: Response, next: express.NextFunction) => {
+    errorHandler(err, res);
+  }
+);
 
 const MONGO_URI =
   process.env.MONGO_URI || 'mongodb://localhost:27017/inventory';
