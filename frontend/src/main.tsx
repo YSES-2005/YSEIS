@@ -8,6 +8,7 @@ import { queryClient } from './lib/queryClient.ts';
 import { QueryClientProvider, queryOptions } from '@tanstack/react-query';
 import { authService } from './features/auth/services/authService.ts';
 import { AxiosError } from 'axios';
+import AutoLogoutProvider from './features/auth/components/AutoLogoutProvider.tsx';
 
 export const userQueryKey = 'auth-user';
 
@@ -43,7 +44,9 @@ export const router = createRouter({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AutoLogoutProvider>
+        <RouterProvider router={router} />
+      </AutoLogoutProvider>
     </QueryClientProvider>
   </StrictMode>
 );
