@@ -12,6 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthDashboardRouteImport } from './routes/_auth/_dashboard'
+import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions'
+import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory'
+import { Route as AuthDashboardBorrowRouteImport } from './routes/_auth/_dashboard/borrow'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -27,32 +31,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthDashboardRoute = AuthDashboardRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthDashboardTransactionsRoute =
+  AuthDashboardTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthDashboardRoute,
+  } as any)
+const AuthDashboardInventoryRoute = AuthDashboardInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AuthDashboardRoute,
+} as any)
+const AuthDashboardBorrowRoute = AuthDashboardBorrowRouteImport.update({
+  id: '/borrow',
+  path: '/borrow',
+  getParentRoute: () => AuthDashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sign-in': typeof SignInRoute
+  '/borrow': typeof AuthDashboardBorrowRoute
+  '/inventory': typeof AuthDashboardInventoryRoute
+  '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sign-in': typeof SignInRoute
+  '/borrow': typeof AuthDashboardBorrowRoute
+  '/inventory': typeof AuthDashboardInventoryRoute
+  '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/sign-in': typeof SignInRoute
+  '/_auth/_dashboard': typeof AuthDashboardRouteWithChildren
+  '/_auth/_dashboard/borrow': typeof AuthDashboardBorrowRoute
+  '/_auth/_dashboard/inventory': typeof AuthDashboardInventoryRoute
+  '/_auth/_dashboard/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in'
+  fullPaths: '/' | '/sign-in' | '/borrow' | '/inventory' | '/transactions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in'
-  id: '__root__' | '/' | '/_auth' | '/sign-in'
+  to: '/' | '/sign-in' | '/borrow' | '/inventory' | '/transactions'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/sign-in'
+    | '/_auth/_dashboard'
+    | '/_auth/_dashboard/borrow'
+    | '/_auth/_dashboard/inventory'
+    | '/_auth/_dashboard/transactions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   SignInRoute: typeof SignInRoute
 }
 
@@ -79,12 +121,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/_dashboard': {
+      id: '/_auth/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/_dashboard/transactions': {
+      id: '/_auth/_dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthDashboardTransactionsRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
+    '/_auth/_dashboard/inventory': {
+      id: '/_auth/_dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthDashboardInventoryRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
+    '/_auth/_dashboard/borrow': {
+      id: '/_auth/_dashboard/borrow'
+      path: '/borrow'
+      fullPath: '/borrow'
+      preLoaderRoute: typeof AuthDashboardBorrowRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
   }
 }
 
+interface AuthDashboardRouteChildren {
+  AuthDashboardBorrowRoute: typeof AuthDashboardBorrowRoute
+  AuthDashboardInventoryRoute: typeof AuthDashboardInventoryRoute
+  AuthDashboardTransactionsRoute: typeof AuthDashboardTransactionsRoute
+}
+
+const AuthDashboardRouteChildren: AuthDashboardRouteChildren = {
+  AuthDashboardBorrowRoute: AuthDashboardBorrowRoute,
+  AuthDashboardInventoryRoute: AuthDashboardInventoryRoute,
+  AuthDashboardTransactionsRoute: AuthDashboardTransactionsRoute,
+}
+
+const AuthDashboardRouteWithChildren = AuthDashboardRoute._addFileChildren(
+  AuthDashboardRouteChildren,
+)
+
+interface AuthRouteChildren {
+  AuthDashboardRoute: typeof AuthDashboardRouteWithChildren
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthDashboardRoute: AuthDashboardRouteWithChildren,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport
