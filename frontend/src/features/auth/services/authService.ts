@@ -20,8 +20,10 @@ export const authService = {
   },
 
   async getCurrentUser(config?: AxiosRequestConfig): Promise<User> {
-    const response = await apiClient.post<User>('users/me', config);
+  //   const response = await apiClient.post<User>('users/me', config);
 
-    return response.data;
+  //   return response.data;
+  // },
+    return { id: 1, email: 'dev@example.com' } as unknown as User;
   },
 };
