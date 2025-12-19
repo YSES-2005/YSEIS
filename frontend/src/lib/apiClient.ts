@@ -10,8 +10,11 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   return config;
 }
 
+// Prefer Vite-prefixed env var, fall back to legacy API_URL if present
+const BASE_URL = (import.meta.env as any).VITE_API_URL ?? (import.meta.env as any).API_URL ?? '';
+
 export const apiClient = Axios.create({
-  baseURL: import.meta.env.API_URL,
+  baseURL: BASE_URL,
 });
 
 apiClient.interceptors.request.use(authRequestInterceptor);
