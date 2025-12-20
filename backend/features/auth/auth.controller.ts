@@ -7,9 +7,9 @@ import { JWT_SECRET } from '../../config/jwt';
 //  @desc    Register a new user
 //  @route   POST /api/auth/register
 //  @access  Public
-//  @param   {string} email, password, role, all from request body
+//  @param   {string} name, email, password, role, all from request body
 //  @returns {object} 201 - JSON object with a success message
-//  @returns {Error} 400 - If email/password are missing or if user already exists
+//  @returns {Error} 400 - If name/email/password are missing or if user already exists
 
 export const register = async (
   req: Request,
@@ -17,15 +17,15 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password) {
-      throw new BadRequestError('Email and password are required');
+    const { name, email, password, role } = req.body;
+    if (!name || !email || !password) {
+      throw new BadRequestError('Name, email and password are required');
     }
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       throw new BadRequestError('User already exists');
     }
-    const user = new UserModel({ email, password, role });
+    const user = new UserModel({ name, email, password, role });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {

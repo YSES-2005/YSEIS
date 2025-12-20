@@ -92,9 +92,13 @@ export default authRouter;
  *     UserInput:
  *       type: object
  *       required:
+ *         - name
  *         - email
  *         - password
  *       properties:
+ *         name:
+ *           type: string
+ *           description: The user's name.
  *         email:
  *           type: string
  *           format: email
