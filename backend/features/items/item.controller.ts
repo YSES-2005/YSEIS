@@ -6,7 +6,7 @@ import { NotFoundError } from '../../errors';
 //GET api/items  
 export const getItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const items = await ItemModel.find().populate('custodian', 'name email');
+    const items = await ItemModel.find({ status: { $ne: 'deleted' } }).populate('custodian', 'name email');
     res.json({ data: items });
   } catch (error) {
     next(error);
@@ -56,6 +56,14 @@ export const updateItem = async (req: Request, res: Response, next: NextFunction
   try {
     const { id } = req.params;
     const payload = req.body;
+    // sets status based on quantity
+    if (payload.quantity !== undefined) {
+      if (payload.quantity === 0) {
+        payload.status = 'unavailable';
+      } else if (payload.quantity > 0 && payload.status === 'unavailable') {
+        payload.status = 'available';
+      }
+    }
 
     const item = await ItemModel.findByIdAndUpdate(id, payload, { new: true });
 
