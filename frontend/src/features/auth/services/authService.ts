@@ -6,24 +6,25 @@ import type { AxiosRequestConfig } from 'axios';
 
 export const authService = {
   async register(user: User) {
-    await apiClient.post('/register', user);
+    await apiClient.post('/auth/register', user);
   },
 
   async login(credentials: { email: string; password: string }) {
-    await apiClient.post('/login', credentials);
+    await apiClient.post('/auth/login', credentials);
   },
 
   async logout() {
     await queryClient.invalidateQueries({ queryKey: [userQueryKey] });
     router.invalidate();
-    await apiClient.post('/logout');
+    await apiClient.post('/auth/logout');
   },
 
-  async getCurrentUser(config?: AxiosRequestConfig): Promise<User> {
-  //   const response = await apiClient.post<User>('users/me', config);
-
-  //   return response.data;
-  // },
-    return { id: 1, email: 'dev@example.com' } as unknown as User;
+  async getCurrentUser(config?: AxiosRequestConfig): Promise<User | null> {
+    try {
+      const data = (await apiClient.get<User>('/users/me', config)) as unknown as User;
+      return data;
+    } catch (error) {
+      return null;
+    }
   },
 };
