@@ -17,7 +17,6 @@ export const authenticate = (
     ? authHeader.slice(7)
     : authHeader;
 
-  // If no Authorization header, attempt to read token from Cookie header (jwt cookie)
   if (!token && req.headers.cookie) {
     const match = req.headers.cookie.match(/(?:^|;\s*)jwt=([^;]*)/);
     if (match) {
