@@ -6,16 +6,24 @@ export enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }
-// Pang test lng magbabago pa once na nasetup na database
+
 export const authenticate = (
   req: express.Request,
   _: express.Response,
   next: express.NextFunction
 ) => {
-  const authHeader = req.header('Authorization') || req.header('authorization');
-  const token = authHeader?.startsWith('Bearer ')
+  const authHeader = req.header('Authorization');
+  let token = authHeader?.startsWith('Bearer ')
     ? authHeader.slice(7)
     : authHeader;
+
+  // If no Authorization header, attempt to read token from Cookie header (jwt cookie)
+  if (!token && req.headers.cookie) {
+    const match = req.headers.cookie.match(/(?:^|;\s*)jwt=([^;]*)/);
+    if (match) {
+      token = match[1];
+    }
+  }
 
   if (!token) {
     return next(new UnauthorizedError('Access denied. No token provided.'));
