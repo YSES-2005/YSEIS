@@ -18,8 +18,7 @@ export function useLoginViewModel({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const submit = (payload: unknown) => {
-    setError(''); // Reset error
-
+    setError('');
     const result = loginSchema.safeParse(payload);
 
     if (!result.success) {
