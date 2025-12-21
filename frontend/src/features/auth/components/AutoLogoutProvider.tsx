@@ -29,7 +29,9 @@ export default function AutoLogoutProvider({
     clearTimers();
     try {
       await authService.logout();
-    } catch (e) {}
+    } catch (e) {
+      // TODO: toast error
+    }
     router.navigate({ to: '/sign-in' });
   };
 
