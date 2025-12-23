@@ -37,8 +37,8 @@ export const authenticate = (
 
     // attach token and derived fields for downstream handlers
     req.token = token;
-    req.userId = payload.sub as any;
-    req.userRole = payload.role as any;
+    req.userId = payload.sub;
+    req.userRole = payload.role;
     next();
   } catch (error) {
     next(new UnauthorizedError('Invalid token.'));
