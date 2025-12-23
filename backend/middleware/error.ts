@@ -17,7 +17,7 @@ export const errorHandler = (err: Error, res: express.Response) => {
 };
 
 export const handleInternalError = (
-  e: any,
+  e: Error | mongoose.Error,
   next: express.NextFunction
 ): void => {
   if (e instanceof mongoose.Error.ValidationError) {
