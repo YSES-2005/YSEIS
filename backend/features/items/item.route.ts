@@ -13,7 +13,11 @@ import { itemSchema } from '@schemas/itemSchema';
 const itemsRouter = express.Router();
 
 // If user didn't include a custodian, add the authenticated user's id
-const fillCustodianFromAuth = (req: any, _res: any, next: any) => {
+const fillCustodianFromAuth = (
+  req: express.Request,
+  _res: express.Response,
+  next: express.NextFunction
+) => {
   if (!req.body) req.body = {};
   if (!req.body.custodian && req.userId) {
     req.body.custodian = req.userId;
@@ -31,8 +35,42 @@ const fillCustodianFromAuth = (req: any, _res: any, next: any) => {
  * @swagger
  * /api/items:
  *   get:
- *     summary: List all items
+ *     summary: List items with optional filters
  *     tags: [Items]
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Case-insensitive search by item name
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [available, unavailable]
+ *         description: Filter by availability status
+ *       - in: query
+ *         name: type
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter by item type
+ *       - in: query
+ *         name: startDate
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Include items updated on/after this date (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Include items updated on/before this date (YYYY-MM-DD)
  *     responses:
  *       '200':
  *         description: A list of items
@@ -124,6 +162,8 @@ export default itemsRouter;
  *               $ref: '#/components/schemas/Item'
  *       '401':
  *         description: Unauthorized
+ *       '403':
+ *         description: Forbidden - Insufficient role (admin required)
  *       '404':
  *         description: Item not found
  */
