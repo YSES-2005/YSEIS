@@ -6,8 +6,85 @@ import { NotFoundError } from '../../errors';
 //GET api/items  
 export const getItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const items = await ItemModel.find({ status: { $ne: 'deleted' } }).populate('custodian', 'name email');
-    res.json({ data: items });
+    const { 
+      search, 
+      status, 
+      type, 
+      custodian,
+      startDate, 
+      endDate, 
+      page = '1', 
+      limit = '10' 
+    } = req.query as Record<string, string | undefined>;
+
+    // add query object
+    const query: Record<string, any> = { status: { $ne: 'deleted' } };
+
+    // filter by status
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    // filter by type
+    if (type) {
+      query.type = type;
+    }
+
+    // search by name (case-insensitive regex)
+    if (search) {
+      query.name = { $regex: new RegExp(search, 'i') };
+    }
+
+    // Note: custodian filter will be applied after populate
+    // since we need to search in populated name/email fields
+
+    // date range filtering
+    if (startDate || endDate) {
+      const range: Record<string, Date> = {};
+      if (startDate) range.$gte = new Date(startDate);
+      if (endDate) {
+        const d = new Date(endDate);
+        d.setHours(23, 59, 59, 999);
+        range.$lte = d;
+      }
+      query.updated_at = range;
+    }
+
+    const pageNumber = Math.max(1, parseInt(page));
+    const limitNumber = Math.max(1, parseInt(limit));
+    const skip = (pageNumber - 1) * limitNumber;
+
+    let itemsQuery = ItemModel.find(query)
+      .populate('custodian', 'name email')
+      .sort({ updated_at: -1 });
+
+    // Get total count before pagination
+    const totalCount = await ItemModel.countDocuments(query);
+
+    // Apply pagination
+    let items = await itemsQuery.skip(skip).limit(limitNumber);
+
+    // Apply custodian filter if provided (after populate)
+    if (custodian) {
+      const custodianLower = custodian.toLowerCase();
+      items = items.filter((item: any) => {
+        const custodianObj = item.custodian;
+        if (!custodianObj) return false;
+        const name = custodianObj.name?.toLowerCase() || '';
+        const email = custodianObj.email?.toLowerCase() || '';
+        return name.includes(custodianLower) || email.includes(custodianLower);
+      });
+    }
+
+    res.json({ 
+      data: items,
+      pagination: {
+        totalItems: totalCount,
+        totalPages: Math.ceil(totalCount / limitNumber),
+        currentPage: pageNumber,
+        limit: limitNumber
+      }
+    });
   } catch (error) {
     next(error);
   }
