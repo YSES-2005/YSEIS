@@ -10,8 +10,8 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   return config;
 }
 
-// Prefer Vite-prefixed env var, fall back to legacy API_URL if present
-const BASE_URL = (import.meta.env as any).VITE_API_URL ?? (import.meta.env as any).API_URL ?? '';
+// Prefer Vite-prefixed env var; optionally support legacy API_URL via env typing
+const BASE_URL = import.meta.env.VITE_API_URL ?? import.meta.env.API_URL ?? '';
 
 export const apiClient = Axios.create({
   baseURL: BASE_URL,
