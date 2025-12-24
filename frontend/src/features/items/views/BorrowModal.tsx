@@ -8,7 +8,7 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-import { FormField, TextInput, TextArea } from '@/features/items/components/FormField';
+import { FormField, TextInput, TextArea } from '@/components/ui/form-field';
 import {
   validateBorrowForm,
   type BorrowFormData,

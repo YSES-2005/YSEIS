@@ -7,7 +7,7 @@ import {
   AlertDialogTitle,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-import { FormField, TextInput, TextArea } from '@/features/items/components/FormField';
+import { FormField, TextInput, TextArea } from '@/components/ui/form-field';
 import {
   validateMultiBorrowForm,
   type MultiBorrowFormState,
