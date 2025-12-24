@@ -1,5 +1,5 @@
-import { type FormEvent } from 'react';
-import type { Item } from '@schemas/itemSchema';
+import { useEffect, useState } from 'react';
+import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -8,51 +8,96 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-
-type BorrowFormState = {
-  fullName: string;
-  quantity: string;
-  returnDate: string;
-  purpose: string;
-  urgent: boolean;
-};
+import { FormField, TextInput, TextArea } from '@/features/items/components/FormField';
+import {
+  validateBorrowForm,
+  type BorrowFormData,
+  type BorrowValidationErrors,
+} from '@/features/items/validation/borrowValidation';
 
 type Props = {
   open: boolean;
   item: Item | null;
-  form: BorrowFormState;
-  onFormChange: (form: BorrowFormState) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (data: BorrowFormData) => void;
   onClose: () => void;
 };
 
-export function BorrowModal({ open, item, form, onFormChange, onSubmit, onClose }: Props) {
+const defaultForm: BorrowFormData = {
+  fullName: '',
+  quantity: 1,
+  returnDate: '',
+  purpose: '',
+  urgent: false,
+};
+
+export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
+  const [form, setForm] = useState<BorrowFormData>(defaultForm);
+  const [errors, setErrors] = useState<BorrowValidationErrors>({});
+
+  useEffect(() => {
+    if (!open) {
+      setForm(defaultForm);
+      setErrors({});
+    }
+  }, [open]);
+
   if (!item) return null;
 
-  const isSubmitDisabled =
-    !form.fullName.trim() ||
-    !form.quantity ||
-    !form.returnDate ||
-    !form.purpose.trim();
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formErrors = validateBorrowForm(form, item);
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    onSubmit(form);
+    setForm(defaultForm);
+    setErrors({});
+  };
+
+  const handleFieldChange = (
+    field: keyof Omit<BorrowFormData, 'urgent'>,
+    value: unknown
+  ) => {
+    setForm((f) => ({ ...f, [field]: value }));
+    if (errors[field as keyof BorrowValidationErrors]) {
+      setErrors((e) => ({ ...e, [field]: undefined }));
+    }
+  };
 
   const primaryLabel = form.urgent ? 'Urgent Borrow' : 'Submit Request';
   const primaryButtonClasses = form.urgent
-    ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-    : 'bg-sky-500 hover:bg-sky-600 text-white';
-  const urgentTrackClasses = form.urgent ? 'bg-sky-500' : 'bg-gray-200';
+    ? 'text-gray-900'
+    : 'text-white';
+  const primaryButtonStyle = form.urgent
+    ? {
+        backgroundColor: 'var(--borrow-urgent)',
+      }
+    : {
+        backgroundColor: 'var(--borrow-primary)',
+      };
+  const primaryButtonHoverStyle = form.urgent
+    ? {
+        backgroundColor: 'var(--borrow-urgent-hover)',
+      }
+    : {
+        backgroundColor: 'var(--borrow-primary-hover)',
+      };
+  const urgentTrackClasses = form.urgent ? '' : 'bg-gray-200';
+  const urgentTrackStyle = form.urgent
+    ? { backgroundColor: 'var(--borrow-primary)' }
+    : undefined;
 
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : onClose())}>
       <AlertDialogContent size="wide" className="p-0 w-full">
-        <form onSubmit={onSubmit} className="flex flex-col">
+        <form onSubmit={handleFormSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
               <div className="w-1/2 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                <img
-                  src={item.avatar}
-                  alt={item.name}
-                  className="w-full h-44 object-cover"
-                />
+                <img src={item.avatar} alt={item.name} className="w-full h-44 object-cover" />
               </div>
               <AlertDialogTitle className="text-xl font-semibold text-gray-900 text-center">
                 {item.name}
@@ -63,49 +108,45 @@ export function BorrowModal({ open, item, form, onFormChange, onSubmit, onClose 
             </AlertDialogHeader>
 
             <div className="grid gap-3">
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Full Name</label>
-                <input
+              <FormField label="Full Name" error={errors.fullName}>
+                <TextInput
                   type="text"
                   value={form.fullName}
-                  onChange={(e) => onFormChange({ ...form, fullName: e.target.value })}
+                  onChange={(e) => handleFieldChange('fullName', e.target.value)}
                   placeholder="Juan Dela Cruz"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  error={errors.fullName}
                 />
-              </div>
+              </FormField>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="grid gap-1">
-                  <label className="text-sm font-semibold text-gray-800">Quantity</label>
-                  <input
+                <FormField label="Quantity" error={errors.quantity}>
+                  <TextInput
                     type="number"
                     min={1}
                     value={form.quantity}
-                    onChange={(e) => onFormChange({ ...form, quantity: e.target.value })}
+                    onChange={(e) => handleFieldChange('quantity', Number(e.target.value))}
                     placeholder="Quantity"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    error={errors.quantity}
                   />
-                </div>
-                <div className="grid gap-1">
-                  <label className="text-sm font-semibold text-gray-800">Return Date</label>
-                  <input
+                </FormField>
+                <FormField label="Return Date" error={errors.returnDate}>
+                  <TextInput
                     type="date"
                     value={form.returnDate}
-                    onChange={(e) => onFormChange({ ...form, returnDate: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    onChange={(e) => handleFieldChange('returnDate', e.target.value)}
+                    error={errors.returnDate}
                   />
-                </div>
+                </FormField>
               </div>
 
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Purpose</label>
-                <textarea
+              <FormField label="Purpose" error={errors.purpose}>
+                <TextArea
                   value={form.purpose}
-                  onChange={(e) => onFormChange({ ...form, purpose: e.target.value })}
+                  onChange={(e) => handleFieldChange('purpose', e.target.value)}
                   placeholder="Briefly describe how you will use this item"
-                  className="w-full min-h-[96px] rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  error={errors.purpose}
                 />
-              </div>
+              </FormField>
             </div>
           </div>
 
@@ -114,8 +155,9 @@ export function BorrowModal({ open, item, form, onFormChange, onSubmit, onClose 
               <span>Urgent Borrow?</span>
               <button
                 type="button"
-                onClick={() => onFormChange({ ...form, urgent: !form.urgent })}
+                onClick={() => setForm((f) => ({ ...f, urgent: !f.urgent }))}
                 className={`h-6 w-12 rounded-full border border-gray-200 flex items-center px-1 transition-colors ${urgentTrackClasses}`}
+                style={urgentTrackStyle}
                 aria-pressed={form.urgent}
                 aria-label="Toggle urgent borrow"
               >
@@ -137,10 +179,16 @@ export function BorrowModal({ open, item, form, onFormChange, onSubmit, onClose 
               </AlertDialogCancel>
               <button
                 type="submit"
-                disabled={isSubmitDisabled}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${primaryButtonClasses} ${
-                  isSubmitDisabled ? 'opacity-60 cursor-not-allowed' : ''
-                }`}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${primaryButtonClasses}`}
+                style={{
+                  ...primaryButtonStyle,
+                }}
+                onMouseEnter={(e) => {
+                  Object.assign(e.currentTarget.style, primaryButtonHoverStyle);
+                }}
+                onMouseLeave={(e) => {
+                  Object.assign(e.currentTarget.style, primaryButtonStyle);
+                }}
               >
                 {primaryLabel}
               </button>

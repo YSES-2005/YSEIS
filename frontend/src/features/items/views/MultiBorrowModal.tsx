@@ -1,5 +1,5 @@
-import { type FormEvent } from 'react';
-import type { Item } from '@schemas/itemSchema';
+import { type FormEvent, useState } from 'react';
+import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -7,14 +7,12 @@ import {
   AlertDialogTitle,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-
-type MultiBorrowFormState = {
-  fullName: string;
-  items: { item: Item; quantity: number }[];
-  returnDate: string;
-  purpose: string;
-  urgent: boolean;
-};
+import { FormField, TextInput, TextArea } from '@/features/items/components/FormField';
+import {
+  validateMultiBorrowForm,
+  type MultiBorrowFormState,
+  type MultiBorrowValidationErrors,
+} from '@/features/items/validation/borrowValidation';
 
 type Props = {
   open: boolean;
@@ -25,7 +23,7 @@ type Props = {
   onImageIndexChange: (index: number) => void;
   onAddItem: (item: Item) => void;
   onUpdateItemQuantity: (itemId: string, delta: number) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (data: MultiBorrowFormState) => void;
   onClose: () => void;
 };
 
@@ -41,28 +39,46 @@ export function MultiBorrowModal({
   onSubmit,
   onClose,
 }: Props) {
-  const isMultiBorrowDisabled =
-    !form.fullName.trim() ||
-    !form.returnDate ||
-    !form.purpose.trim() ||
-    form.items.length === 0;
+  const [errors, setErrors] = useState<MultiBorrowValidationErrors>({});
 
-  const displayItems = form.items.length > 0 ? form.items.map(i => i.item) : availableItems;
-  const currentItem = displayItems[currentImageIndex];
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formErrors = validateMultiBorrowForm(form);
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    onSubmit(form);
+    setErrors({});
+  };
+
+  const handleFormChange = (updatedForm: MultiBorrowFormState) => {
+    onFormChange(updatedForm);
+    if (Object.keys(errors).length > 0) {
+      setErrors({});
+    }
+  };
+
+  const handleCloseModal = () => {
+    setErrors({});
+    onClose();
+  };
 
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : onClose())}>
+    <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : handleCloseModal())}>
       <AlertDialogContent size="wide" className="p-0 w-full">
-        <form onSubmit={onSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
               <div className="relative w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                 <img
-                  src={currentItem?.avatar}
-                  alt={currentItem?.name}
+                  src={availableItems[currentImageIndex]?.avatar}
+                  alt={availableItems[currentImageIndex]?.name}
                   className="w-full h-44 object-cover"
                 />
-                {displayItems.length > 1 && (
+                {availableItems.length > 1 && (
                   <>
                     <button
                       type="button"
@@ -76,8 +92,8 @@ export function MultiBorrowModal({
                     </button>
                     <button
                       type="button"
-                      onClick={() => onImageIndexChange(Math.min(displayItems.length - 1, currentImageIndex + 1))}
-                      disabled={currentImageIndex === displayItems.length - 1}
+                      onClick={() => onImageIndexChange(Math.min(availableItems.length - 1, currentImageIndex + 1))}
+                      disabled={currentImageIndex === availableItems.length - 1}
                       className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 disabled:opacity-30"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +101,7 @@ export function MultiBorrowModal({
                       </svg>
                     </button>
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                      {displayItems.map((_, idx) => (
+                      {availableItems.map((_, idx) => (
                         <button
                           key={idx}
                           type="button"
@@ -100,7 +116,7 @@ export function MultiBorrowModal({
                 )}
               </div>
               <AlertDialogTitle className="text-xl font-semibold text-gray-900 text-center">
-                {currentItem?.name}
+                {availableItems[currentImageIndex]?.name}
               </AlertDialogTitle>
               <button
                 type="button"
@@ -110,74 +126,109 @@ export function MultiBorrowModal({
                     onAddItem(item);
                   }
                 }}
-                className="px-4 py-1.5 bg-sky-500 text-white rounded-lg text-sm font-semibold hover:bg-sky-600 transition-colors mx-auto"
+                className="px-4 py-1.5 text-white rounded-lg text-sm font-semibold transition-colors mx-auto"
+                style={{
+                  backgroundColor: 'var(--borrow-primary)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--borrow-primary-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--borrow-primary)';
+                }}
               >
                 Add item
               </button>
             </AlertDialogHeader>
 
             <div className="grid gap-3">
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Full Name</label>
-                <input
+              <FormField label="Full Name" error={errors.fullName}>
+                <TextInput
                   type="text"
                   value={form.fullName}
-                  onChange={(e) => onFormChange({ ...form, fullName: e.target.value })}
+                  onChange={(e) => handleFormChange({ ...form, fullName: e.target.value })}
                   placeholder="Juan Dela Cruz"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  error={errors.fullName}
                 />
-              </div>
+              </FormField>
 
               <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Quantity</label>
+                <label className="text-sm font-semibold text-gray-800">Items</label>
                 <div className="space-y-2">
-                  {form.items.map((entry) => {
-                    const itemId = (entry.item as any).id || (entry.item as any)._id;
-                    return (
-                      <div key={itemId} className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700">{entry.item.name}</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => onUpdateItemQuantity(itemId, -1)}
-                            className="w-6 h-6 flex items-center justify-center rounded bg-red-400 hover:bg-red-500 text-white text-lg font-bold"
-                          >
-                            −
-                          </button>
-                          <span className="w-8 text-center text-sm font-semibold">{entry.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => onUpdateItemQuantity(itemId, 1)}
-                            className="w-6 h-6 flex items-center justify-center rounded bg-green-400 hover:bg-green-500 text-white text-lg font-bold"
-                          >
-                            +
-                          </button>
+                  {form.items.length === 0 ? (
+                    <p className="text-xs text-gray-500 py-2">No items added yet. Add items from the carousel above.</p>
+                  ) : (
+                    form.items.map((entry) => {
+                      const itemId = entry.item.id!;
+                      const isQuantityInvalid = entry.quantity < 1 || entry.quantity > entry.item.quantity;
+                      return (
+                        <div key={itemId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <div className="flex flex-col">
+                            <span className="text-sm text-gray-700">{entry.item.name}</span>
+                            {isQuantityInvalid && (
+                              <span className="text-xs text-red-500">
+                                {entry.quantity < 1 ? 'Quantity must be at least 1' : `Max ${entry.item.quantity} available`}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => onUpdateItemQuantity(itemId, -1)}
+                              className="w-6 h-6 flex items-center justify-center rounded text-white text-lg font-bold"
+                              style={{ backgroundColor: 'var(--action-destructive)' }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = 'var(--action-destructive-hover)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'var(--action-destructive)';
+                              }}
+                            >
+                              −
+                            </button>
+                            <span className={`w-8 text-center text-sm font-semibold ${isQuantityInvalid ? 'text-red-500' : ''}`}>
+                              {entry.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateItemQuantity(itemId, 1)}
+                              className="w-6 h-6 flex items-center justify-center rounded text-white text-lg font-bold"
+                              style={{ backgroundColor: 'var(--action-success)' }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = 'var(--action-success-hover)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'var(--action-success)';
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
+                {errors.items && <p className="text-xs text-red-500 mt-1">{errors.items}</p>}
               </div>
 
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Return Date</label>
-                <input
+              <FormField label="Return Date" error={errors.returnDate}>
+                <TextInput
                   type="date"
                   value={form.returnDate}
-                  onChange={(e) => onFormChange({ ...form, returnDate: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  onChange={(e) => handleFormChange({ ...form, returnDate: e.target.value })}
+                  error={errors.returnDate}
                 />
-              </div>
+              </FormField>
 
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Purpose</label>
-                <textarea
+              <FormField label="Purpose" error={errors.purpose}>
+                <TextArea
                   value={form.purpose}
-                  onChange={(e) => onFormChange({ ...form, purpose: e.target.value })}
+                  onChange={(e) => handleFormChange({ ...form, purpose: e.target.value })}
                   placeholder="Briefly describe how you will use this item"
-                  className="w-full min-h-[96px] rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  error={errors.purpose}
                 />
-              </div>
+              </FormField>
             </div>
           </div>
 
@@ -186,10 +237,11 @@ export function MultiBorrowModal({
               <span>Urgent Borrow?</span>
               <button
                 type="button"
-                onClick={() => onFormChange({ ...form, urgent: !form.urgent })}
-                className={`h-6 w-12 rounded-full border border-gray-200 flex items-center px-1 transition-colors ${
-                  form.urgent ? 'bg-sky-500' : 'bg-gray-200'
-                }`}
+                onClick={() => handleFormChange({ ...form, urgent: !form.urgent })}
+                className="h-6 w-12 rounded-full border border-gray-200 flex items-center px-1 transition-colors"
+                style={{
+                  backgroundColor: form.urgent ? 'var(--borrow-primary)' : 'var(--action-muted)',
+                }}
                 aria-pressed={form.urgent}
                 aria-label="Toggle urgent borrow"
               >
@@ -205,18 +257,28 @@ export function MultiBorrowModal({
               <AlertDialogCancel
                 type="button"
                 className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-100"
-                onClick={onClose}
+                onClick={handleCloseModal}
               >
                 Cancel
               </AlertDialogCancel>
               <button
                 type="submit"
-                disabled={isMultiBorrowDisabled}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  form.urgent
-                    ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-                    : 'bg-sky-500 hover:bg-sky-600 text-white'
-                } ${isMultiBorrowDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  form.urgent ? 'text-gray-900' : 'text-white'
+                }`}
+                style={{
+                  backgroundColor: form.urgent ? 'var(--borrow-urgent)' : 'var(--borrow-primary)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = form.urgent
+                    ? 'var(--borrow-urgent-hover)'
+                    : 'var(--borrow-primary-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = form.urgent
+                    ? 'var(--borrow-urgent)'
+                    : 'var(--borrow-primary)';
+                }}
               >
                 {form.urgent ? 'Urgent Borrow' : 'Submit Request'}
               </button>
