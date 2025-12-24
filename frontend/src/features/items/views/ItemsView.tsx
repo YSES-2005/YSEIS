@@ -1,25 +1,10 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import type { Item } from '@schemas/itemSchema';
+import { useState, useEffect } from 'react';
+import type { Item as SchemaItem, ItemPopulated as Item } from '@schemas/itemSchema';
 import { useItemsViewModel } from '../viewmodels/useItemsViewModel';
 import ItemTable from './ItemTable';
 import { BorrowModal } from './BorrowModal';
 import { MultiBorrowModal } from './MultiBorrowModal';
-
-type BorrowFormState = {
-  fullName: string;
-  quantity: string;
-  returnDate: string;
-  purpose: string;
-  urgent: boolean;
-};
-
-type MultiBorrowFormState = {
-  fullName: string;
-  items: { item: Item; quantity: number }[];
-  returnDate: string;
-  purpose: string;
-  urgent: boolean;
-};
+import type { BorrowFormData, MultiBorrowFormState } from '../validation/borrowValidation';
 
 export function ItemsView() {
   const {
@@ -47,19 +32,12 @@ export function ItemsView() {
   
   const [tempCustodian, setTempCustodian] = useState('');
   const [tempType, setTempType] = useState<string | null>(null);
-  const [tempStatus, setTempStatus] = useState<string | null>('available');
+  const [tempStatus, setTempStatus] = useState<"available" | "unavailable" | null>('available');
   const [tempStartDate, setTempStartDate] = useState('');
   const [tempEndDate, setTempEndDate] = useState('');
 
   const [borrowOpen, setBorrowOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [borrowForm, setBorrowForm] = useState<BorrowFormState>({
-    fullName: '',
-    quantity: '1',
-    returnDate: '',
-    purpose: '',
-    urgent: false,
-  });
 
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
@@ -72,6 +50,11 @@ export function ItemsView() {
     urgent: false,
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const normalizeToSchemaItem = (item: Item): SchemaItem => ({
+    ...item,
+    custodian: typeof item.custodian === 'string' ? item.custodian : item.custodian?.name || '',
+  });
 
   useEffect(() => {
     if (showFilterPanel) {
@@ -102,13 +85,6 @@ export function ItemsView() {
 
   const handleOpenBorrow = (item: Item) => {
     setSelectedItem(item);
-    setBorrowForm({
-      fullName: '',
-      quantity: '1',
-      returnDate: '',
-      purpose: '',
-      urgent: false,
-    });
     setBorrowOpen(true);
   };
 
@@ -117,8 +93,9 @@ export function ItemsView() {
     setSelectedItem(null);
   };
 
-  const handleBorrowSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleBorrowSubmit = (data: BorrowFormData) => {
+    console.log('Borrow request:', data);
+    // TODO: Send to API
     handleCloseBorrow();
   };
 
@@ -136,25 +113,23 @@ export function ItemsView() {
 
   const handleToggleAll = () => {
     const availableItems = items.filter(item => item.status === 'available');
-    const allSelected = availableItems.every(item => 
-      selectedItems.has((item as any).id || (item as any)._id)
-    );
+    const allSelected = availableItems.every(item => selectedItems.has(item.id!));
     
     if (allSelected) {
       // unselect all
       setSelectedItems(new Set());
     } else {
       // select all available items
-      const allIds = new Set(availableItems.map(item => (item as any).id || (item as any)._id));
+      const allIds = new Set(availableItems.map(item => item.id!));
       setSelectedItems(allIds);
     }
   };
 
   const handleOpenMultiBorrow = () => {
-    const selected = items.filter(item => selectedItems.has((item as any).id || (item as any)._id));
+    const selected = items.filter(item => selectedItems.has(item.id!));
     setMultiBorrowForm({
       fullName: '',
-      items: selected.map(item => ({ item, quantity: 1 })),
+      items: selected.map(item => ({ item: normalizeToSchemaItem(item), quantity: 1 })),
       returnDate: '',
       purpose: '',
       urgent: false,
@@ -169,9 +144,9 @@ export function ItemsView() {
     setSelectedItems(new Set());
   };
 
-  const handleMultiBorrowSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  
+  const handleMultiBorrowSubmit = (data: MultiBorrowFormState) => {
+    // TODO: Send multi-borrow data to API
+    void data; // placeholder to avoid unused warning until wired
     handleCloseMultiBorrow();
   };
 
@@ -179,7 +154,7 @@ export function ItemsView() {
     setMultiBorrowForm(prev => ({
       ...prev,
       items: prev.items.map(entry =>
-        ((entry.item as any).id || (entry.item as any)._id) === itemId
+        entry.item.id! === itemId
           ? { ...entry, quantity: Math.max(1, entry.quantity + delta) }
           : entry
       ),
@@ -187,18 +162,17 @@ export function ItemsView() {
   };
 
   const handleAddItemToMultiBorrow = (item: Item) => {
-    const itemId = (item as any).id || (item as any)._id;
+    const itemId = item.id!;
+    const normalizedItem = normalizeToSchemaItem(item);
     setSelectedItems(prev => new Set(prev).add(itemId));
     setShowCheckboxes(true);
     
     setMultiBorrowForm(prev => {
-      const exists = prev.items.some(entry => 
-        ((entry.item as any).id || (entry.item as any)._id) === itemId
-      );
+      const exists = prev.items.some(entry => entry.item.id! === itemId);
       if (!exists) {
         return {
           ...prev,
-          items: [...prev.items, { item, quantity: 1 }]
+          items: [...prev.items, { item: normalizedItem, quantity: 1 }]
         };
       }
       return prev;
@@ -295,7 +269,7 @@ export function ItemsView() {
                   <label className="block text-sm font-medium mb-2">Status</label>
                   <select
                     value={tempStatus || ''}
-                    onChange={(e) => setTempStatus(e.target.value || null)}
+                    onChange={(e) => setTempStatus((e.target.value as 'available' | 'unavailable') || null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Any</option>
@@ -349,8 +323,19 @@ export function ItemsView() {
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               items.filter(item => item.status === 'available').length === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-500 text-white hover:bg-blue-600'
+                : 'text-white'
             }`}
+            style={items.filter(item => item.status === 'available').length === 0 ? {} : { backgroundColor: 'var(--borrow-primary)' }}
+            onMouseEnter={(e) => {
+              if (items.filter(item => item.status === 'available').length > 0) {
+                e.currentTarget.style.backgroundColor = 'var(--borrow-primary-hover)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (items.filter(item => item.status === 'available').length > 0) {
+                e.currentTarget.style.backgroundColor = 'var(--borrow-primary)';
+              }
+            }}
           >
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -381,8 +366,6 @@ export function ItemsView() {
       <BorrowModal
         open={borrowOpen}
         item={selectedItem}
-        form={borrowForm}
-        onFormChange={setBorrowForm}
         onSubmit={handleBorrowSubmit}
         onClose={handleCloseBorrow}
       />

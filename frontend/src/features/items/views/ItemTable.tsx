@@ -1,4 +1,5 @@
-import type { Item } from '@schemas/itemSchema';
+import type { ItemPopulated as Item } from '@schemas/itemSchema';
+import { Badge } from '@/components/ui/badge';
 
 type Props = {
   items: Item[];
@@ -32,7 +33,7 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 <input
                   type="checkbox"
                   className="rounded"
-                  checked={items.filter(item => item.status === 'available').every(item => selectedItems.has((item as any).id || (item as any)._id))}
+                  checked={items.filter(item => item.status === 'available').every(item => selectedItems.has(item.id!))}
                   onChange={onToggleAll}
                 />
               </th>
@@ -48,8 +49,14 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
         <tbody className="bg-white divide-y divide-gray-200">
           {items.map(item => {
             const isAvailable = item.status === 'available';
-            const itemId = (item as any).id || (item as any)._id;
+            const itemId = item.id!;
             const isSelected = selectedItems.has(itemId);
+            const typeLower = (item.type || '').toLowerCase();
+            const typeVariant: 'info' | 'warning' | 'default' = typeLower.includes('suppl')
+              ? 'info'
+              : typeLower.includes('prop')
+                ? 'warning'
+                : 'default';
 
             return (
               <tr key={itemId}>
@@ -73,20 +80,20 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{item.quantity}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs rounded-full" 
-                  style={{ fontWeight: 550, backgroundColor: '#FFFD80', color: '#867D00' }}
-                  >{item.type}</span>
+                  <Badge variant={typeVariant} className="font-medium text-[11px] px-3 py-1">
+                    {item.type}
+                  </Badge>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{(item.custodian as any)?.name ?? item.custodian ?? '—'}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                  {typeof item.custodian === 'object'
+                    ? item.custodian?.name ?? item.custodian?.email ?? '—'
+                    : item.custodian ?? '—'}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {item.status === 'available' ? (
-                    <span className="text-xs px-2 py-1 rounded-full"
-                    style={{ fontWeight: 550, backgroundColor: '#C1FFA0', color: '#116D11' }}
-                    >Available</span>
+                    <Badge variant="success" className="text-xs font-semibold px-3 py-1">Available</Badge>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full"
-                    style={{ fontWeight: 550, backgroundColor: '#FF6987', color: '#6D1113' }}
-                    >Unavailable</span>
+                    <Badge variant="destructive" className="text-xs font-semibold px-3 py-1">Unavailable</Badge>
                   )}
                 </td>
                 <td className="px-3 py-4 whitespace-nowrap text-center text-sm font-medium">
