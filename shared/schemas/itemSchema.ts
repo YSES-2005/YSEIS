@@ -18,3 +18,7 @@ export const itemSchema = z.object({
 });
 
 export type Item = z.infer<typeof itemSchema>;
+
+export type ItemPopulated = Omit<Item, 'custodian'> & {
+  custodian: string | { name?: string; email?: string };
+};
