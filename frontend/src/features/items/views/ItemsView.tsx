@@ -207,7 +207,7 @@ export function ItemsView() {
           {/* Search Bar */}
           <div className="relative">
             <svg 
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
               viewBox="0 0 20 20" 
               fill="currentColor"
             >
@@ -217,14 +217,14 @@ export function ItemsView() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-[400px] border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-[400px] border border-input rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div className="relative">
             <button
               onClick={() => setShowFilterPanel(!showFilterPanel)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-input rounded-lg hover:bg-muted transition-colors"
             >
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.591L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clipRule="evenodd" />
@@ -233,7 +233,7 @@ export function ItemsView() {
             </button>
             
             {showFilterPanel && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10">
+              <div className="absolute right-0 mt-2 w-80 bg-card border border-border rounded-lg shadow-lg p-4 z-10">
                 <h3 className="text-lg font-semibold mb-4">Filter</h3>
 
                 <div className="mb-4">
@@ -245,7 +245,7 @@ export function ItemsView() {
                     value={tempCustodian}
                     onChange={(e) => setTempCustodian(e.target.value)}
                     placeholder="Enter custodian name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -254,7 +254,7 @@ export function ItemsView() {
                   <select
                     value={tempType || ''}
                     onChange={(e) => setTempType(e.target.value || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Any</option>
                     {uniqueTypes.map((type) => (
@@ -270,7 +270,7 @@ export function ItemsView() {
                   <select
                     value={tempStatus || ''}
                     onChange={(e) => setTempStatus((e.target.value as 'available' | 'unavailable') || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Any</option>
                     <option value="available">Available</option>
@@ -287,14 +287,14 @@ export function ItemsView() {
                       type="date"
                       value={tempStartDate}
                       onChange={(e) => setTempStartDate(e.target.value)}
-                      className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 min-w-0 px-2 py-2 text-sm border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
-                    <span className="text-gray-500 text-sm shrink-0">to</span>
+                    <span className="text-muted-foreground text-sm shrink-0">to</span>
                     <input
                       type="date"
                       value={tempEndDate}
                       onChange={(e) => setTempEndDate(e.target.value)}
-                      className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 min-w-0 px-2 py-2 text-sm border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -302,13 +302,13 @@ export function ItemsView() {
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     onClick={handleResetFilters}
-                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-foreground border border-input rounded-lg hover:bg-muted transition-colors"
                   >
                     Reset
                   </button>
                   <button
                     onClick={handleApplyFilters}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
                   >
                     Apply
                   </button>
@@ -320,22 +320,11 @@ export function ItemsView() {
           <button 
             onClick={handleOpenMultiBorrow}
             disabled={items.filter(item => item.status === 'available').length === 0}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-opacity hover:opacity-90 ${
               items.filter(item => item.status === 'available').length === 0
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'text-white'
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-primary text-primary-foreground'
             }`}
-            style={items.filter(item => item.status === 'available').length === 0 ? {} : { backgroundColor: 'var(--borrow-primary)' }}
-            onMouseEnter={(e) => {
-              if (items.filter(item => item.status === 'available').length > 0) {
-                e.currentTarget.style.backgroundColor = 'var(--borrow-primary-hover)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (items.filter(item => item.status === 'available').length > 0) {
-                e.currentTarget.style.backgroundColor = 'var(--borrow-primary)';
-              }
-            }}
           >
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -347,7 +336,7 @@ export function ItemsView() {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="text-gray-500">Loading...</div>
+          <div className="text-muted-foreground">Loading...</div>
         </div>
       ) : (
         <ItemTable 

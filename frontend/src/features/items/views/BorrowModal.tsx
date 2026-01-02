@@ -68,26 +68,9 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
   };
 
   const primaryLabel = form.urgent ? 'Urgent Borrow' : 'Submit Request';
-  const primaryButtonClasses = form.urgent
-    ? 'text-gray-900'
-    : 'text-white';
-  const primaryButtonStyle = form.urgent
-    ? {
-        backgroundColor: 'var(--borrow-urgent)',
-      }
-    : {
-        backgroundColor: 'var(--borrow-primary)',
-      };
-  const primaryButtonHoverStyle = form.urgent
-    ? {
-        backgroundColor: 'var(--borrow-urgent-hover)',
-      }
-    : {
-        backgroundColor: 'var(--borrow-primary-hover)',
-      };
   const urgentTrackClasses = form.urgent ? '' : 'bg-gray-200';
   const urgentTrackStyle = form.urgent
-    ? { backgroundColor: 'var(--borrow-primary)' }
+    ? { backgroundColor: 'var(--primary)' }
     : undefined;
 
   return (
@@ -96,13 +79,13 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
         <form onSubmit={handleFormSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
-              <div className="w-1/2 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+              <div className="w-1/2 overflow-hidden rounded-lg border border-input bg-muted">
                 <img src={item.avatar} alt={item.name} className="w-full h-44 object-cover" />
               </div>
-              <AlertDialogTitle className="text-xl font-semibold text-gray-900 text-center">
+              <AlertDialogTitle className="text-xl font-semibold text-foreground text-center">
                 {item.name}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm text-gray-600 text-center">
+              <AlertDialogDescription className="text-sm text-muted-foreground text-center">
                 {/* fill out the form to submit borrow request. */}
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -150,13 +133,13 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
             </div>
           </div>
 
-          <div className="border-t px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <span>Urgent Borrow?</span>
               <button
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, urgent: !f.urgent }))}
-                className={`h-6 w-12 rounded-full border border-gray-200 flex items-center px-1 transition-colors ${urgentTrackClasses}`}
+                className={`h-6 w-12 rounded-full border border-input flex items-center px-1 transition-colors ${urgentTrackClasses}`}
                 style={urgentTrackStyle}
                 aria-pressed={form.urgent}
                 aria-label="Toggle urgent borrow"
@@ -172,23 +155,16 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
             <div className="flex items-center gap-2 ml-auto">
               <AlertDialogCancel
                 type="button"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
                 onClick={onClose}
               >
                 Cancel
               </AlertDialogCancel>
               <button
                 type="submit"
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${primaryButtonClasses}`}
-                style={{
-                  ...primaryButtonStyle,
-                }}
-                onMouseEnter={(e) => {
-                  Object.assign(e.currentTarget.style, primaryButtonHoverStyle);
-                }}
-                onMouseLeave={(e) => {
-                  Object.assign(e.currentTarget.style, primaryButtonStyle);
-                }}
+                className={`px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 ${
+                  form.urgent ? 'bg-warning text-warning-foreground' : 'bg-primary text-primary-foreground'
+                }`}
               >
                 {primaryLabel}
               </button>

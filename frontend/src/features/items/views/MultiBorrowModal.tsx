@@ -72,7 +72,7 @@ export function MultiBorrowModal({
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
-              <div className="relative w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+              <div className="relative w-full overflow-hidden rounded-lg border border-input bg-muted">
                 <img
                   src={availableItems[currentImageIndex]?.avatar}
                   alt={availableItems[currentImageIndex]?.name}
@@ -84,7 +84,7 @@ export function MultiBorrowModal({
                       type="button"
                       onClick={() => onImageIndexChange(Math.max(0, currentImageIndex - 1))}
                       disabled={currentImageIndex === 0}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 disabled:opacity-30"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background rounded-full p-1 disabled:opacity-30"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -94,7 +94,7 @@ export function MultiBorrowModal({
                       type="button"
                       onClick={() => onImageIndexChange(Math.min(availableItems.length - 1, currentImageIndex + 1))}
                       disabled={currentImageIndex === availableItems.length - 1}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 disabled:opacity-30"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background rounded-full p-1 disabled:opacity-30"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -107,7 +107,7 @@ export function MultiBorrowModal({
                           type="button"
                           onClick={() => onImageIndexChange(idx)}
                           className={`w-2 h-2 rounded-full ${
-                            idx === currentImageIndex ? 'bg-sky-500' : 'bg-gray-300'
+                            idx === currentImageIndex ? 'bg-primary' : 'bg-muted'
                           }`}
                         />
                       ))}
@@ -115,7 +115,7 @@ export function MultiBorrowModal({
                   </>
                 )}
               </div>
-              <AlertDialogTitle className="text-xl font-semibold text-gray-900 text-center">
+              <AlertDialogTitle className="text-xl font-semibold text-foreground text-center">
                 {availableItems[currentImageIndex]?.name}
               </AlertDialogTitle>
               <button
@@ -126,16 +126,7 @@ export function MultiBorrowModal({
                     onAddItem(item);
                   }
                 }}
-                className="px-4 py-1.5 text-white rounded-lg text-sm font-semibold transition-colors mx-auto"
-                style={{
-                  backgroundColor: 'var(--borrow-primary)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--borrow-primary-hover)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--borrow-primary)';
-                }}
+                className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-opacity mx-auto bg-primary text-primary-foreground hover:opacity-90"
               >
                 Add item
               </button>
@@ -153,20 +144,20 @@ export function MultiBorrowModal({
               </FormField>
 
               <div className="grid gap-1">
-                <label className="text-sm font-semibold text-gray-800">Items</label>
+                <label className="text-sm font-semibold text-foreground">Items</label>
                 <div className="space-y-2">
                   {form.items.length === 0 ? (
-                    <p className="text-xs text-gray-500 py-2">No items added yet. Add items from the carousel above.</p>
+                    <p className="text-xs text-muted-foreground py-2">No items added yet. Add items from the carousel above.</p>
                   ) : (
                     form.items.map((entry) => {
                       const itemId = entry.item.id!;
                       const isQuantityInvalid = entry.quantity < 1 || entry.quantity > entry.item.quantity;
                       return (
-                        <div key={itemId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div key={itemId} className="flex items-center justify-between p-2 bg-muted rounded">
                           <div className="flex flex-col">
-                            <span className="text-sm text-gray-700">{entry.item.name}</span>
+                            <span className="text-sm text-foreground">{entry.item.name}</span>
                             {isQuantityInvalid && (
-                              <span className="text-xs text-red-500">
+                              <span className="text-xs text-destructive">
                                 {entry.quantity < 1 ? 'Quantity must be at least 1' : `Max ${entry.item.quantity} available`}
                               </span>
                             )}
@@ -175,31 +166,17 @@ export function MultiBorrowModal({
                             <button
                               type="button"
                               onClick={() => onUpdateItemQuantity(itemId, -1)}
-                              className="w-6 h-6 flex items-center justify-center rounded text-white text-lg font-bold"
-                              style={{ backgroundColor: 'var(--action-destructive)' }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = 'var(--action-destructive-hover)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = 'var(--action-destructive)';
-                              }}
+                              className="w-6 h-6 flex items-center justify-center rounded bg-destructive text-destructive-foreground text-lg font-bold hover:opacity-90 transition-opacity"
                             >
                               −
                             </button>
-                            <span className={`w-8 text-center text-sm font-semibold ${isQuantityInvalid ? 'text-red-500' : ''}`}>
+                            <span className={`w-8 text-center text-sm font-semibold ${isQuantityInvalid ? 'text-destructive' : ''}`}>
                               {entry.quantity}
                             </span>
                             <button
                               type="button"
                               onClick={() => onUpdateItemQuantity(itemId, 1)}
-                              className="w-6 h-6 flex items-center justify-center rounded text-white text-lg font-bold"
-                              style={{ backgroundColor: 'var(--action-success)' }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = 'var(--action-success-hover)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = 'var(--action-success)';
-                              }}
+                              className="w-6 h-6 flex items-center justify-center rounded bg-success text-success-foreground text-lg font-bold hover:opacity-90 transition-opacity"
                             >
                               +
                             </button>
@@ -232,15 +209,15 @@ export function MultiBorrowModal({
             </div>
           </div>
 
-          <div className="border-t px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+          <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <span>Urgent Borrow?</span>
               <button
                 type="button"
                 onClick={() => handleFormChange({ ...form, urgent: !form.urgent })}
-                className="h-6 w-12 rounded-full border border-gray-200 flex items-center px-1 transition-colors"
+                className="h-6 w-12 rounded-full border border-input flex items-center px-1 transition-colors"
                 style={{
-                  backgroundColor: form.urgent ? 'var(--borrow-primary)' : 'var(--action-muted)',
+                  backgroundColor: form.urgent ? 'var(--primary)' : 'var(--muted)',
                 }}
                 aria-pressed={form.urgent}
                 aria-label="Toggle urgent borrow"
@@ -256,29 +233,16 @@ export function MultiBorrowModal({
             <div className="flex items-center gap-2 ml-auto">
               <AlertDialogCancel
                 type="button"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
                 onClick={handleCloseModal}
               >
                 Cancel
               </AlertDialogCancel>
               <button
                 type="submit"
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  form.urgent ? 'text-gray-900' : 'text-white'
+                className={`px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 ${
+                  form.urgent ? 'bg-warning text-warning-foreground' : 'bg-primary text-primary-foreground'
                 }`}
-                style={{
-                  backgroundColor: form.urgent ? 'var(--borrow-urgent)' : 'var(--borrow-primary)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = form.urgent
-                    ? 'var(--borrow-urgent-hover)'
-                    : 'var(--borrow-primary-hover)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = form.urgent
-                    ? 'var(--borrow-urgent)'
-                    : 'var(--borrow-primary)';
-                }}
               >
                 {form.urgent ? 'Urgent Borrow' : 'Submit Request'}
               </button>

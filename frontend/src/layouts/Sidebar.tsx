@@ -28,17 +28,17 @@ export function Sidebar({ expanded, onToggle }: SidebarProps) {
 
   return (
     <div
-      className={`${expanded ? 'w-64' : 'w-16'} bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col`}
+      className={`${expanded ? 'w-64' : 'w-16'} bg-sidebar shadow-lg transition-all duration-300 ease-in-out flex flex-col`}
     >
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         {expanded && (
-          <h2 className="text-xl font-semibold text-gray-800">Inventory</h2>
+          <h2 className="text-xl font-semibold text-sidebar-foreground">Inventory</h2>
         )}
         <Button
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className="p-2 hover:bg-gray-100"
+          className="p-2 hover:bg-sidebar-accent/10"
         >
           {expanded ? (
             <ChevronLeftIcon className="h-4 w-4" />
@@ -54,9 +54,9 @@ export function Sidebar({ expanded, onToggle }: SidebarProps) {
             <li key={item.name}>
               <Link
                 to={item.href}
-                className="flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                className="flex items-center p-3 text-sidebar-foreground rounded-lg hover:bg-sidebar-accent/10 transition-colors duration-200"
                 activeProps={{
-                  className: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
+                  className: 'bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90',
                 }}
               >
                 <item.icon className="h-5 w-5 shrink-0" />

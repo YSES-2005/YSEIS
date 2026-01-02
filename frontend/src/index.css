@@ -45,21 +45,6 @@
   --sidebar-accent-foreground: oklch(0.98 0.01 237);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
-  
-  /* Borrow Modal Colors */
-  --borrow-primary: #0ea5e9; /* sky-500 */
-  --borrow-primary-hover: #0284c7; /* sky-600 */
-  --borrow-urgent: #facc15; /* yellow-400 */
-  --borrow-urgent-hover: #eab308; /* yellow-500 */
-  --borrow-button-text-default: white;
-  --borrow-button-text-urgent: #111827; /* gray-900 */
-
-  /* Action colors */
-  --action-success: var(--success);
-  --action-success-hover: #a3e68c;
-  --action-destructive: var(--destructive);
-  --action-destructive-hover: #e04867;
-  --action-muted: #e5e7eb;
 }
 
 .dark {

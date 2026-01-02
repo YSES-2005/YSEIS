@@ -23,13 +23,13 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
   };
 
   return (
-    <div className="bg-white rounded shadow">
+    <div className="bg-card rounded shadow">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-border">
+        <thead className="bg-muted">
           <tr>
             {showCheckboxes && (
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 <input
                   type="checkbox"
                   className="rounded"
@@ -38,15 +38,15 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 />
               </th>
             )}
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Custodian</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Asset</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Quantity</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Custodian</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+            <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-card divide-y divide-border">
           {items.map(item => {
             const isAvailable = item.status === 'available';
             const itemId = item.id!;
@@ -74,8 +74,8 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                   <img src={item.avatar} alt="" className="w-10 h-10 rounded object-cover" />
                   <div>
-                    <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                    <div className="text-xs text-gray-500">{item.location ?? ''}</div>
+                    <div className="text-sm font-medium text-foreground">{item.name}</div>
+                    <div className="text-xs text-muted-foreground">{item.location ?? ''}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{item.quantity}</td>
@@ -84,7 +84,7 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                     {item.type}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                   {typeof item.custodian === 'object'
                     ? item.custodian?.name ?? item.custodian?.email ?? '—'
                     : item.custodian ?? '—'}
@@ -100,10 +100,10 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                   <button
                     type="button"
                     disabled={!isAvailable}
-                    className={`px-3 py-1 rounded font-semibold text-white transition-colors ${
+                    className={`px-3 py-1 rounded font-semibold transition-opacity ${
                       isAvailable
-                        ? 'bg-sky-500 hover:bg-sky-600'
-                        : 'bg-slate-300 text-slate-600 cursor-not-allowed'
+                        ? 'bg-primary text-primary-foreground hover:opacity-90'
+                        : 'bg-muted text-muted-foreground cursor-not-allowed'
                     }`}
                     onClick={() => isAvailable && onBorrow(item)}
                   >
@@ -118,11 +118,11 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 py-4 border-t">
+        <div className="flex items-center justify-center gap-2 py-4 border-t border-border">
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Previous page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -136,8 +136,8 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
               onClick={() => onPageChange(page)}
               className={`px-3 py-1 rounded ${
                 currentPage === page
-                  ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-100 text-gray-700'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'hover:bg-muted text-foreground'
               }`}
             >
               {page}
@@ -147,7 +147,7 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Next page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
