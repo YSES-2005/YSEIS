@@ -22,3 +22,79 @@ export type Item = z.infer<typeof itemSchema>;
 export type ItemPopulated = Omit<Item, 'custodian'> & {
   custodian: string | { name?: string; email?: string };
 };
+
+const baseBorrowSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, 'Full name is required')
+    .min(2, 'Full name must be at least 2 characters')
+    .max(100, 'Full name must not exceed 100 characters'),
+  returnDate: z
+    .string()
+    .min(1, 'Return date is required')
+    .refine(date => {
+      const d = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return d >= today;
+    }, 'Return date cannot be in the past')
+    .refine(date => {
+      const d = new Date(date);
+      const maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() + 1);
+      return d <= maxDate;
+    }, 'Return date cannot be more than 1 year from today'),
+  purpose: z
+    .string()
+    .min(1, 'Purpose is required')
+    .min(5, 'Purpose must be at least 5 characters')
+    .max(500, 'Purpose must not exceed 500 characters'),
+  urgent: z.boolean().default(false),
+});
+
+export const borrowFormSchema = baseBorrowSchema.extend({
+  quantity: z
+    .number()
+    .int('Quantity must be a whole number')
+    .min(1, 'Quantity must be at least 1'),
+});
+
+const clientItemSchema = itemSchema.extend({
+  custodian: z.union([
+    z.string(),
+    z.object({
+      name: z.string().optional(),
+      email: z.email().optional(),
+    }),
+  ]),
+});
+
+export const multiBorrowFormSchema = baseBorrowSchema
+  .extend({
+    items: z
+      .array(
+        z.object({
+          item: clientItemSchema,
+          quantity: z
+            .number()
+            .int('Quantity must be a whole number')
+            .min(1, 'All quantities must be at least 1'),
+        })
+      )
+      .min(1, 'At least one item is required'),
+  })
+  .superRefine((data, ctx) => {
+    for (let i = 0; i < data.items.length; i++) {
+      const entry = data.items[i];
+      if (entry.quantity > entry.item.quantity) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Cannot borrow more than ${entry.item.quantity} of ${entry.item.name}`,
+          path: ['items', i, 'quantity'],
+        });
+      }
+    }
+  });
+
+export type BorrowFormData = z.infer<typeof borrowFormSchema>;
+export type MultiBorrowFormState = z.infer<typeof multiBorrowFormSchema>;

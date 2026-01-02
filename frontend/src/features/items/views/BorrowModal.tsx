@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import type { ItemPopulated as Item } from '@schemas/itemSchema';
+import type {
+  BorrowFormData,
+  ItemPopulated as Item,
+} from '@schemas/itemSchema';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,62 +11,35 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { FormField, TextInput, TextArea } from '@/components/ui/form-field';
-import {
-  validateBorrowForm,
-  type BorrowFormData,
-  type BorrowValidationErrors,
-} from '@/features/items/validation/borrowValidation';
 
 type Props = {
   open: boolean;
   item: Item | null;
-  onSubmit: (data: BorrowFormData) => void;
+  form: BorrowFormData;
+  errors: Partial<Record<keyof BorrowFormData, string>>;
+  onSubmit: () => void;
   onClose: () => void;
+  setField: <K extends keyof BorrowFormData>(
+    field: K,
+    value: BorrowFormData[K]
+  ) => void;
 };
 
-const defaultForm: BorrowFormData = {
-  fullName: '',
-  quantity: 1,
-  returnDate: '',
-  purpose: '',
-  urgent: false,
-};
-
-export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
-  const [form, setForm] = useState<BorrowFormData>(defaultForm);
-  const [errors, setErrors] = useState<BorrowValidationErrors>({});
-
-  const handleCloseModal = () => {
-    setForm(defaultForm);
-    setErrors({});
-    onClose();
+export function BorrowModal({
+  open,
+  item,
+  form,
+  errors,
+  onSubmit,
+  onClose,
+  setField,
+}: Props) {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit();
   };
 
   if (!item) return null;
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formErrors = validateBorrowForm(form, item);
-
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
-
-    onSubmit(form);
-    setForm(defaultForm);
-    setErrors({});
-  };
-
-  const handleFieldChange = (
-    field: keyof Omit<BorrowFormData, 'urgent'>,
-    value: unknown
-  ) => {
-    setForm((f) => ({ ...f, [field]: value }));
-    if (errors[field as keyof BorrowValidationErrors]) {
-      setErrors((e) => ({ ...e, [field]: undefined }));
-    }
-  };
 
   const primaryLabel = form.urgent ? 'Urgent Borrow' : 'Submit Request';
   const urgentTrackClasses = form.urgent ? '' : 'bg-gray-200';
@@ -73,20 +48,25 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
     : undefined;
 
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : handleCloseModal())}>
+    <AlertDialog
+      open={open}
+      onOpenChange={isOpen => (isOpen ? undefined : onClose())}
+    >
       <AlertDialogContent size="wide" className="p-0 w-full">
         <form onSubmit={handleFormSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
               <div className="w-1/2 overflow-hidden rounded-lg border border-input bg-muted">
-                <img src={item.avatar} alt={item.name} className="w-full h-44 object-cover" />
+                <img
+                  src={item.avatar}
+                  alt={item.name}
+                  className="w-full h-44 object-cover"
+                />
               </div>
               <AlertDialogTitle className="text-xl font-semibold text-foreground text-center">
                 {item.name}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm text-muted-foreground text-center">
-                {/* fill out the form to submit borrow request. */}
-              </AlertDialogDescription>
+              <AlertDialogDescription className="text-sm text-muted-foreground text-center" />
             </AlertDialogHeader>
 
             <div className="grid gap-3">
@@ -94,7 +74,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
                 <TextInput
                   type="text"
                   value={form.fullName}
-                  onChange={(e) => handleFieldChange('fullName', e.target.value)}
+                  onChange={e => setField('fullName', e.target.value)}
                   placeholder="Juan Dela Cruz"
                   error={errors.fullName}
                 />
@@ -106,7 +86,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
                     type="number"
                     min={1}
                     value={form.quantity}
-                    onChange={(e) => handleFieldChange('quantity', Number(e.target.value))}
+                    onChange={e => setField('quantity', Number(e.target.value))}
                     placeholder="Quantity"
                     error={errors.quantity}
                   />
@@ -115,7 +95,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
                   <TextInput
                     type="date"
                     value={form.returnDate}
-                    onChange={(e) => handleFieldChange('returnDate', e.target.value)}
+                    onChange={e => setField('returnDate', e.target.value)}
                     error={errors.returnDate}
                   />
                 </FormField>
@@ -124,7 +104,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
               <FormField label="Purpose" error={errors.purpose}>
                 <TextArea
                   value={form.purpose}
-                  onChange={(e) => handleFieldChange('purpose', e.target.value)}
+                  onChange={e => setField('purpose', e.target.value)}
                   placeholder="Briefly describe how you will use this item"
                   error={errors.purpose}
                 />
@@ -137,7 +117,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
               <span>Urgent Borrow?</span>
               <button
                 type="button"
-                onClick={() => setForm((f) => ({ ...f, urgent: !f.urgent }))}
+                onClick={() => setField('urgent', !form.urgent)}
                 className={`h-6 w-12 rounded-full border border-input flex items-center px-1 transition-colors ${urgentTrackClasses}`}
                 style={urgentTrackStyle}
                 aria-pressed={form.urgent}
@@ -155,14 +135,16 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
               <AlertDialogCancel
                 type="button"
                 className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
-                onClick={handleCloseModal}
+                onClick={onClose}
               >
                 Cancel
               </AlertDialogCancel>
               <button
                 type="submit"
                 className={`px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 ${
-                  form.urgent ? 'bg-warning text-warning-foreground' : 'bg-primary text-primary-foreground'
+                  form.urgent
+                    ? 'bg-warning text-warning-foreground'
+                    : 'bg-primary text-primary-foreground'
                 }`}
               >
                 {primaryLabel}

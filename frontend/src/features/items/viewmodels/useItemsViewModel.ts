@@ -5,18 +5,31 @@ import { itemService } from '../services/itemService';
 export function useItemsViewModel() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-  
+
   // filter default state
   const [custodianFilter, setCustodianFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<"available" | "unavailable" | null>('available');
+  const [statusFilter, setStatusFilter] = useState<
+    'available' | 'unavailable' | null
+  >('available');
   const [startDateFilter, setStartDateFilter] = useState('');
   const [endDateFilter, setEndDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['items', { search: debouncedSearch, typeFilter, statusFilter, custodianFilter, startDateFilter, endDateFilter, currentPage }],
+    queryKey: [
+      'items',
+      {
+        search: debouncedSearch,
+        typeFilter,
+        statusFilter,
+        custodianFilter,
+        startDateFilter,
+        endDateFilter,
+        currentPage,
+      },
+    ],
     queryFn: () =>
       itemService.getItems({
         search: debouncedSearch || undefined,
@@ -33,8 +46,6 @@ export function useItemsViewModel() {
   const items = useMemo(() => data?.data || [], [data?.data]);
   const totalPages = data?.pagination?.totalPages || 1;
   const totalItems = data?.pagination?.totalItems || 0;
-
-  
 
   // debounce search input
   useEffect(() => {
