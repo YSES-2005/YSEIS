@@ -7,7 +7,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true); 
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -16,10 +16,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         onToggle={() => setSidebarExpanded(!sidebarExpanded)}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header
-          sidebarExpanded={sidebarExpanded}
-          onToggleSidebar={() => setSidebarExpanded(!sidebarExpanded)}
-        />
+        <Header onToggleSidebar={() => setSidebarExpanded(!sidebarExpanded)} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
           {children}
         </main>

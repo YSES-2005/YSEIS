@@ -30,7 +30,7 @@ export function useItemsViewModel() {
       }),
   });
 
-  const items = data?.data || [];
+  const items = useMemo(() => data?.data || [], [data?.data]);
   const totalPages = data?.pagination?.totalPages || 1;
   const totalItems = data?.pagination?.totalItems || 0;
 
@@ -47,14 +47,6 @@ export function useItemsViewModel() {
     items.forEach(i => i.type && s.add(i.type));
     return Array.from(s);
   }, [items]);
-
-  // Reset pagination when filters change
-  // Only reset if current page would exceed available pages
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
 
   return {
     items,

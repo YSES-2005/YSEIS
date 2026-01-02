@@ -3,11 +3,10 @@ import { Badge } from '@/components/ui/badge';
 import { MenuIcon, BellIcon, SearchIcon, UserIcon } from 'lucide-react';
 
 interface HeaderProps {
-  sidebarExpanded: boolean;
   onToggleSidebar: () => void;
 }
 
-export function Header({ sidebarExpanded, onToggleSidebar }: HeaderProps) {
+export function Header({ onToggleSidebar }: HeaderProps) {
   return (
     <header className="bg-card shadow-sm border-b border-border">
       <div className="flex items-center justify-between px-6 py-4">

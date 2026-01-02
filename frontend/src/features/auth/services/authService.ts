@@ -23,7 +23,7 @@ export const authService = {
     try {
       const data = (await apiClient.get<User>('/users/me', config)) as unknown as User;
       return data;
-    } catch (error) {
+    } catch {
       return null;
     }
   },

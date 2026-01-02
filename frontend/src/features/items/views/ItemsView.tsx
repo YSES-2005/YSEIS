@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Item as SchemaItem, ItemPopulated as Item } from '@schemas/itemSchema';
 import { useItemsViewModel } from '../viewmodels/useItemsViewModel';
 import ItemTable from './ItemTable';
@@ -56,15 +56,14 @@ export function ItemsView() {
     custodian: typeof item.custodian === 'string' ? item.custodian : item.custodian?.name || '',
   });
 
-  useEffect(() => {
-    if (showFilterPanel) {
-      setTempCustodian(custodianFilter);
-      setTempType(typeFilter);
-      setTempStatus(statusFilter);
-      setTempStartDate(startDateFilter);
-      setTempEndDate(endDateFilter);
-    }
-  }, [showFilterPanel, custodianFilter, typeFilter, statusFilter, startDateFilter, endDateFilter]);
+  const handleOpenFilterPanel = () => {
+    setTempCustodian(custodianFilter);
+    setTempType(typeFilter);
+    setTempStatus(statusFilter);
+    setTempStartDate(startDateFilter);
+    setTempEndDate(endDateFilter);
+    setShowFilterPanel(true);
+  };
 
   const handleApplyFilters = () => {
     setCustodianFilter(tempCustodian);
@@ -223,7 +222,7 @@ export function ItemsView() {
 
           <div className="relative">
             <button
-              onClick={() => setShowFilterPanel(!showFilterPanel)}
+              onClick={() => showFilterPanel ? setShowFilterPanel(false) : handleOpenFilterPanel()}
               className="flex items-center gap-2 px-4 py-2 border border-input rounded-lg hover:bg-muted transition-colors"
             >
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">

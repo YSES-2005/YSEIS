@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import {
   AlertDialog,
@@ -34,12 +34,11 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
   const [form, setForm] = useState<BorrowFormData>(defaultForm);
   const [errors, setErrors] = useState<BorrowValidationErrors>({});
 
-  useEffect(() => {
-    if (!open) {
-      setForm(defaultForm);
-      setErrors({});
-    }
-  }, [open]);
+  const handleCloseModal = () => {
+    setForm(defaultForm);
+    setErrors({});
+    onClose();
+  };
 
   if (!item) return null;
 
@@ -74,7 +73,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
     : undefined;
 
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : onClose())}>
+    <AlertDialog open={open} onOpenChange={(isOpen) => (isOpen ? undefined : handleCloseModal())}>
       <AlertDialogContent size="wide" className="p-0 w-full">
         <form onSubmit={handleFormSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
@@ -156,7 +155,7 @@ export function BorrowModal({ open, item, onSubmit, onClose }: Props) {
               <AlertDialogCancel
                 type="button"
                 className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
-                onClick={onClose}
+                onClick={handleCloseModal}
               >
                 Cancel
               </AlertDialogCancel>
