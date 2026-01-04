@@ -35,6 +35,7 @@ export default function AutoLogoutProvider({
     router.navigate({ to: '/sign-in' });
   };
 
+  // TODO: implement warning modal 
   const showWarning = () => {
     console.warn('You will be logged out due to inactivity.');
   };
