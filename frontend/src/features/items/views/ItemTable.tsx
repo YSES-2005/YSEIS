@@ -1,5 +1,16 @@
 import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Props = {
   items: Item[];
@@ -23,30 +34,27 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
   };
 
   return (
-    <div className="bg-card rounded shadow">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-border">
-        <thead className="bg-muted">
-          <tr>
+    <div className="rounded-md border bg-card">
+      <Table>
+        <TableHeader className="bg-muted/50">
+          <TableRow>
             {showCheckboxes && (
-              <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                <input
-                  type="checkbox"
-                  className="rounded"
-                  checked={items.filter(item => item.status === 'available').every(item => selectedItems.has(item.id!))}
-                  onChange={onToggleAll}
+              <TableHead className="w-[50px] text-center">
+                <Checkbox
+                  checked={items.length > 0 && items.filter(item => item.status === 'available').every(item => selectedItems.has(item.id!))}
+                  onCheckedChange={() => onToggleAll()}
                 />
-              </th>
+              </TableHead>
             )}
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Asset</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Quantity</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Custodian</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-            <th className="px-3 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
-          </tr>
-        </thead>
-        <tbody className="bg-card divide-y divide-border">
+            <TableHead>Asset</TableHead>
+            <TableHead>Quantity</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Custodian</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-center">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {items.map(item => {
             const isAvailable = item.status === 'available';
             const itemId = item.id!;
@@ -59,101 +67,90 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 : 'default';
 
             return (
-              <tr key={itemId}>
+              <TableRow key={itemId}>
                 {showCheckboxes && (
-                  <td className="px-4 py-4 whitespace-nowrap text-center">
-                    <input
-                      type="checkbox"
+                  <TableCell className="text-center">
+                    <Checkbox
                       checked={isSelected}
-                      onChange={() => onToggleSelection(itemId)}
+                      onCheckedChange={() => onToggleSelection(itemId)}
                       disabled={!isAvailable}
-                      className="rounded"
                     />
-                  </td>
+                  </TableCell>
                 )}
-                <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
-                  <img src={item.avatar} alt="" className="w-10 h-10 rounded object-cover" />
-                  <div>
-                    <div className="text-sm font-medium text-foreground">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">{item.location ?? ''}</div>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <img src={item.avatar} alt="" className="w-10 h-10 rounded object-cover" />
+                    <div>
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-xs text-muted-foreground">{item.location ?? ''}</div>
+                    </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">{item.quantity}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                </TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>
                   <Badge variant={typeVariant} className="font-medium text-[11px] px-3 py-1">
                     {item.type}
                   </Badge>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                </TableCell>
+                <TableCell>
                   {typeof item.custodian === 'object'
                     ? item.custodian?.name ?? item.custodian?.email ?? '—'
                     : item.custodian ?? '—'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                </TableCell>
+                <TableCell>
                   {item.status === 'available' ? (
                     <Badge variant="success" className="text-xs font-semibold px-3 py-1">Available</Badge>
                   ) : (
                     <Badge variant="destructive" className="text-xs font-semibold px-3 py-1">Unavailable</Badge>
                   )}
-                </td>
-                <td className="px-3 py-4 whitespace-nowrap text-center text-sm font-medium">
-                  <button
-                    type="button"
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    size="sm"
                     disabled={!isAvailable}
-                    className={`px-3 py-1 rounded font-semibold transition-opacity ${
-                      isAvailable
-                        ? 'bg-primary text-primary-foreground hover:opacity-90'
-                        : 'bg-muted text-muted-foreground cursor-not-allowed'
-                    }`}
-                    onClick={() => isAvailable && onBorrow(item)}
+                    onClick={() => onBorrow(item)}
                   >
                     Borrow
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             );
           })}
-        </tbody>
-      </table>
-      </div>
+        </TableBody>
+      </Table>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 py-4 border-t border-border">
-          <button
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Previous page"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          </button>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
 
           {getPageNumbers().map((page) => (
-            <button
+            <Button
               key={page}
+              variant={currentPage === page ? "default" : "ghost"}
+              size="icon-sm"
               onClick={() => onPageChange(page)}
-              className={`px-3 py-1 rounded ${
-                currentPage === page
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-muted text-foreground'
-              }`}
             >
               {page}
-            </button>
+            </Button>
           ))}
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Next page"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </button>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>

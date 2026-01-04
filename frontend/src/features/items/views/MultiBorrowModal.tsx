@@ -9,7 +9,17 @@ import {
   AlertDialogTitle,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-import { FormField, TextInput, TextArea } from '@/components/ui/form-field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
+import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
 
 type Props = {
   open: boolean;
@@ -51,11 +61,11 @@ export function MultiBorrowModal({
       open={open}
       onOpenChange={isOpen => (isOpen ? undefined : onClose())}
     >
-      <AlertDialogContent size="wide" className="p-0 w-full">
+      <AlertDialogContent size="wide" className="p-0 w-full max-w-lg">
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
-              <div className="relative w-full overflow-hidden rounded-lg border border-input bg-muted">
+              <div className="relative w-full overflow-hidden rounded-lg border border-input bg-muted mx-auto">
                 <img
                   src={availableItems[currentImageIndex]?.avatar}
                   alt={availableItems[currentImageIndex]?.name}
@@ -63,30 +73,22 @@ export function MultiBorrowModal({
                 />
                 {availableItems.length > 1 && (
                   <>
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="icon-sm"
                       onClick={() =>
                         setCurrentImageIndex(Math.max(0, currentImageIndex - 1))
                       }
                       disabled={currentImageIndex === 0}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background rounded-full p-1 disabled:opacity-30"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full opacity-80 hover:opacity-100"
                     >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
-                    <button
+                      <ChevronLeft />
+                    </Button>
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="icon-sm"
                       onClick={() =>
                         setCurrentImageIndex(
                           Math.min(
@@ -96,29 +98,19 @@ export function MultiBorrowModal({
                         )
                       }
                       disabled={currentImageIndex === availableItems.length - 1}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background rounded-full p-1 disabled:opacity-30"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full opacity-80 hover:opacity-100"
                     >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
+                      <ChevronRight />
+                    </Button>
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                       {availableItems.map((_, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => setCurrentImageIndex(idx)}
-                          className={`w-2 h-2 rounded-full ${idx === currentImageIndex ? 'bg-primary' : 'bg-muted'}`}
+                          className={`size-2 rounded-full transition-colors ${
+                            idx === currentImageIndex ? 'bg-primary' : 'bg-muted'
+                          }`}
                         />
                       ))}
                     </div>
@@ -128,30 +120,33 @@ export function MultiBorrowModal({
               <AlertDialogTitle className="text-xl font-semibold text-foreground text-center">
                 {availableItems[currentImageIndex]?.name}
               </AlertDialogTitle>
-              <button
-                type="button"
-                onClick={() => addItem(availableItems[currentImageIndex])}
-                className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-opacity mx-auto bg-primary text-primary-foreground hover:opacity-90"
-              >
-                Add item
-              </button>
+              <div className="flex justify-center">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => addItem(availableItems[currentImageIndex])}
+                >
+                  Add item
+                </Button>
+              </div>
             </AlertDialogHeader>
 
-            <div className="grid gap-3">
-              <FormField label="Full Name" error={errors.fullName}>
-                <TextInput
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                <Input
+                  id="fullName"
                   type="text"
                   value={form.fullName}
                   onChange={e => setField('fullName', e.target.value)}
                   placeholder="Juan Dela Cruz"
-                  error={errors.fullName}
+                  aria-invalid={!!errors.fullName}
                 />
-              </FormField>
+                <FieldError>{errors.fullName}</FieldError>
+              </Field>
 
-              <div className="grid gap-1">
-                <label className="text-sm font-semibold text-foreground">
-                  Items
-                </label>
+              <Field>
+                <FieldLabel>Items</FieldLabel>
                 <div className="space-y-2">
                   {form.items.length === 0 ? (
                     <p className="text-xs text-muted-foreground py-2">
@@ -170,10 +165,10 @@ export function MultiBorrowModal({
                         return (
                           <div
                             key={itemId}
-                            className="flex items-center justify-between p-2 bg-muted rounded"
+                            className="flex items-center justify-between p-2 bg-muted rounded-md"
                           >
                             <div className="flex flex-col">
-                              <span className="text-sm text-foreground">
+                              <span className="text-sm font-medium text-foreground">
                                 {entry.item.name}
                               </span>
                               {isQuantityInvalid && (
@@ -185,25 +180,27 @@ export function MultiBorrowModal({
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <button
+                              <Button
                                 type="button"
+                                variant="destructive"
+                                size="icon-xs"
                                 onClick={() => updateItemQuantity(itemId, -1)}
-                                className="w-6 h-6 flex items-center justify-center rounded bg-destructive text-destructive-foreground text-lg font-bold hover:opacity-90 transition-opacity"
                               >
-                                −
-                              </button>
+                                <Minus />
+                              </Button>
                               <span
                                 className={`w-8 text-center text-sm font-semibold ${isQuantityInvalid ? 'text-destructive' : ''}`}
                               >
                                 {entry.quantity}
                               </span>
-                              <button
+                              <Button
                                 type="button"
+                                variant="default"
+                                size="icon-xs"
                                 onClick={() => updateItemQuantity(itemId, 1)}
-                                className="w-6 h-6 flex items-center justify-center rounded bg-success text-success-foreground text-lg font-bold hover:opacity-90 transition-opacity"
                               >
-                                +
-                              </button>
+                                <Plus />
+                              </Button>
                             </div>
                           </div>
                         );
@@ -211,72 +208,56 @@ export function MultiBorrowModal({
                     )
                   )}
                 </div>
-                {errors.items && (
-                  <p className="text-xs text-red-500 mt-1">{errors.items}</p>
-                )}
-              </div>
+                <FieldError>{errors.items}</FieldError>
+              </Field>
 
-              <FormField label="Return Date" error={errors.returnDate}>
-                <TextInput
+              <Field>
+                <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
+                <Input
+                  id="returnDate"
                   type="date"
                   value={form.returnDate}
                   onChange={e => setField('returnDate', e.target.value)}
-                  error={errors.returnDate}
+                  aria-invalid={!!errors.returnDate}
                 />
-              </FormField>
+                <FieldError>{errors.returnDate}</FieldError>
+              </Field>
 
-              <FormField label="Purpose" error={errors.purpose}>
-                <TextArea
+              <Field>
+                <FieldLabel htmlFor="purpose">Purpose</FieldLabel>
+                <Textarea
+                  id="purpose"
                   value={form.purpose}
                   onChange={e => setField('purpose', e.target.value)}
                   placeholder="Briefly describe how you will use this item"
-                  error={errors.purpose}
+                  aria-invalid={!!errors.purpose}
                 />
-              </FormField>
-            </div>
+                <FieldError>{errors.purpose}</FieldError>
+              </Field>
+            </FieldGroup>
           </div>
 
           <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <span>Urgent Borrow?</span>
-              <button
-                type="button"
-                onClick={() => setField('urgent', !form.urgent)}
-                className="h-6 w-12 rounded-full border border-input flex items-center px-1 transition-colors"
-                style={{
-                  backgroundColor: form.urgent
-                    ? 'var(--primary)'
-                    : 'var(--muted)',
-                }}
-                aria-pressed={form.urgent}
+            <Field orientation="horizontal" className="w-auto">
+              <FieldLabel htmlFor="urgent-toggle" className="cursor-pointer font-semibold">Urgent Borrow?</FieldLabel>
+              <Switch
+                id="urgent-toggle"
+                checked={form.urgent}
+                onCheckedChange={(checked) => setField('urgent', checked)}
                 aria-label="Toggle urgent borrow"
-              >
-                <span
-                  className={`h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                    form.urgent ? 'translate-x-6' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </div>
+              />
+            </Field>
 
             <div className="flex items-center gap-2 ml-auto">
-              <AlertDialogCancel
-                type="button"
-                className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
-                onClick={onClose}
-              >
+              <AlertDialogCancel onClick={onClose}>
                 Cancel
               </AlertDialogCancel>
-              <button
+              <Button
                 type="submit"
-                className={`px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 ${
-                  form.urgent
-                    ? 'bg-warning text-warning-foreground'
-                    : 'bg-primary text-primary-foreground'
-                }`}
+                variant={form.urgent ? "destructive" : "default"}
               >
                 {form.urgent ? 'Urgent Borrow' : 'Submit Request'}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

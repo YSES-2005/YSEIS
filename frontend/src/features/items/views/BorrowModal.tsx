@@ -10,7 +10,16 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
-import { FormField, TextInput, TextArea } from '@/components/ui/form-field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 
 type Props = {
   open: boolean;
@@ -42,21 +51,17 @@ export function BorrowModal({
   if (!item) return null;
 
   const primaryLabel = form.urgent ? 'Urgent Borrow' : 'Submit Request';
-  const urgentTrackClasses = form.urgent ? '' : 'bg-gray-200';
-  const urgentTrackStyle = form.urgent
-    ? { backgroundColor: 'var(--primary)' }
-    : undefined;
 
   return (
     <AlertDialog
       open={open}
       onOpenChange={isOpen => (isOpen ? undefined : onClose())}
     >
-      <AlertDialogContent size="wide" className="p-0 w-full">
+      <AlertDialogContent size="wide" className="p-0 w-full max-w-lg">
         <form onSubmit={handleFormSubmit} className="flex flex-col">
           <div className="p-5 space-y-4">
             <AlertDialogHeader className="space-y-3">
-              <div className="w-1/2 overflow-hidden rounded-lg border border-input bg-muted">
+              <div className="w-1/2 overflow-hidden rounded-lg border border-input bg-muted mx-auto">
                 <img
                   src={item.avatar}
                   alt={item.name}
@@ -69,86 +74,86 @@ export function BorrowModal({
               <AlertDialogDescription className="text-sm text-muted-foreground text-center" />
             </AlertDialogHeader>
 
-            <div className="grid gap-3">
-              <FormField label="Full Name" error={errors.fullName}>
-                <TextInput
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                <Input
+                  id="fullName"
                   type="text"
+                  className="h-10"
                   value={form.fullName}
                   onChange={e => setField('fullName', e.target.value)}
                   placeholder="Juan Dela Cruz"
-                  error={errors.fullName}
+                  aria-invalid={!!errors.fullName}
                 />
-              </FormField>
+                <FieldError>{errors.fullName}</FieldError>
+              </Field>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <FormField label="Quantity" error={errors.quantity}>
-                  <TextInput
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field>
+                  <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
+                  <Input
+                    id="quantity"
                     type="number"
+                    className="h-10"
                     min={1}
                     value={form.quantity}
                     onChange={e => setField('quantity', Number(e.target.value))}
                     placeholder="Quantity"
-                    error={errors.quantity}
+                    aria-invalid={!!errors.quantity}
                   />
-                </FormField>
-                <FormField label="Return Date" error={errors.returnDate}>
-                  <TextInput
+                  <FieldError>{errors.quantity}</FieldError>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
+                  <Input
+                    id="returnDate"
                     type="date"
+                    className="h-10"
                     value={form.returnDate}
                     onChange={e => setField('returnDate', e.target.value)}
-                    error={errors.returnDate}
+                    aria-invalid={!!errors.returnDate}
                   />
-                </FormField>
+                  <FieldError>{errors.returnDate}</FieldError>
+                </Field>
               </div>
 
-              <FormField label="Purpose" error={errors.purpose}>
-                <TextArea
+              <Field>
+                <FieldLabel htmlFor="purpose">Purpose</FieldLabel>
+                <Textarea
+                  id="purpose"
                   value={form.purpose}
                   onChange={e => setField('purpose', e.target.value)}
                   placeholder="Briefly describe how you will use this item"
-                  error={errors.purpose}
+                  aria-invalid={!!errors.purpose}
                 />
-              </FormField>
-            </div>
+                <FieldError>{errors.purpose}</FieldError>
+              </Field>
+            </FieldGroup>
           </div>
 
           <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <span>Urgent Borrow?</span>
-              <button
-                type="button"
-                onClick={() => setField('urgent', !form.urgent)}
-                className={`h-6 w-12 rounded-full border border-input flex items-center px-1 transition-colors ${urgentTrackClasses}`}
-                style={urgentTrackStyle}
-                aria-pressed={form.urgent}
+            <Field orientation="horizontal" className="w-auto">
+              <FieldLabel htmlFor="urgent-toggle" className="cursor-pointer font-semibold">Urgent Borrow?</FieldLabel>
+              <Switch
+                id="urgent-toggle"
+                checked={form.urgent}
+                onCheckedChange={(checked) => setField('urgent', checked)}
                 aria-label="Toggle urgent borrow"
-              >
-                <span
-                  className={`h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                    form.urgent ? 'translate-x-6' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </div>
+              />
+            </Field>
 
             <div className="flex items-center gap-2 ml-auto">
-              <AlertDialogCancel
-                type="button"
-                className="px-4 py-2 rounded-lg border border-input text-foreground hover:bg-muted"
-                onClick={onClose}
-              >
+              <AlertDialogCancel onClick={onClose} size="sm">
                 Cancel
               </AlertDialogCancel>
-              <button
+              <Button
                 type="submit"
-                className={`px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 ${
-                  form.urgent
-                    ? 'bg-warning text-warning-foreground'
-                    : 'bg-primary text-primary-foreground'
-                }`}
+                size="sm"
+                variant={form.urgent ? "destructive" : "default"}
               >
                 {primaryLabel}
-              </button>
+              </Button>
             </div>
           </div>
         </form>
