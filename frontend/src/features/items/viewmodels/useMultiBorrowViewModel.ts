@@ -126,6 +126,18 @@ export function useMultiBorrowViewModel({
     setErrors({});
   };
 
+  const syncWithSelection = (selectedItems: Item[]) => {
+    setForm(prev => {
+      const currentItemsMap = new Map(prev.items.map(i => [i.item.id, i]));
+      const newItems = selectedItems.map(item => {
+        const existing = currentItemsMap.get(item.id);
+        if (existing) return existing;
+        return { item: normalizeToSchemaItem(item), quantity: 1 };
+      });
+      return { ...prev, items: newItems };
+    });
+  };
+
   return {
     form,
     errors,
@@ -136,5 +148,6 @@ export function useMultiBorrowViewModel({
     submit,
     reset,
     setCurrentImageIndex,
+    syncWithSelection,
   };
 }
