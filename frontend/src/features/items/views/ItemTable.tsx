@@ -73,7 +73,7 @@ export function ItemTable({
             const isAvailable = item.status === 'available';
             const itemId = item.id!;
             const typeLower = (item.type || '').toLowerCase();
-            const typeVariant = typeLower.includes('suppl') ? 'info' : typeLower.includes('prop') ? 'warning' : 'default';
+            const typeVariant: 'secondary' | 'outline' | 'default' = typeLower.includes('suppl') ? 'secondary' : typeLower.includes('prop') ? 'outline' : 'default';
 
             return (
               <TableRow key={itemId}>
@@ -97,7 +97,7 @@ export function ItemTable({
                 </TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>
-                  <Badge variant={typeVariant as any} className="capitalize">
+                  <Badge variant={typeVariant} className="capitalize">
                     {item.type}
                   </Badge>
                 </TableCell>
