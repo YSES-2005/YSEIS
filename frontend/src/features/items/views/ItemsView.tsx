@@ -185,11 +185,11 @@ export function ItemsView() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold">Inventory</h1>
+          <h1>Inventory</h1>
         </div>
 
         <div className="flex items-center gap-3">
@@ -236,13 +236,13 @@ export function ItemsView() {
                       onValueChange={val => setTempType(val === 'any' ? null : val)}
                     >
                       <SelectTrigger id="type" size="sm">
-                        <SelectValue></SelectValue>
+                        <SelectValue className="capitalize"/>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
                         {uniqueTypes.map(type => (
                           <SelectItem key={type} value={type}>
-                            {type}
+                            {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -262,7 +262,7 @@ export function ItemsView() {
                       }
                     >
                       <SelectTrigger id="status" size="sm">
-                        <SelectValue></SelectValue>
+                        <SelectValue className="capitalize"/>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any</SelectItem>

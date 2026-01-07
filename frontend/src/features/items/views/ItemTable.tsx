@@ -1,3 +1,5 @@
+"use client";
+
 import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -24,24 +26,36 @@ type Props = {
   showCheckboxes: boolean;
 };
 
-export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorrow, selectedItems, onToggleSelection, onToggleAll, showCheckboxes }: Props) {
+export function ItemTable({ 
+  items, 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  onBorrow, 
+  selectedItems, 
+  onToggleSelection, 
+  onToggleAll, 
+  showCheckboxes 
+}: Props) {
+  
   const getPageNumbers = () => {
     const pages: number[] = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
-    }
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
     return pages;
   };
 
+  const isAllAvailableSelected = items.length > 0 && 
+    items.filter(item => item.status === 'available').every(item => selectedItems.has(item.id!));
+
   return (
-    <div className="rounded-md border bg-card">
+    <div className="rounded-md border bg-card overflow-hidden">
       <Table>
-        <TableHeader className="bg-muted/50">
+        <TableHeader>
           <TableRow>
             {showCheckboxes && (
-              <TableHead className="w-[50px] text-center">
+              <TableHead className="w-10 text-center">
                 <Checkbox
-                  checked={items.length > 0 && items.filter(item => item.status === 'available').every(item => selectedItems.has(item.id!))}
+                  checked={isAllAvailableSelected}
                   onCheckedChange={() => onToggleAll()}
                 />
               </TableHead>
@@ -58,20 +72,15 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
           {items.map(item => {
             const isAvailable = item.status === 'available';
             const itemId = item.id!;
-            const isSelected = selectedItems.has(itemId);
             const typeLower = (item.type || '').toLowerCase();
-            const typeVariant: 'info' | 'warning' | 'default' = typeLower.includes('suppl')
-              ? 'info'
-              : typeLower.includes('prop')
-                ? 'warning'
-                : 'default';
+            const typeVariant = typeLower.includes('suppl') ? 'info' : typeLower.includes('prop') ? 'warning' : 'default';
 
             return (
               <TableRow key={itemId}>
                 {showCheckboxes && (
                   <TableCell className="text-center">
                     <Checkbox
-                      checked={isSelected}
+                      checked={selectedItems.has(itemId)}
                       onCheckedChange={() => onToggleSelection(itemId)}
                       disabled={!isAvailable}
                     />
@@ -79,16 +88,16 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                 )}
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <img src={item.avatar} alt="" className="w-10 h-10 rounded object-cover" />
+                    <img src={item.avatar} alt="" className="size-8 rounded object-cover shrink-0" />
                     <div>
                       <div className="font-medium">{item.name}</div>
-                      <div className="text-xs text-muted-foreground">{item.location ?? ''}</div>
+                      <div className="text-muted-foreground">{item.location}</div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>
-                  <Badge variant={typeVariant} className="font-medium text-[11px] px-3 py-1">
+                  <Badge variant={typeVariant as any} className="capitalize">
                     {item.type}
                   </Badge>
                 </TableCell>
@@ -98,14 +107,13 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
                     : item.custodian ?? '—'}
                 </TableCell>
                 <TableCell>
-                  {item.status === 'available' ? (
-                    <Badge variant="success" className="text-xs font-semibold px-3 py-1">Available</Badge>
-                  ) : (
-                    <Badge variant="destructive" className="text-xs font-semibold px-3 py-1">Unavailable</Badge>
-                  )}
+                  <Badge variant={isAvailable ? "outline" : "destructive"}>
+                    {isAvailable ? "Available" : "Unavailable"}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-center">
                   <Button
+                    variant="default"
                     size="sm"
                     disabled={!isAvailable}
                     onClick={() => onBorrow(item)}
@@ -120,36 +128,36 @@ export function ItemTable({ items, currentPage, totalPages, onPageChange, onBorr
       </Table>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 py-4 border-t border-border">
+        <div className="flex items-center justify-center gap-2 py-4 border-t">
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            aria-label="Previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="size-4" />
           </Button>
 
-          {getPageNumbers().map((page) => (
-            <Button
-              key={page}
-              variant={currentPage === page ? "default" : "ghost"}
-              size="icon-sm"
-              onClick={() => onPageChange(page)}
-            >
-              {page}
-            </Button>
-          ))}
+          <div className="flex items-center gap-1">
+            {getPageNumbers().map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "ghost"}
+                size="sm"
+                onClick={() => onPageChange(page)}
+              >
+                {page}
+              </Button>
+            ))}
+          </div>
 
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            aria-label="Next page"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="size-4" />
           </Button>
         </div>
       )}
