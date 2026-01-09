@@ -105,7 +105,6 @@ export function ItemsView() {
   const {
     form: multiBorrowForm,
     errors: multiBorrowErrors,
-    // Note: Removed currentImageIndex from here as it's now handled inside the Modal's Carousel
     setField: setMultiBorrowField,
     updateItemQuantity,
     addItem,
@@ -206,7 +205,6 @@ export function ItemsView() {
 
           <Popover open={showFilterPanel} onOpenChange={setShowFilterPanel}>
             <PopoverTrigger
-              // Kept your render prop syntax
               render={<Button variant="outline" size="sm" />}
               onClick={() => {
                 if (!showFilterPanel) handleOpenFilterPanel();
