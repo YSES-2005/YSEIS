@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type {
   ItemPopulated as Item,
@@ -65,7 +67,7 @@ export function ItemsView() {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
 
-  const availableItems = items.filter(item => item.status === 'available');
+  const availableItems = items.filter((item) => item.status === 'available');
 
   const handleBorrowSubmit = (data: BorrowFormData) => {
     console.log('Borrow request:', data);
@@ -103,20 +105,19 @@ export function ItemsView() {
   const {
     form: multiBorrowForm,
     errors: multiBorrowErrors,
-    currentImageIndex,
+    // Note: Removed currentImageIndex from here as it's now handled inside the Modal's Carousel
     setField: setMultiBorrowField,
     updateItemQuantity,
     addItem,
     submit: submitMultiBorrow,
     reset: resetMultiBorrow,
-    setCurrentImageIndex,
     syncWithSelection,
   } = useMultiBorrowViewModel({
     onSubmit: handleMultiBorrowSubmit,
   });
 
   const handleOpenMultiBorrow = () => {
-    const itemsToAdd = items.filter(item => selectedItems.has(item.id!));
+    const itemsToAdd = items.filter((item) => selectedItems.has(item.id!));
     syncWithSelection(itemsToAdd);
     setMultiBorrowOpen(true);
   };
@@ -129,7 +130,7 @@ export function ItemsView() {
   };
 
   const handleToggleSelection = (itemId: string) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
@@ -141,19 +142,19 @@ export function ItemsView() {
   };
 
   const handleToggleAll = () => {
-    const allSelected = availableItems.every(item =>
+    const allSelected = availableItems.every((item) =>
       selectedItems.has(item.id!)
     );
     if (allSelected) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(availableItems.map(item => item.id!)));
+      setSelectedItems(new Set(availableItems.map((item) => item.id!)));
     }
   };
 
   const handleAddItemToMultiBorrow = (item: Item) => {
     addItem(item);
-    setSelectedItems(prev => new Set(prev).add(item.id!));
+    setSelectedItems((prev) => new Set(prev).add(item.id!));
     setShowCheckboxes(true);
     setMultiBorrowOpen(false);
   };
@@ -197,7 +198,7 @@ export function ItemsView() {
             <Search className="absolute left-2 top-1.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
               className="pl-8"
             />
@@ -205,6 +206,7 @@ export function ItemsView() {
 
           <Popover open={showFilterPanel} onOpenChange={setShowFilterPanel}>
             <PopoverTrigger
+              // Kept your render prop syntax
               render={<Button variant="outline" size="sm" />}
               onClick={() => {
                 if (!showFilterPanel) handleOpenFilterPanel();
@@ -224,7 +226,7 @@ export function ItemsView() {
                     <Input
                       id="custodian"
                       value={tempCustodian}
-                      onChange={e => setTempCustodian(e.target.value)}
+                      onChange={(e) => setTempCustodian(e.target.value)}
                       placeholder="Enter custodian name"
                     />
                   </Field>
@@ -233,16 +235,19 @@ export function ItemsView() {
                     <FieldLabel htmlFor="type">Type</FieldLabel>
                     <Select
                       value={tempType || 'any'}
-                      onValueChange={val => setTempType(val === 'any' ? null : val)}
+                      onValueChange={(val) =>
+                        setTempType(val === 'any' ? null : val)
+                      }
                     >
                       <SelectTrigger id="type" size="sm">
-                        <SelectValue className="capitalize"/>
+                        <SelectValue className="capitalize" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
-                        {uniqueTypes.map(type => (
+                        {uniqueTypes.map((type) => (
                           <SelectItem key={type} value={type}>
-                            {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+                            {type.charAt(0).toUpperCase() +
+                              type.slice(1).toLowerCase()}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -253,7 +258,7 @@ export function ItemsView() {
                     <FieldLabel htmlFor="status">Status</FieldLabel>
                     <Select
                       value={tempStatus || 'any'}
-                      onValueChange={val =>
+                      onValueChange={(val) =>
                         setTempStatus(
                           val === 'any'
                             ? null
@@ -262,7 +267,7 @@ export function ItemsView() {
                       }
                     >
                       <SelectTrigger id="status" size="sm">
-                        <SelectValue className="capitalize"/>
+                        <SelectValue className="capitalize" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
@@ -278,13 +283,13 @@ export function ItemsView() {
                       <Input
                         type="date"
                         value={tempStartDate}
-                        onChange={e => setTempStartDate(e.target.value)}
+                        onChange={(e) => setTempStartDate(e.target.value)}
                       />
                       <span className="text-muted-foreground text-sm">to</span>
                       <Input
                         type="date"
                         value={tempEndDate}
-                        onChange={e => setTempEndDate(e.target.value)}
+                        onChange={(e) => setTempEndDate(e.target.value)}
                       />
                     </div>
                   </Field>
@@ -302,7 +307,7 @@ export function ItemsView() {
           <Button
             onClick={handleOpenMultiBorrow}
             disabled={availableItems.length === 0}
-            variant={availableItems.length === 0 ? "secondary" : "default"}
+            variant={availableItems.length === 0 ? 'secondary' : 'default'}
           >
             <Layers className="mr-2 h-4 w-4" />
             Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
@@ -328,7 +333,6 @@ export function ItemsView() {
         />
       )}
 
-
       <BorrowModal
         open={borrowOpen}
         item={selectedItem}
@@ -344,13 +348,13 @@ export function ItemsView() {
         availableItems={availableItems}
         form={multiBorrowForm}
         errors={multiBorrowErrors}
-        currentImageIndex={currentImageIndex}
         onSubmit={submitMultiBorrow}
         onClose={handleCloseMultiBorrow}
         setField={setMultiBorrowField}
         addItem={handleAddItemToMultiBorrow}
         updateItemQuantity={updateItemQuantity}
-        setCurrentImageIndex={setCurrentImageIndex}
+        currentImageIndex={0} 
+        setCurrentImageIndex={() => {}} 
       />
     </div>
   );
