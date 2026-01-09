@@ -1,15 +1,24 @@
+import * as React from 'react';
 import type {
   ItemPopulated as Item,
   MultiBorrowFormState,
 } from '@schemas/itemSchema';
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -20,7 +29,7 @@ import {
   FieldLabel,
   FieldError,
 } from '@/components/ui/field';
-import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 
 type Props = {
   open: boolean;
@@ -52,242 +61,211 @@ export function MultiBorrowModal({
   updateItemQuantity,
   setCurrentImageIndex,
 }: Props) {
+  const [api, setApi] = React.useState<CarouselApi | null>(null);
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const onSelect = () => {
+      setCurrentImageIndex(api.selectedScrollSnap());
+    };
+
+    api.on('select', onSelect);
+    
+    return () => {
+        api.off('select', onSelect)
+    }
+  }, [api, setCurrentImageIndex]);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     onSubmit();
   };
 
   return (
-    <AlertDialog
-      open={open}
-      onOpenChange={isOpen => (isOpen ? undefined : onClose())}
-    >
-      <AlertDialogContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <AlertDialogHeader className="text-center place-items-center">
-            <div className="relative w-full overflow-hidden rounded-lg border border-input bg-muted mx-auto h-44">
-              <img
-                src={availableItems[currentImageIndex]?.avatar}
-                alt={availableItems[currentImageIndex]?.name}
-                className="w-full h-full object-cover"
-              />
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="grid gap-6">
+          <DialogHeader>
+            <div className="mx-auto w-full max-w-[240px] flex flex-col items-center gap-4">
+              <Carousel setApi={setApi} className="w-full">
+                <CarouselContent>
+                  {availableItems.map((item) => (
+                    <CarouselItem key={item.id}>
+                      <div className="flex flex-col items-center gap-2">
+  
+                        <div className="aspect-square relative w-full overflow-hidden rounded-md border bg-muted">
+                          <img
+                            src={item.avatar}
+                            alt={item.name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
 
-              {availableItems.length > 1 && (
-                <>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="icon-sm"
-                    onClick={() =>
-                      setCurrentImageIndex(Math.max(0, currentImageIndex - 1))
-                    }
-                    disabled={currentImageIndex === 0}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full opacity-80 hover:opacity-100"
-                  >
-                    <ChevronLeft />
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="icon-sm"
-                    onClick={() =>
-                      setCurrentImageIndex(
-                        Math.min(
-                          availableItems.length - 1,
-
-                          currentImageIndex + 1
-                        )
-                      )
-                    }
-                    disabled={currentImageIndex === availableItems.length - 1}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full opacity-80 hover:opacity-100"
-                  >
-                    <ChevronRight />
-                  </Button>
-
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                    {availableItems.map((_, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`size-2 rounded-full transition-colors ${
-                          idx === currentImageIndex ? 'bg-primary' : 'bg-muted'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
+              <div className="text-center space-y-2">
+                <DialogTitle>
+                  {availableItems[currentImageIndex]?.name}
+                </DialogTitle>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => addItem(availableItems[currentImageIndex])}
+                >
+                  Add Item
+                </Button>
+              </div>
             </div>
-
-            <AlertDialogTitle className="w-full text-center">
-              {availableItems[currentImageIndex]?.name}
-            </AlertDialogTitle>
-
-            <div className="col-span-full flex w-full justify-center">
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => addItem(availableItems[currentImageIndex])}
-              >
-                Add item
-              </Button>
-            </div>
-          </AlertDialogHeader>
+          </DialogHeader>
 
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-
               <Input
                 id="fullName"
                 type="text"
                 value={form.fullName}
-                onChange={e => setField('fullName', e.target.value)}
+                onChange={(e) => setField('fullName', e.target.value)}
                 placeholder="Juan Dela Cruz"
                 aria-invalid={!!errors.fullName}
               />
-
               <FieldError>{errors.fullName}</FieldError>
             </Field>
 
             <Field>
-              <FieldLabel>Items</FieldLabel>
-
+              <FieldLabel>Selected Items</FieldLabel>
               <div className="flex flex-col gap-2">
                 {form.items.length === 0 ? (
-                  <p className="text-muted-foreground py-2">
-                    No items added yet. Add items from the carousel above.
+                  <p className="text-sm text-muted-foreground">
+                    No items added yet.
                   </p>
                 ) : (
-                  form.items.map(
-                    (entry: {
-                      item: { id?: string; name: string; quantity: number };
+                  form.items.map((entry) => {
+                    const isQuantityInvalid =
+                      entry.quantity < 1 ||
+                      entry.quantity > entry.item.quantity;
 
-                      quantity: number;
-                    }) => {
-                      const itemId = entry.item.id!;
-
-                      const isQuantityInvalid =
-                        entry.quantity < 1 ||
-                        entry.quantity > entry.item.quantity;
-
-                      return (
-                        <div
-                          key={itemId}
-                          className="flex items-center justify-between p-2 bg-muted rounded-md"
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-foreground">
-                              {entry.item.name}
-                            </span>
-
-                            {isQuantityInvalid && (
-                              <span className="text-destructive">
-                                {entry.quantity < 1
-                                  ? 'Quantity must be at least 1'
-                                  : `Max ${entry.item.quantity} available`}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon-xs"
-                              onClick={() => updateItemQuantity(itemId, -1)}
-                            >
-                              <Minus />
-                            </Button>
-
-                            <span
-                              className={`w-8 text-center font-semibold ${isQuantityInvalid ? 'text-destructive' : ''}`}
-                            >
-                              {entry.quantity}
-                            </span>
-
-                            <Button
-                              type="button"
-                              variant="default"
-                              size="icon-xs"
-                              onClick={() => updateItemQuantity(itemId, 1)}
-                            >
-                              <Plus />
-                            </Button>
-                          </div>
+                    return (
+                      <Card
+                        key={entry.item.id}
+                        className="flex items-center justify-between p-3 shadow-none bg-muted/40"
+                      >
+                        <div className="grid gap-1">
+                          <span className="font-medium text-sm">
+                            {entry.item.name}
+                          </span>
+                          {isQuantityInvalid && (
+                            <p className="text-[0.8rem] font-medium text-destructive">
+                              {entry.quantity < 1
+                                ? 'Min 1'
+                                : `Max ${entry.item.quantity}`}
+                            </p>
+                          )}
                         </div>
-                      );
-                    }
-                  )
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() =>
+                              updateItemQuantity(entry.item.id!, -1)
+                            }
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+
+                          <span className="w-6 text-center text-sm font-medium">
+                            {entry.quantity}
+                          </span>
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() =>
+                              updateItemQuantity(entry.item.id!, 1)
+                            }
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </Card>
+                    );
+                  })
                 )}
               </div>
-
               {errors.items && <FieldError>{errors.items}</FieldError>}
             </Field>
 
+            {/* Return Date */}
             <Field>
               <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
-
               <Input
                 id="returnDate"
                 type="date"
                 value={form.returnDate}
-                onChange={e => setField('returnDate', e.target.value)}
+                onChange={(e) => setField('returnDate', e.target.value)}
                 aria-invalid={!!errors.returnDate}
               />
-
               <FieldError>{errors.returnDate}</FieldError>
             </Field>
 
+            {/* Purpose */}
             <Field>
               <FieldLabel htmlFor="purpose">Purpose</FieldLabel>
-
               <Textarea
                 id="purpose"
                 value={form.purpose}
-                onChange={e => setField('purpose', e.target.value)}
+                onChange={(e) => setField('purpose', e.target.value)}
                 placeholder="Briefly describe how you will use this item"
                 aria-invalid={!!errors.purpose}
               />
-
               <FieldError>{errors.purpose}</FieldError>
             </Field>
           </FieldGroup>
 
-          <AlertDialogFooter className="flex flex-wrap items-center gap-3 sm:justify-between">
-            <Field orientation="horizontal" className="w-auto">
+          <DialogFooter className="flex-row items-center justify-between sm:justify-between">
+            {/* Urgent Switch */}
+            <div className="flex items-center space-x-2">
               <Switch
                 id="urgent-toggle"
                 checked={form.urgent}
-                onCheckedChange={checked => setField('urgent', checked)}
-                aria-label="Toggle urgent borrow"
+                onCheckedChange={(checked) => setField('urgent', checked)}
               />
-
-              <FieldLabel
+              <label
                 htmlFor="urgent-toggle"
-                className="font-normal cursor-pointer"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Urgent Borrow?
-              </FieldLabel>
-            </Field>
+              </label>
+            </div>
 
-            <div className="flex items-center gap-2 ml-auto">
-              <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" onClick={onClose}>
+                Cancel
+              </Button>
 
               <Button
                 type="submit"
                 variant={form.urgent ? 'destructive' : 'default'}
               >
-                {form.urgent ? 'Urgent Borrow' : 'Submit Request'}
+                {form.urgent ? 'Urgent Borrow' : 'Submit'}
               </Button>
             </div>
-          </AlertDialogFooter>
+          </DialogFooter>
         </form>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>
+    </Dialog>
   );
 }
