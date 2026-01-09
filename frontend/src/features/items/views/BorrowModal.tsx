@@ -1,16 +1,15 @@
+import * as React from 'react';
 import type {
   BorrowFormData,
   ItemPopulated as Item,
 } from '@schemas/itemSchema';
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -51,43 +50,38 @@ export function BorrowModal({
 
   if (!item) return null;
 
-  const primaryLabel = form.urgent ? 'Urgent Borrow' : 'Submit Request';
-
   return (
-    <AlertDialog
-      open={open}
-      onOpenChange={isOpen => (isOpen ? undefined : onClose())}
-    >
-      <AlertDialogContent>
-        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <AlertDialogHeader className="sm:text-center sm:plafwce-items-center">
-            <div className="w-1/2 overflow-hidden rounded-lg mx-auto">
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+        <form onSubmit={handleFormSubmit} className="grid gap-6">
+          <DialogHeader className="items-center">
+            
+            <div className="mb-4 w-full max-w-[200px] aspect-square relative overflow-hidden rounded-md border bg-muted">
               <img
                 src={item.avatar}
                 alt={item.name}
-                className="w-full h-44 object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
-            <AlertDialogTitle className="w-full text-center">
-              {item.name}
-            </AlertDialogTitle>
-            <AlertDialogDescription />
-          </AlertDialogHeader>
+            <DialogTitle>{item.name}</DialogTitle>
+          </DialogHeader>
 
           <FieldGroup>
+            {/* Full Name */}
             <Field>
               <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
               <Input
                 id="fullName"
                 type="text"
                 value={form.fullName}
-                onChange={e => setField('fullName', e.target.value)}
+                onChange={(e) => setField('fullName', e.target.value)}
                 placeholder="Juan Dela Cruz"
                 aria-invalid={!!errors.fullName}
               />
               <FieldError>{errors.fullName}</FieldError>
             </Field>
 
+            {/* Quantity and Date Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
@@ -95,64 +89,71 @@ export function BorrowModal({
                   id="quantity"
                   type="number"
                   min={1}
+                  max={item.quantity} 
                   value={form.quantity}
-                  onChange={e => setField('quantity', Number(e.target.value))}
-                  placeholder="Quantity"
+                  onChange={(e) => setField('quantity', Number(e.target.value))}
+                  placeholder="1"
                   aria-invalid={!!errors.quantity}
                 />
                 <FieldError>{errors.quantity}</FieldError>
               </Field>
+
               <Field>
                 <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
                 <Input
                   id="returnDate"
                   type="date"
                   value={form.returnDate}
-                  onChange={e => setField('returnDate', e.target.value)}
+                  onChange={(e) => setField('returnDate', e.target.value)}
                   aria-invalid={!!errors.returnDate}
                 />
                 <FieldError>{errors.returnDate}</FieldError>
               </Field>
             </div>
 
+            {/* Purpose */}
             <Field>
               <FieldLabel htmlFor="purpose">Purpose</FieldLabel>
               <Textarea
                 id="purpose"
                 value={form.purpose}
-                onChange={e => setField('purpose', e.target.value)}
-                placeholder="Briefly describe how you will use this item"
+                onChange={(e) => setField('purpose', e.target.value)}
+                placeholder="Briefly describe usage..."
                 aria-invalid={!!errors.purpose}
               />
               <FieldError>{errors.purpose}</FieldError>
             </Field>
           </FieldGroup>
 
-          <AlertDialogFooter>
-            <Field orientation="horizontal" className="w-auto">
+          <DialogFooter className="flex-row items-center justify-between sm:justify-between gap-4">
+            <div className="flex items-center space-x-2">
               <Switch
                 id="urgent-toggle"
                 checked={form.urgent}
                 onCheckedChange={(checked) => setField('urgent', checked)}
-                aria-label="Toggle urgent borrow"
               />
-               <FieldLabel htmlFor="urgent-toggle" className="font-normal cursor-pointer">Urgent Borrow?</FieldLabel>
-            </Field>
+              <label
+                htmlFor="urgent-toggle"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                Urgent?
+              </label>
+            </div>
 
-            <div className="flex items-center gap-2 ml-auto">
-              <AlertDialogCancel onClick={onClose}>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" onClick={onClose}>
                 Cancel
-              </AlertDialogCancel>
+              </Button>
               <Button
                 type="submit"
-                variant={form.urgent ? "destructive" : "default"}
+                variant={form.urgent ? 'destructive' : 'default'}
               >
-                {primaryLabel}
+                {form.urgent ? 'Urgent Borrow' : 'Submit'}
               </Button>
             </div>
-          </AlertDialogFooter>
+          </DialogFooter>
         </form>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>
+    </Dialog>
   );
 }
