@@ -17,6 +17,14 @@ export const itemSchema = z.object({
   updated_at: z.coerce.date().optional(),
 });
 
+export const updateItemSchema = itemSchema
+  .omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+  })
+  .partial();
+
 export type Item = z.infer<typeof itemSchema>;
 
 export type ItemPopulated = Omit<Item, 'custodian'> & {

@@ -3,18 +3,22 @@ import ItemModel from './item.model';
 import { NotFoundError } from '../../errors';
 
 //gets all items
-//GET api/items  
-export const getItems = async (req: Request, res: Response, next: NextFunction) => {
+//GET api/items
+export const getItems = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { 
-      search, 
-      status, 
-      type, 
+    const {
+      search,
+      status,
+      type,
       custodian,
-      startDate, 
-      endDate, 
-      page = '1', 
-      limit = '10' 
+      startDate,
+      endDate,
+      page = '1',
+      limit = '10',
     } = req.query as Record<string, string | undefined>;
 
     // add query object
@@ -55,7 +59,7 @@ export const getItems = async (req: Request, res: Response, next: NextFunction) 
     const skip = (pageNumber - 1) * limitNumber;
 
     let itemsQuery = ItemModel.find(query)
-      .populate('custodian', 'name email')
+      .populate('custodian', 'name email avatar')
       .sort({ updated_at: -1 });
 
     // Get total count before pagination
@@ -76,14 +80,14 @@ export const getItems = async (req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    res.json({ 
+    res.json({
       data: items,
       pagination: {
         totalItems: totalCount,
         totalPages: Math.ceil(totalCount / limitNumber),
         currentPage: pageNumber,
-        limit: limitNumber
-      }
+        limit: limitNumber,
+      },
     });
   } catch (error) {
     next(error);
@@ -91,12 +95,19 @@ export const getItems = async (req: Request, res: Response, next: NextFunction) 
 };
 
 //get item by item id
-//GET api/items/id 
-export const getItemById = async (req: Request, res: Response, next: NextFunction) => {
+//GET api/items/id
+export const getItemById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
-    const item = await ItemModel.findById(id).populate('custodian', 'name email');
-    
+    const item = await ItemModel.findById(id).populate(
+      'custodian',
+      'name email'
+    );
+
     if (!item) {
       throw new NotFoundError('Item not found');
     }
@@ -109,7 +120,11 @@ export const getItemById = async (req: Request, res: Response, next: NextFunctio
 
 //create new item
 //POST appi/items
-export const createItem = async (req: Request, res: Response, next: NextFunction) => {
+export const createItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const payload = req.body;
     const custodian = payload.custodian || req.userId;
@@ -117,7 +132,7 @@ export const createItem = async (req: Request, res: Response, next: NextFunction
     const newItem = new ItemModel({
       ...payload,
       custodian,
-      status: payload.status ?? 'available'
+      status: payload.status ?? 'available',
     });
 
     await newItem.save();
@@ -129,7 +144,11 @@ export const createItem = async (req: Request, res: Response, next: NextFunction
 
 //update existing item
 //PUT api/items/id
-export const updateItem = async (req: Request, res: Response, next: NextFunction) => {
+export const updateItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -156,11 +175,19 @@ export const updateItem = async (req: Request, res: Response, next: NextFunction
 
 //deletes item (just changes status)
 //DELETE api/items/id
-export const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
-    
-    const item = await ItemModel.findByIdAndUpdate(id, { status: 'deleted' }, { new: true });
+
+    const item = await ItemModel.findByIdAndUpdate(
+      id,
+      { status: 'deleted' },
+      { new: true }
+    );
 
     if (!item) {
       throw new NotFoundError('Item not found');

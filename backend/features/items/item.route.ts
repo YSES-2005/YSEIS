@@ -8,7 +8,7 @@ import {
 } from './item.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
-import { itemSchema } from '@schemas/itemSchema';
+import { itemSchema, updateItemSchema } from '@schemas/itemSchema';
 
 const itemsRouter = express.Router();
 
@@ -125,7 +125,7 @@ itemsRouter.put(
   '/:id',
   authenticate,
   authorize(Role.ADMIN),
-  validate(itemSchema),
+  validate(updateItemSchema),
   updateItem
 );
 itemsRouter.delete('/:id', authenticate, authorize(Role.ADMIN), deleteItem);
