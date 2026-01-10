@@ -45,11 +45,11 @@ services:
     volumes:
       - ./frontend:/usr/src/app:z,cached
       - ./shared:/usr/src/shared:z,cached
-      - frontend_node_modules:/usr/src/app/node_modules
+      - ./frontend/node_modules:/usr/src/app/node_modules
+
     depends_on:
       - backend
 
 volumes:
   mongo-data:
   backend_node_modules:
-  frontend_node_modules:

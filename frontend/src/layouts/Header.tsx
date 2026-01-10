@@ -1,27 +1,19 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MenuIcon, BellIcon, SearchIcon, UserIcon } from 'lucide-react';
+import { BellIcon, SearchIcon, UserIcon } from 'lucide-react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
-interface HeaderProps {
-  onToggleSidebar: () => void;
-}
-
-export function Header({ onToggleSidebar }: HeaderProps) {
+export function Header() {
   return (
-    <header className="bg-card shadow-sm border-b border-border">
+    <header className="bg-card border-b border-border">
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-muted lg:hidden"
-          >
-            <MenuIcon className="h-5 w-5" />
-          </Button>
+          <SidebarTrigger />
 
           <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+            <h1 className="text-2xl font-semibold text-foreground">
+              Dashboard
+            </h1>
             <Badge variant="secondary">Beta</Badge>
           </div>
         </div>
