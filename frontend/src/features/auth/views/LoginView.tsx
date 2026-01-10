@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import logo from '@/assets/logo.png';
 import illustration from '@/assets/dashboard.png';
 
@@ -27,8 +27,8 @@ export function LoginView({ onSuccess }: LoginViewProps) {
       {/* Branding Column*/}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-primary rounded-xl">
         {/* Background orbs*/}
-        <div className="absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#a5f3fc] mix-blend-screen blur-[120px] opacity-20" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#3b82f6] mix-blend-screen blur-[120px] opacity-30" />
+        <div className="absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary mix-blend-screen blur-[120px] opacity-30" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-accent mix-blend-screen blur-[120px] opacity-40" />
 
         <div className="relative z-10 flex w-full flex-col items-center justify-center pt-32 pb-24 px-20 text-white space-y-12">
           {/* Dashboard preview*/}
@@ -81,34 +81,22 @@ export function LoginView({ onSuccess }: LoginViewProps) {
           {/* Login forms */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
-            <div className="space-y-2">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium text-slate-700"
-              >
-                Email
-              </Label>
+            <Field className="space-y-2">
+              <FieldLabel className="text-sm">Email</FieldLabel>
               <Input
                 className="!text-sm py-6 px-4 focus-visible:border-primary"
-                id="email"
                 name="email"
-                type="text"
+                type="email"
                 placeholder="Enter your email address"
               />
-            </div>
+            </Field>
 
             {/* Password */}
-            <div className="space-y-2">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-slate-700"
-              >
-                Password
-              </Label>
-              <div className="relative">
+            <Field className="space-y-2">
+              <FieldLabel className="text-slate-700">Password</FieldLabel>
+              <FieldGroup className="relative">
                 <Input
-                  className="!text-sm py-6 px-4 focus-visible:border-primary"
-                  id="password"
+                  className="!text-sm py-6 px-4 focus-visible:border-primary w-full"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
@@ -120,8 +108,8 @@ export function LoginView({ onSuccess }: LoginViewProps) {
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
-              </div>
-            </div>
+              </FieldGroup>
+            </Field>
 
             {/* Error */}
             {error && (
