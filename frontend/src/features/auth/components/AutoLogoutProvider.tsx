@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { authService } from '../services/authService';
+import { authService } from '../../../services/authService';
 import { router } from '@/main';
 
 const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; //logout in half an hour
