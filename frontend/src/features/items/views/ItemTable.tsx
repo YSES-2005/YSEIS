@@ -16,8 +16,8 @@ import {
   PaginationContent,
   PaginationItem,
   PaginationLink,
-} from "@/components/ui/pagination"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from '@/components/ui/pagination';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -44,7 +44,6 @@ export function ItemTable({
   onToggleAll,
   showCheckboxes,
 }: Props) {
-
   // helper to safely get custodian name
   const getCustodianDisplay = (custodian: Item['custodian']) => {
     if (!custodian) return '—';
@@ -55,8 +54,8 @@ export function ItemTable({
   const isAllAvailableSelected =
     items.length > 0 &&
     items
-      .filter((item) => item.status === 'available')
-      .every((item) => selectedItems.has(item.id!));
+      .filter(item => item.status === 'available')
+      .every(item => selectedItems.has(item.id!));
 
   return (
     <div className="space-y-4">
@@ -65,7 +64,7 @@ export function ItemTable({
           <TableHeader>
             <TableRow>
               {showCheckboxes && (
-                <TableHead className="w-[50px] text-center">
+                <TableHead className="w-12.5 text-center">
                   <Checkbox
                     checked={isAllAvailableSelected}
                     onCheckedChange={() => onToggleAll()}
@@ -82,19 +81,22 @@ export function ItemTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item) => {
+            {items.map(item => {
               const isAvailable = item.status === 'available';
               const itemId = item.id!;
-              
+
               const typeLower = (item.type || '').toLowerCase();
               const typeVariant = typeLower.includes('suppl')
                 ? 'secondary'
                 : typeLower.includes('prop')
-                ? 'outline'
-                : 'default';
+                  ? 'outline'
+                  : 'default';
 
               return (
-                <TableRow key={itemId} data-state={selectedItems.has(itemId) && "selected"}>
+                <TableRow
+                  key={itemId}
+                  data-state={selectedItems.has(itemId) && 'selected'}
+                >
                   {showCheckboxes && (
                     <TableCell className="text-center">
                       <Checkbox
@@ -109,16 +111,20 @@ export function ItemTable({
                     <div className="flex items-center gap-3">
                       {/* show initials for broken avatar links */}
                       <Avatar className="h-9 w-9 rounded-sm">
-                        <AvatarImage src={item.avatar} alt={item.name} className="object-cover" />
+                        <AvatarImage
+                          src={item.avatar}
+                          alt={item.name}
+                          className="object-cover"
+                        />
                         <AvatarFallback className="rounded-sm uppercase">
                           {item.name.substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
-                        <span className="font-medium truncate max-w-[200px]" title={item.name}>
+                        <span className="font-medium truncate max-w-[20ch]">
                           {item.name}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                        <span className="text-xs text-muted-foreground truncate max-w-[20ch]">
                           {item.location}
                         </span>
                       </div>
@@ -126,7 +132,10 @@ export function ItemTable({
                   </TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>
-                    <Badge variant={typeVariant} className="capitalize shadow-none">
+                    <Badge
+                      variant={typeVariant}
+                      className="capitalize shadow-none"
+                    >
                       {item.type}
                     </Badge>
                   </TableCell>
@@ -134,7 +143,10 @@ export function ItemTable({
                     {getCustodianDisplay(item.custodian)}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={isAvailable ? 'outline' : 'destructive'} className="shadow-none">
+                    <Badge
+                      variant={isAvailable ? 'outline' : 'destructive'}
+                      className="shadow-none"
+                    >
                       {isAvailable ? 'Available' : 'Unavailable'}
                     </Badge>
                   </TableCell>
@@ -159,9 +171,9 @@ export function ItemTable({
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
@@ -169,25 +181,27 @@ export function ItemTable({
                 <span className="sr-only">Previous</span>
               </Button>
             </PaginationItem>
-            
+
             {/* mapping for <10 pages  */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-               <PaginationItem key={page}>
-                 <PaginationLink 
-                    isActive={page === currentPage}
-                    onClick={() => onPageChange(page)}
-                    className="cursor-pointer"
-                 >
-                   {page}
-                 </PaginationLink>
-               </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => onPageChange(page)}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
             ))}
 
             <PaginationItem>
-               <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  onPageChange(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -202,3 +216,4 @@ export function ItemTable({
 }
 
 export default ItemTable;
+

@@ -73,10 +73,10 @@ export function MultiBorrowModal({
     };
 
     api.on('select', onSelect);
-    
+
     return () => {
-        api.off('select', onSelect)
-    }
+      api.off('select', onSelect);
+    };
   }, [api, setCurrentImageIndex]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,17 +85,16 @@ export function MultiBorrowModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-lg p-6 max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit} className="grid gap-6">
           <DialogHeader>
-            <div className="mx-auto w-full max-w-[240px] flex flex-col items-center gap-4">
+            <div className="mx-auto w-full max-w-1/2 flex flex-col items-center gap-4">
               <Carousel setApi={setApi} className="w-full">
                 <CarouselContent>
-                  {availableItems.map((item) => (
+                  {availableItems.map(item => (
                     <CarouselItem key={item.id}>
                       <div className="flex flex-col items-center gap-2">
-  
                         <div className="aspect-square relative w-full overflow-hidden rounded-md border bg-muted">
                           <img
                             src={item.avatar}
@@ -133,7 +132,7 @@ export function MultiBorrowModal({
                 id="fullName"
                 type="text"
                 value={form.fullName}
-                onChange={(e) => setField('fullName', e.target.value)}
+                onChange={e => setField('fullName', e.target.value)}
                 placeholder="Juan Dela Cruz"
                 aria-invalid={!!errors.fullName}
               />
@@ -144,11 +143,9 @@ export function MultiBorrowModal({
               <FieldLabel>Selected Items</FieldLabel>
               <div className="flex flex-col gap-2">
                 {form.items.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No items added yet.
-                  </p>
+                  <p className="text-muted-foreground">No items added yet.</p>
                 ) : (
-                  form.items.map((entry) => {
+                  form.items.map(entry => {
                     const isQuantityInvalid =
                       entry.quantity < 1 ||
                       entry.quantity > entry.item.quantity;
@@ -215,7 +212,7 @@ export function MultiBorrowModal({
                 id="returnDate"
                 type="date"
                 value={form.returnDate}
-                onChange={(e) => setField('returnDate', e.target.value)}
+                onChange={e => setField('returnDate', e.target.value)}
                 aria-invalid={!!errors.returnDate}
               />
               <FieldError>{errors.returnDate}</FieldError>
@@ -227,7 +224,7 @@ export function MultiBorrowModal({
               <Textarea
                 id="purpose"
                 value={form.purpose}
-                onChange={(e) => setField('purpose', e.target.value)}
+                onChange={e => setField('purpose', e.target.value)}
                 placeholder="Briefly describe how you will use this item"
                 aria-invalid={!!errors.purpose}
               />
@@ -241,11 +238,11 @@ export function MultiBorrowModal({
               <Switch
                 id="urgent-toggle"
                 checked={form.urgent}
-                onCheckedChange={(checked) => setField('urgent', checked)}
+                onCheckedChange={checked => setField('urgent', checked)}
               />
               <label
                 htmlFor="urgent-toggle"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Urgent Borrow?
               </label>

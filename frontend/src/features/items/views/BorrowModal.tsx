@@ -51,12 +51,11 @@ export function BorrowModal({
   if (!item) return null;
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleFormSubmit} className="grid gap-6">
           <DialogHeader className="items-center">
-            
-            <div className="mb-4 w-full max-w-[200px] aspect-square relative overflow-hidden rounded-md border bg-muted">
+            <div className="mb-4 w-full max-w-1/2 aspect-square relative overflow-hidden rounded-md border bg-muted">
               <img
                 src={item.avatar}
                 alt={item.name}
@@ -74,7 +73,7 @@ export function BorrowModal({
                 id="fullName"
                 type="text"
                 value={form.fullName}
-                onChange={(e) => setField('fullName', e.target.value)}
+                onChange={e => setField('fullName', e.target.value)}
                 placeholder="Juan Dela Cruz"
                 aria-invalid={!!errors.fullName}
               />
@@ -89,9 +88,9 @@ export function BorrowModal({
                   id="quantity"
                   type="number"
                   min={1}
-                  max={item.quantity} 
+                  max={item.quantity}
                   value={form.quantity}
-                  onChange={(e) => setField('quantity', Number(e.target.value))}
+                  onChange={e => setField('quantity', Number(e.target.value))}
                   placeholder="1"
                   aria-invalid={!!errors.quantity}
                 />
@@ -104,7 +103,7 @@ export function BorrowModal({
                   id="returnDate"
                   type="date"
                   value={form.returnDate}
-                  onChange={(e) => setField('returnDate', e.target.value)}
+                  onChange={e => setField('returnDate', e.target.value)}
                   aria-invalid={!!errors.returnDate}
                 />
                 <FieldError>{errors.returnDate}</FieldError>
@@ -117,7 +116,7 @@ export function BorrowModal({
               <Textarea
                 id="purpose"
                 value={form.purpose}
-                onChange={(e) => setField('purpose', e.target.value)}
+                onChange={e => setField('purpose', e.target.value)}
                 placeholder="Briefly describe usage..."
                 aria-invalid={!!errors.purpose}
               />
@@ -130,11 +129,11 @@ export function BorrowModal({
               <Switch
                 id="urgent-toggle"
                 checked={form.urgent}
-                onCheckedChange={(checked) => setField('urgent', checked)}
+                onCheckedChange={checked => setField('urgent', checked)}
               />
               <label
                 htmlFor="urgent-toggle"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
                 Urgent?
               </label>
@@ -157,3 +156,4 @@ export function BorrowModal({
     </Dialog>
   );
 }
+
