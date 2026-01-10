@@ -1,34 +1,35 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import type { Notification } from '@schemas/notificationSchema';
 
-export interface INotification extends Document {
-  recipient: mongoose.Types.ObjectId; // User ID
-  type: 'INFO' | 'WARNING' | 'SUCCESS' | 'ERROR';
-  title: string;
-  message: string;
-  isRead: boolean;
-  relatedEntityId?: mongoose.Types.ObjectId; // Transaction or Item ID
-  relatedModel?: 'Item' | 'Transaction';
+export interface INotification extends Omit<Notification, '_id' | 'recipient'>, Document {
+  recipient: mongoose.Types.ObjectId;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const NotificationSchema = new Schema(
   {
-    recipient: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    type: {
-      type: String,
-      enum: ['INFO', 'WARNING', 'SUCCESS', 'ERROR'],
-      default: 'INFO',
+    recipient: { 
+      type: Schema.Types.ObjectId, 
+      ref: 'User', 
+      required: true,
+      index: true 
+    },
+    type: { 
+      type: String, 
+      enum: ['INFO', 'WARNING', 'SUCCESS', 'ERROR'], 
+      default: 'INFO' 
     },
     title: { type: String, required: true },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
+    
     relatedEntityId: { type: Schema.Types.ObjectId },
-    relatedModel: { type: String, enum: ['Item', 'Transaction'] },
+    relatedModel: { type: String, enum: ['Item', 'Transaction'] }
   },
-  { timestamps: true }
+  { 
+    timestamps: true 
+  }
 );
 
-export const Notification = mongoose.model<INotification>(
-  'Notification',
-  NotificationSchema
-);
+export const NotificationModel = mongoose.model<INotification>('Notification', NotificationSchema);
