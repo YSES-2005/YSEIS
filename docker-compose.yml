@@ -39,7 +39,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       CHOKIDAR_USEPOLLING: true
-      API_URL: ${API_URL}
+      VITE_API_URL: ${API_URL}
     ports:
       - '5173:5173'
     volumes:
