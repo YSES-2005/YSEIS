@@ -22,17 +22,13 @@ export function LoginView({ onSuccess }: LoginViewProps) {
     submit(Object.fromEntries(formData));
   };
 
-  // TODO: Validation
-  // 1. [ ] Check if Email is empty
-  // 2. [ ] Check if Password is empty
-
   return (
     <div className="flex h-screen bg-background text-foreground p-4 overflow-hidden">
       {/* Branding Column*/}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-[#0088ff] rounded-xl">
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-primary rounded-xl">
         {/* Background orbs*/}
-        <div className="absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#00e5ff] mix-blend-screen blur-[120px] opacity-60" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#0055ff] mix-blend-screen blur-[120px] opacity-70" />
+        <div className="absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#a5f3fc] mix-blend-screen blur-[120px] opacity-20" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#3b82f6] mix-blend-screen blur-[120px] opacity-30" />
 
         <div className="relative z-10 flex w-full flex-col items-center justify-center pt-32 pb-24 px-20 text-white space-y-12">
           {/* Dashboard preview*/}
@@ -135,7 +131,7 @@ export function LoginView({ onSuccess }: LoginViewProps) {
             {/* Login button*/}
             <Button
               type="submit"
-              className="w-full bg-[#38bdf8] hover:bg-accent text-white text-base font-semibold py-6"
+              className="w-full text-white text-base font-semibold py-6"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Log in'}
