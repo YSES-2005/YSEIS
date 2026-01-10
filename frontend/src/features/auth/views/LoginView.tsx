@@ -93,7 +93,7 @@ export function LoginView({ onSuccess }: LoginViewProps) {
 
             {/* Password */}
             <Field className="space-y-2">
-              <FieldLabel className="text-slate-700">Password</FieldLabel>
+              <FieldLabel className="text-sm">Password</FieldLabel>
               <FieldGroup className="relative">
                 <Input
                   className="!text-sm py-6 px-4 focus-visible:border-primary w-full"
