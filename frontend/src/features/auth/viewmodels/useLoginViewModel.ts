@@ -1,9 +1,9 @@
 import { queryClient } from '@/lib/queryClient';
 import { userQueryKey } from '@/main';
+import { authService } from '@/services/authService';
+import { loginSchema } from '@schemas/loginSchema';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { authService } from '../services/authService';
-import { loginSchema } from '../../../../../shared/dist/loginSchema';
 
 export function useLoginViewModel({ onSuccess }: { onSuccess: () => void }) {
   const [error, setError] = useState('');
