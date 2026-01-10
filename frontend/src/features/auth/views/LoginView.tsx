@@ -81,25 +81,27 @@ export function LoginView({ onSuccess }: LoginViewProps) {
           {/* Login forms */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
-            <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input
-                className="py-6 px-4 focus-visible:border-primary"
-                name="email"
-                type="email"
-                placeholder="Enter your email address"
-              />
-            </Field>
-
-            {/* Password */}
-            <Field>
-              <FieldLabel>Password</FieldLabel>
-              <FieldGroup className="relative">
+            <FieldGroup>
+              <Field>
+                <FieldLabel>Email</FieldLabel>
                 <Input
-                  className=" py-6 px-4 focus-visible:border-primary w-full"
+                  className="py-6 px-4 focus-visible:border-primary"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  aria-invalid={!!error}
+                />
+              </Field>
+
+              {/* Password */}
+              <Field>
+                <FieldLabel>Password</FieldLabel>
+                <Input
+                  className="py-6 px-4 focus-visible:border-primary w-full"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
+                  aria-invalid={!!error}
                 />
                 <button
                   type="button"
@@ -108,8 +110,8 @@ export function LoginView({ onSuccess }: LoginViewProps) {
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
-              </FieldGroup>
-            </Field>
+              </Field>
+            </FieldGroup>
 
             {/* Error */}
             {error && (
