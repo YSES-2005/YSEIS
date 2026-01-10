@@ -145,7 +145,7 @@ export function MultiBorrowModal({
                 {form.items.length === 0 ? (
                   <p className="text-muted-foreground">No items added yet.</p>
                 ) : (
-                  form.items.map(entry => {
+                  form.items.map((entry: typeof form.items[0]) => {
                     const isQuantityInvalid =
                       entry.quantity < 1 ||
                       entry.quantity > entry.item.quantity;
