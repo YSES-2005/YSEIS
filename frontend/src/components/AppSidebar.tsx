@@ -5,21 +5,18 @@ import {
   ReplaceIcon,
   Command,
   GalleryVerticalEndIcon,
+  SettingsIcon,
+  Send,
 } from 'lucide-react';
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { OrgSwitcher } from './OrgSwitcher';
-import { Link } from '@tanstack/react-router';
+import { NavItems } from './NavItems';
+import { NavUser } from './NavUser';
 
 const data = {
   orgs: [
@@ -34,8 +31,8 @@ const data = {
       plan: 'Enterprise',
     },
   ],
-  nav: [
-    { title: 'Dashboard', url: '/', icon: HomeIcon },
+  navMain: [
+    { title: 'Dashboard', url: '/dashboard', icon: HomeIcon },
     { title: 'Inventory', url: '/inventory', icon: PackageIcon },
     { title: 'Borrow Requests', url: '/borrow', icon: ReplaceIcon },
     {
@@ -44,30 +41,30 @@ const data = {
       icon: ShoppingCartIcon,
     },
   ],
+  navSecondary: [
+    {
+      title: 'Settings',
+      url: '#',
+      icon: SettingsIcon,
+    },
+    {
+      title: 'Feedback',
+      url: '#',
+      icon: Send,
+    },
+  ],
 };
 
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="w-full">
+      <SidebarHeader className="w-full px-2 pb-4">
         <OrgSwitcher orgs={data.orgs} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.nav.map(item => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton render={<Link to={item.url} />}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavItems items={data.navMain} />
+        <NavItems items={data.navSecondary} className="mt-auto" />
+        <NavUser />
       </SidebarContent>
     </Sidebar>
   );

@@ -12,19 +12,19 @@
   --card-foreground: oklch(0.13 0.028 261.692);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.028 261.692);
-  --primary: #9BBCFD; /* type*/
-  --primary-foreground:  #0f2f6b;
+  --primary: #9bbcfd; /* type*/
+  --primary-foreground: #0f2f6b;
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.967 0.003 264.542);
   --muted-foreground: oklch(0.551 0.027 264.364);
   --accent: oklch(0.59 0.14 242);
   --accent-foreground: oklch(0.98 0.01 237);
-  --destructive: #FF6987;
-  --destructive-foreground: #6D1113;
-  --success: #C1FFA0; 
-  --success-foreground: #116D11;
-  --warning: #f7e05d; 
+  --destructive: #ff6987;
+  --destructive-foreground: #6d1113;
+  --success: #c1ffa0;
+  --success-foreground: #116d11;
+  --warning: #f7e05d;
   --warning-foreground: #6b5b00;
   --info: #f7e05d;
   --info-foreground: #0f2f6b;
@@ -148,4 +148,3 @@
     @apply font-sans;
   }
 }
-

@@ -58,8 +58,8 @@ export function ItemTable({
       .every(item => selectedItems.has(item.id!));
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <div className="space-y-4 bg-sidebar p-2 rounded-md">
+      <div className="rounded-md">
         <Table>
           <TableHeader>
             <TableRow>
@@ -139,7 +139,7 @@ export function ItemTable({
                       {item.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-muted-foreground">
                     {getCustodianDisplay(item.custodian)}
                   </TableCell>
                   <TableCell>
@@ -216,4 +216,3 @@ export function ItemTable({
 }
 
 export default ItemTable;
-

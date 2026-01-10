@@ -7,27 +7,23 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { queryClient } from './lib/queryClient.ts';
 import { QueryClientProvider, queryOptions } from '@tanstack/react-query';
 import { authService } from './services/authService.ts';
-import { AxiosError } from 'axios';
 import AutoLogoutProvider from './features/auth/components/AutoLogoutProvider.tsx';
+import { isAxiosError } from 'axios';
 
-export const userQueryKey = 'auth-user';
+export const userQueryKey = 'user';
 
-const userQueryConfig = queryOptions({
+export const userQueryConfig = queryOptions({
   queryKey: [userQueryKey],
   queryFn: async ({ signal }) => {
-    try {
-      return await authService.getCurrentUser({ signal });
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 401) {
-          return null;
-        }
-      }
-
-      throw error;
-    }
+    return await authService.getCurrentUser({ signal });
   },
   staleTime: Infinity,
+  retry: (failureCount, error) => {
+    if (isAxiosError(error) && error.response?.status === 401) {
+      return false;
+    }
+    return failureCount < 3;
+  },
 });
 
 export const router = createRouter({

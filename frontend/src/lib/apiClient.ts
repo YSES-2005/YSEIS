@@ -1,4 +1,3 @@
-import { router } from '@/main';
 import Axios, { type InternalAxiosRequestConfig } from 'axios';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
@@ -25,18 +24,6 @@ apiClient.interceptors.response.use(
   error => {
     // TODO: add toast
     // const message = error.response?.data?.message || error.message;
-
-    if (error.response?.status === 401) {
-      const searchParams = new URLSearchParams();
-      const redirectTo =
-        searchParams.get('redirectTo') || window.location.pathname;
-      router.navigate({
-        to: '/sign-in',
-        params: {
-          redirectTo: redirectTo,
-        },
-      });
-    }
 
     return Promise.reject(error);
   }

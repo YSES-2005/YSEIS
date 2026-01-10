@@ -20,11 +20,8 @@ export const authService = {
   },
 
   async getCurrentUser(config?: AxiosRequestConfig): Promise<User | null> {
-    try {
-      const data = (await apiClient.get<User>('/users/me', config)) as unknown as User;
-      return data;
-    } catch {
-      return null;
-    }
+    const { data } = await apiClient.get('/users/me', config);
+
+    return data;
   },
 };

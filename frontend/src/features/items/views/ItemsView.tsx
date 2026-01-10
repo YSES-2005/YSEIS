@@ -67,7 +67,7 @@ export function ItemsView() {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
 
-  const availableItems = items.filter((item) => item.status === 'available');
+  const availableItems = items.filter(item => item.status === 'available');
 
   const handleBorrowSubmit = (data: BorrowFormData) => {
     console.log('Borrow request:', data);
@@ -116,7 +116,7 @@ export function ItemsView() {
   });
 
   const handleOpenMultiBorrow = () => {
-    const itemsToAdd = items.filter((item) => selectedItems.has(item.id!));
+    const itemsToAdd = items.filter(item => selectedItems.has(item.id!));
     syncWithSelection(itemsToAdd);
     setMultiBorrowOpen(true);
   };
@@ -129,7 +129,7 @@ export function ItemsView() {
   };
 
   const handleToggleSelection = (itemId: string) => {
-    setSelectedItems((prev) => {
+    setSelectedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
@@ -141,19 +141,19 @@ export function ItemsView() {
   };
 
   const handleToggleAll = () => {
-    const allSelected = availableItems.every((item) =>
+    const allSelected = availableItems.every(item =>
       selectedItems.has(item.id!)
     );
     if (allSelected) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(availableItems.map((item) => item.id!)));
+      setSelectedItems(new Set(availableItems.map(item => item.id!)));
     }
   };
 
   const handleAddItemToMultiBorrow = (item: Item) => {
     addItem(item);
-    setSelectedItems((prev) => new Set(prev).add(item.id!));
+    setSelectedItems(prev => new Set(prev).add(item.id!));
     setShowCheckboxes(true);
     setMultiBorrowOpen(false);
   };
@@ -197,7 +197,7 @@ export function ItemsView() {
             <Search className="absolute left-2 top-1.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Search"
               className="pl-8"
             />
@@ -224,7 +224,7 @@ export function ItemsView() {
                     <Input
                       id="custodian"
                       value={tempCustodian}
-                      onChange={(e) => setTempCustodian(e.target.value)}
+                      onChange={e => setTempCustodian(e.target.value)}
                       placeholder="Enter custodian name"
                     />
                   </Field>
@@ -233,7 +233,7 @@ export function ItemsView() {
                     <FieldLabel htmlFor="type">Type</FieldLabel>
                     <Select
                       value={tempType || 'any'}
-                      onValueChange={(val) =>
+                      onValueChange={val =>
                         setTempType(val === 'any' ? null : val)
                       }
                     >
@@ -242,7 +242,7 @@ export function ItemsView() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
-                        {uniqueTypes.map((type) => (
+                        {uniqueTypes.map(type => (
                           <SelectItem key={type} value={type}>
                             {type.charAt(0).toUpperCase() +
                               type.slice(1).toLowerCase()}
@@ -256,7 +256,7 @@ export function ItemsView() {
                     <FieldLabel htmlFor="status">Status</FieldLabel>
                     <Select
                       value={tempStatus || 'any'}
-                      onValueChange={(val) =>
+                      onValueChange={val =>
                         setTempStatus(
                           val === 'any'
                             ? null
@@ -281,13 +281,13 @@ export function ItemsView() {
                       <Input
                         type="date"
                         value={tempStartDate}
-                        onChange={(e) => setTempStartDate(e.target.value)}
+                        onChange={e => setTempStartDate(e.target.value)}
                       />
                       <span className="text-muted-foreground text-sm">to</span>
                       <Input
                         type="date"
                         value={tempEndDate}
-                        onChange={(e) => setTempEndDate(e.target.value)}
+                        onChange={e => setTempEndDate(e.target.value)}
                       />
                     </div>
                   </Field>
@@ -351,11 +351,12 @@ export function ItemsView() {
         setField={setMultiBorrowField}
         addItem={handleAddItemToMultiBorrow}
         updateItemQuantity={updateItemQuantity}
-        currentImageIndex={0} 
-        setCurrentImageIndex={() => {}} 
+        currentImageIndex={0}
+        setCurrentImageIndex={() => {}}
       />
     </div>
   );
 }
 
 export default ItemsView;
+

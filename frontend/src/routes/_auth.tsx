@@ -2,9 +2,15 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: async ({ context, location }) => {
-    const user = await context.getUser();
+    try {
+      const user = await context.getUser();
 
-    if (!user) {
+      if (!user) {
+        throw new Error('No user found');
+      }
+
+      return { user };
+    } catch {
       throw redirect({
         to: '/sign-in',
         search: {
@@ -12,8 +18,6 @@ export const Route = createFileRoute('/_auth')({
         },
       });
     }
-
-    return { user };
   },
   component: () => <Outlet />,
 });

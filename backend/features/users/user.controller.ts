@@ -12,7 +12,7 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
     if (!user)
       return res.status(404).json({ user: null, message: 'User not found' });
 
-    return res.json({ user });
+    return res.json({ data: user });
   } catch (err) {
     next(err);
   }
