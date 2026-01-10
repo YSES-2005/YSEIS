@@ -185,7 +185,7 @@ export function ItemsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="h-6 w-6" />
@@ -205,7 +205,7 @@ export function ItemsView() {
 
           <Popover open={showFilterPanel} onOpenChange={setShowFilterPanel}>
             <PopoverTrigger
-              render={<Button variant="outline" size="sm" />}
+              render={<Button variant="outline" />}
               onClick={() => {
                 if (!showFilterPanel) handleOpenFilterPanel();
               }}
@@ -304,8 +304,8 @@ export function ItemsView() {
 
           <Button
             onClick={handleOpenMultiBorrow}
-            disabled={availableItems.length === 0}
-            variant={availableItems.length === 0 ? 'secondary' : 'default'}
+            disabled={availableItems.length == 0}
+            variant={availableItems.length === 0 ? 'ghost' : 'neutral'}
           >
             <Layers className="mr-2 h-4 w-4" />
             Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
@@ -359,4 +359,3 @@ export function ItemsView() {
 }
 
 export default ItemsView;
-

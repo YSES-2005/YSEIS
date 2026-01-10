@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import type { LucideIcon } from 'lucide-react';
 
 export function NavItems({
@@ -29,7 +29,11 @@ export function NavItems({
         <SidebarMenu>
           {items.map(item => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton render={<Link to={item.url} />}>
+              <SidebarMenuButton
+                render={
+                  <Link to={item.url} activeProps={{ className: 'bg-muted' }} />
+                }
+              >
                 <item.icon />
                 <span>{item.title}</span>
               </SidebarMenuButton>

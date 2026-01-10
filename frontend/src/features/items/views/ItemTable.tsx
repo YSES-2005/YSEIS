@@ -1,6 +1,6 @@
 'use client';
 
-import type { ItemPopulated as Item } from '@schemas/itemSchema';
+import type { ItemPopulated as Item, ItemPopulated } from '@schemas/itemSchema';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -19,10 +19,10 @@ import {
 } from '@/components/ui/pagination';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CircleArrowDown } from 'lucide-react';
 
 type Props = {
-  items: Item[];
+  items: ItemPopulated[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -85,13 +85,6 @@ export function ItemTable({
               const isAvailable = item.status === 'available';
               const itemId = item.id!;
 
-              const typeLower = (item.type || '').toLowerCase();
-              const typeVariant = typeLower.includes('suppl')
-                ? 'secondary'
-                : typeLower.includes('prop')
-                  ? 'outline'
-                  : 'default';
-
               return (
                 <TableRow
                   key={itemId}
@@ -131,20 +124,21 @@ export function ItemTable({
                     </div>
                   </TableCell>
                   <TableCell>{item.quantity}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={typeVariant}
-                      className="capitalize shadow-none"
-                    >
-                      {item.type}
+                  <TableCell className="capitalize">{item.type}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    <Badge variant={'outline'} className="pl-0.5 pr-1.5">
+                      <Avatar className="size-4 rounded-full">
+                        <AvatarImage src={item.custodian.avatar} />
+                        <AvatarFallback className="rounded-lg text-[0.6rem]">
+                          {item.custodian.name.slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {getCustodianDisplay(item.custodian)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {getCustodianDisplay(item.custodian)}
-                  </TableCell>
                   <TableCell>
                     <Badge
-                      variant={isAvailable ? 'outline' : 'destructive'}
+                      variant={isAvailable ? 'success' : 'destructive'}
                       className="shadow-none"
                     >
                       {isAvailable ? 'Available' : 'Unavailable'}
@@ -152,11 +146,11 @@ export function ItemTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
-                      variant="default"
-                      size="sm"
+                      variant="outline"
                       disabled={!isAvailable}
                       onClick={() => onBorrow(item)}
                     >
+                      <CircleArrowDown />
                       Borrow
                     </Button>
                   </TableCell>
