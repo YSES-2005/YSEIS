@@ -101,7 +101,7 @@ export function useMultiBorrowViewModel({
     const fieldErrors = result.error.flatten().fieldErrors;
     const extractedErrors = Object.fromEntries(
       Object.entries(fieldErrors).map(
-        ([key, val]: [string, string[] | undefined]) => [key, val?.[0]]
+        ([key, val]: [string, unknown]) => [key, (val as string[] | undefined)?.[0]]
       )
     ) as MultiBorrowValidationErrors;
     setErrors(extractedErrors);
@@ -127,8 +127,8 @@ export function useMultiBorrowViewModel({
   };
 
   const syncWithSelection = (selectedItems: Item[]) => {
-    setForm(prev => {
-      const currentItemsMap = new Map(prev.items.map(i => [i.item.id, i]));
+    setForm((prev: MultiBorrowFormState) => {
+      const currentItemsMap = new Map(prev.items.map((i: MultiBorrowItemEntry) => [i.item.id, i]));
       const newItems = selectedItems.map(item => {
         const existing = currentItemsMap.get(item.id);
         if (existing) return existing;
