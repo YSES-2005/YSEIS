@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { authService } from '../../../services/authService';
 import { router } from '@/main';
+import { useLogout } from '@/hooks/useLogout';
+import { toast } from 'sonner';
 
 const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; //logout in half an hour
 const WARNING_DURATION =
@@ -11,6 +12,7 @@ export default function AutoLogoutProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const logout = useLogout();
   const warningTimer = useRef<number | null>(null);
   const logoutTimer = useRef<number | null>(null);
 
@@ -27,17 +29,12 @@ export default function AutoLogoutProvider({
 
   const doLogout = async () => {
     clearTimers();
-    try {
-      await authService.logout();
-    } catch (e) {
-      // TODO: toast error
-    }
+    logout.mutate();
     router.navigate({ to: '/sign-in' });
   };
 
-  // TODO: implement warning modal 
   const showWarning = () => {
-    console.warn('You will be logged out due to inactivity.');
+    toast.warning('You will be logged out due to inactivity.');
   };
 
   const resetTimers = () => {
