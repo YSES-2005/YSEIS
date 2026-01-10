@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { QueryClient } from '@tanstack/react-query';
 import { type User } from '@schemas/userSchema';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { Toaster } from '@/components/ui/sonner';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -15,6 +16,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {/* Your Navbar would go here */}
       <ThemeProvider>
         <Outlet />
+        <Toaster />
       </ThemeProvider>
 
       {import.meta.env.DEV && (

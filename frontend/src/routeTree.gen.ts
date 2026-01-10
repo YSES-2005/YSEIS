@@ -8,100 +8,100 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as SignInRouteImport } from './routes/sign-in';
-import { Route as AuthRouteImport } from './routes/_auth';
-import { Route as IndexRouteImport } from './routes/index';
-import { Route as AuthDashboardRouteImport } from './routes/_auth/_dashboard';
-import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions';
-import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory';
-import { Route as AuthDashboardDashboardRouteImport } from './routes/_auth/_dashboard/dashboard';
-import { Route as AuthDashboardBorrowRouteImport } from './routes/_auth/_dashboard/borrow';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthDashboardRouteImport } from './routes/_auth/_dashboard'
+import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions'
+import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory'
+import { Route as AuthDashboardDashboardRouteImport } from './routes/_auth/_dashboard/dashboard'
+import { Route as AuthDashboardBorrowRouteImport } from './routes/_auth/_dashboard/borrow'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthDashboardTransactionsRoute =
   AuthDashboardTransactionsRouteImport.update({
     id: '/transactions',
     path: '/transactions',
     getParentRoute: () => AuthDashboardRoute,
-  } as any);
+  } as any)
 const AuthDashboardInventoryRoute = AuthDashboardInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
   getParentRoute: () => AuthDashboardRoute,
-} as any);
+} as any)
 const AuthDashboardDashboardRoute = AuthDashboardDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthDashboardRoute,
-} as any);
+} as any)
 const AuthDashboardBorrowRoute = AuthDashboardBorrowRouteImport.update({
   id: '/borrow',
   path: '/borrow',
   getParentRoute: () => AuthDashboardRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/sign-in': typeof SignInRoute;
-  '/borrow': typeof AuthDashboardBorrowRoute;
-  '/dashboard': typeof AuthDashboardDashboardRoute;
-  '/inventory': typeof AuthDashboardInventoryRoute;
-  '/transactions': typeof AuthDashboardTransactionsRoute;
+  '/': typeof IndexRoute
+  '/sign-in': typeof SignInRoute
+  '/borrow': typeof AuthDashboardBorrowRoute
+  '/dashboard': typeof AuthDashboardDashboardRoute
+  '/inventory': typeof AuthDashboardInventoryRoute
+  '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/sign-in': typeof SignInRoute;
-  '/borrow': typeof AuthDashboardBorrowRoute;
-  '/dashboard': typeof AuthDashboardDashboardRoute;
-  '/inventory': typeof AuthDashboardInventoryRoute;
-  '/transactions': typeof AuthDashboardTransactionsRoute;
+  '/': typeof IndexRoute
+  '/sign-in': typeof SignInRoute
+  '/borrow': typeof AuthDashboardBorrowRoute
+  '/dashboard': typeof AuthDashboardDashboardRoute
+  '/inventory': typeof AuthDashboardInventoryRoute
+  '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
-  '/_auth': typeof AuthRouteWithChildren;
-  '/sign-in': typeof SignInRoute;
-  '/_auth/_dashboard': typeof AuthDashboardRouteWithChildren;
-  '/_auth/_dashboard/borrow': typeof AuthDashboardBorrowRoute;
-  '/_auth/_dashboard/dashboard': typeof AuthDashboardDashboardRoute;
-  '/_auth/_dashboard/inventory': typeof AuthDashboardInventoryRoute;
-  '/_auth/_dashboard/transactions': typeof AuthDashboardTransactionsRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/sign-in': typeof SignInRoute
+  '/_auth/_dashboard': typeof AuthDashboardRouteWithChildren
+  '/_auth/_dashboard/borrow': typeof AuthDashboardBorrowRoute
+  '/_auth/_dashboard/dashboard': typeof AuthDashboardDashboardRoute
+  '/_auth/_dashboard/inventory': typeof AuthDashboardInventoryRoute
+  '/_auth/_dashboard/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/sign-in'
     | '/borrow'
     | '/dashboard'
     | '/inventory'
-    | '/transactions';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/transactions'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sign-in'
     | '/borrow'
     | '/dashboard'
     | '/inventory'
-    | '/transactions';
+    | '/transactions'
   id:
     | '__root__'
     | '/'
@@ -111,81 +111,81 @@ export interface FileRouteTypes {
     | '/_auth/_dashboard/borrow'
     | '/_auth/_dashboard/dashboard'
     | '/_auth/_dashboard/inventory'
-    | '/_auth/_dashboard/transactions';
-  fileRoutesById: FileRoutesById;
+    | '/_auth/_dashboard/transactions'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AuthRoute: typeof AuthRouteWithChildren;
-  SignInRoute: typeof SignInRoute;
+  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  SignInRoute: typeof SignInRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/sign-in': {
-      id: '/sign-in';
-      path: '/sign-in';
-      fullPath: '/sign-in';
-      preLoaderRoute: typeof SignInRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
-      id: '/_auth';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof AuthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/_dashboard': {
-      id: '/_auth/_dashboard';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof AuthDashboardRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
+      id: '/_auth/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/_dashboard/transactions': {
-      id: '/_auth/_dashboard/transactions';
-      path: '/transactions';
-      fullPath: '/transactions';
-      preLoaderRoute: typeof AuthDashboardTransactionsRouteImport;
-      parentRoute: typeof AuthDashboardRoute;
-    };
+      id: '/_auth/_dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthDashboardTransactionsRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
     '/_auth/_dashboard/inventory': {
-      id: '/_auth/_dashboard/inventory';
-      path: '/inventory';
-      fullPath: '/inventory';
-      preLoaderRoute: typeof AuthDashboardInventoryRouteImport;
-      parentRoute: typeof AuthDashboardRoute;
-    };
+      id: '/_auth/_dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthDashboardInventoryRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
     '/_auth/_dashboard/dashboard': {
-      id: '/_auth/_dashboard/dashboard';
-      path: '/dashboard';
-      fullPath: '/dashboard';
-      preLoaderRoute: typeof AuthDashboardDashboardRouteImport;
-      parentRoute: typeof AuthDashboardRoute;
-    };
+      id: '/_auth/_dashboard/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthDashboardDashboardRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
     '/_auth/_dashboard/borrow': {
-      id: '/_auth/_dashboard/borrow';
-      path: '/borrow';
-      fullPath: '/borrow';
-      preLoaderRoute: typeof AuthDashboardBorrowRouteImport;
-      parentRoute: typeof AuthDashboardRoute;
-    };
+      id: '/_auth/_dashboard/borrow'
+      path: '/borrow'
+      fullPath: '/borrow'
+      preLoaderRoute: typeof AuthDashboardBorrowRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
   }
 }
 
 interface AuthDashboardRouteChildren {
-  AuthDashboardBorrowRoute: typeof AuthDashboardBorrowRoute;
-  AuthDashboardDashboardRoute: typeof AuthDashboardDashboardRoute;
-  AuthDashboardInventoryRoute: typeof AuthDashboardInventoryRoute;
-  AuthDashboardTransactionsRoute: typeof AuthDashboardTransactionsRoute;
+  AuthDashboardBorrowRoute: typeof AuthDashboardBorrowRoute
+  AuthDashboardDashboardRoute: typeof AuthDashboardDashboardRoute
+  AuthDashboardInventoryRoute: typeof AuthDashboardInventoryRoute
+  AuthDashboardTransactionsRoute: typeof AuthDashboardTransactionsRoute
 }
 
 const AuthDashboardRouteChildren: AuthDashboardRouteChildren = {
@@ -193,27 +193,27 @@ const AuthDashboardRouteChildren: AuthDashboardRouteChildren = {
   AuthDashboardDashboardRoute: AuthDashboardDashboardRoute,
   AuthDashboardInventoryRoute: AuthDashboardInventoryRoute,
   AuthDashboardTransactionsRoute: AuthDashboardTransactionsRoute,
-};
+}
 
 const AuthDashboardRouteWithChildren = AuthDashboardRoute._addFileChildren(
-  AuthDashboardRouteChildren
-);
+  AuthDashboardRouteChildren,
+)
 
 interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRouteWithChildren;
+  AuthDashboardRoute: typeof AuthDashboardRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRouteWithChildren,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   SignInRoute: SignInRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

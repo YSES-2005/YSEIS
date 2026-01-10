@@ -1,4 +1,5 @@
 import Axios, { type InternalAxiosRequestConfig } from 'axios';
+import { toast } from 'sonner';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
@@ -22,8 +23,8 @@ apiClient.interceptors.response.use(
     return response.data;
   },
   error => {
-    // TODO: add toast
-    // const message = error.response?.data?.message || error.message;
+    const message = error.response?.data?.message || error.message;
+    toast.error(message);
 
     return Promise.reject(error);
   }
