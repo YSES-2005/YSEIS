@@ -81,10 +81,10 @@ export function LoginView({ onSuccess }: LoginViewProps) {
           {/* Login forms */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
-            <Field className="space-y-2">
-              <FieldLabel className="text-sm">Email</FieldLabel>
+            <Field>
+              <FieldLabel>Email</FieldLabel>
               <Input
-                className="!text-sm py-6 px-4 focus-visible:border-primary"
+                className="py-6 px-4 focus-visible:border-primary"
                 name="email"
                 type="email"
                 placeholder="Enter your email address"
@@ -92,11 +92,11 @@ export function LoginView({ onSuccess }: LoginViewProps) {
             </Field>
 
             {/* Password */}
-            <Field className="space-y-2">
-              <FieldLabel className="text-sm">Password</FieldLabel>
+            <Field>
+              <FieldLabel>Password</FieldLabel>
               <FieldGroup className="relative">
                 <Input
-                  className="!text-sm py-6 px-4 focus-visible:border-primary w-full"
+                  className=" py-6 px-4 focus-visible:border-primary w-full"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
@@ -119,7 +119,7 @@ export function LoginView({ onSuccess }: LoginViewProps) {
             {/* Login button*/}
             <Button
               type="submit"
-              className="w-full text-white text-base font-semibold py-6"
+              className="w-full font-semibold py-6"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Log in'}
