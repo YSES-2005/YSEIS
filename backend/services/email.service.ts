@@ -28,3 +28,4 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     console.error('Email failed:', (error as Error).message);
   }
 };
+
