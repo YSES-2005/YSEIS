@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import type { Notification } from '@schemas/notificationSchema';
 
 export interface INotification extends Omit<Notification, '_id' | 'recipient'>, Document {
   recipient: mongoose.Types.ObjectId;
