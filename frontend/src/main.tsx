@@ -6,7 +6,7 @@ import { routeTree } from './routeTree.gen.ts';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { queryClient } from './lib/queryClient.ts';
 import { QueryClientProvider, queryOptions } from '@tanstack/react-query';
-import { authService } from './features/auth/services/authService.ts';
+import { authService } from './services/authService.ts';
 import { AxiosError } from 'axios';
 import AutoLogoutProvider from './features/auth/components/AutoLogoutProvider.tsx';
 
