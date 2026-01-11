@@ -6,6 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import logo from '@/assets/logo.png';
 import illustration from '@/assets/dashboard.png';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 
 interface LoginViewProps {
   onSuccess: () => void;
@@ -96,20 +102,24 @@ export function LoginView({ onSuccess }: LoginViewProps) {
               {/* Password */}
               <Field>
                 <FieldLabel>Password</FieldLabel>
-                <Input
-                  className="py-6 px-4 focus-visible:border-primary w-full"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  aria-invalid={!!error}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                <InputGroup className="py-6 px-1 focus-visible:border-primary w-full">
+                  <InputGroupInput
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    aria-invalid={!!error}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff /> : <Eye />}
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
             </FieldGroup>
 
