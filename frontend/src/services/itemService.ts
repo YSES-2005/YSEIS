@@ -1,29 +1,22 @@
-import { apiClient } from '@/lib/apiClient';
+import { api } from '@/lib/apiClient';
 import type { ItemPopulated } from '@schemas/itemSchema';
-
-type ApiResponse<T> = { 
-  data: T;
-  pagination?: {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    limit: number;
-  };
-};
+import type { ApiResponse } from '@schemas/apiTypes';
 
 export type GetItemsParams = {
   search?: string;
   status?: 'available' | 'unavailable';
   type?: string | null;
   custodian?: string;
-  startDate?: string; 
+  startDate?: string;
   endDate?: string;
   page?: number;
   limit?: number;
 };
 
 export const itemService = {
-  async getItems(params?: GetItemsParams): Promise<ApiResponse<ItemPopulated[]>> {
+  async getItems(
+    params?: GetItemsParams
+  ): Promise<ApiResponse<ItemPopulated[]>> {
     const query: Record<string, string | number> = {};
     if (params?.search) query.search = params.search;
     if (params?.status) query.status = params.status;
@@ -34,16 +27,13 @@ export const itemService = {
     if (params?.page) query.page = params.page;
     if (params?.limit) query.limit = params.limit;
 
-    const res = await apiClient.get<ApiResponse<ItemPopulated[]>>('/items', {
+    const response = await api.get<ApiResponse<ItemPopulated[]>>('/items', {
       params: query,
     });
 
-    const response = res as unknown as ApiResponse<ItemPopulated[]>;
     return {
       data: Array.isArray(response.data) ? response.data : [],
       pagination: response.pagination,
     };
   },
 };
-
-export default itemService;

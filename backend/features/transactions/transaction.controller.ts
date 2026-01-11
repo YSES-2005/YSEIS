@@ -3,15 +3,19 @@ import TransactionModel from './transaction.model';
 import { BadRequestError, NotFoundError, ForbiddenError } from '../../errors';
 
 // GET /api/transactions?status=pending this is for admin
-export const getTransactions = async (req: Request, res: Response, next: NextFunction) => {
+export const getTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const status = req.query.status as string | undefined;
     const filter = status ? { approvalStatus: status } : {};
-    
+
     const transactions = await TransactionModel.find(filter)
       .populate('item')
       .populate('borrower', '-password');
-      
+
     res.json({ transactions });
   } catch (error) {
     next(error);
@@ -19,13 +23,17 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
 };
 
 // GET /api/transactions/me (authenticated user)
-export const getTransactionsForMe = async (req: Request, res: Response, next: NextFunction) => {
+export const getTransactionsForMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const uid = req.userId;
     const transactions = await TransactionModel.find({ borrower: uid })
       .populate('item')
       .populate('borrower', '-password');
-      
+
     res.json({ transactions });
   } catch (error) {
     next(error);
@@ -33,17 +41,21 @@ export const getTransactionsForMe = async (req: Request, res: Response, next: Ne
 };
 
 // GET /api/transactions/:id
-export const getTransactionById = async (req: Request, res: Response, next: NextFunction) => {
+export const getTransactionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const transaction = await TransactionModel.findById(id)
       .populate('item')
       .populate('borrower', '-password');
-      
+
     if (!transaction) {
       throw new NotFoundError('Transaction not found');
     }
-    
+
     res.json({ transaction });
   } catch (error) {
     next(error);
@@ -51,12 +63,21 @@ export const getTransactionById = async (req: Request, res: Response, next: Next
 };
 
 // POST /api/transactions this is for creating borrow request
-export const createTransaction = async (req: Request, res: Response, next: NextFunction) => {
+export const createTransaction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { item, purpose, urgency, returnDate } = req.body;
     const borrower = (req.userId as string) ?? req.body.borrower;
 
-    console.debug('[createTransaction] borrower:', borrower, 'typeof:', typeof borrower);
+    console.debug(
+      '[createTransaction] borrower:',
+      borrower,
+      'typeof:',
+      typeof borrower
+    );
 
     const transaction = new TransactionModel({
       item,
@@ -64,7 +85,7 @@ export const createTransaction = async (req: Request, res: Response, next: NextF
       purpose,
       urgency,
       returnDate,
-      approvalStatus: 'pending'
+      approvalStatus: 'pending',
     });
 
     await transaction.save();
@@ -74,8 +95,12 @@ export const createTransaction = async (req: Request, res: Response, next: NextF
   }
 };
 
-// PUT /api/transactions/:id, admin can update status of the item 
-export const updateTransaction = async (req: Request, res: Response, next: NextFunction) => {
+// PUT /api/transactions/:id, admin can update status of the item
+export const updateTransaction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -101,7 +126,7 @@ export const updateTransaction = async (req: Request, res: Response, next: NextF
       transaction.returned = true;
       transaction.returnedAt = new Date();
     }
-    
+
     if (payload.purpose) transaction.purpose = payload.purpose;
     if (payload.returnDate) transaction.returnDate = payload.returnDate;
     if (payload.urgency !== undefined) transaction.urgency = payload.urgency;
@@ -113,4 +138,10 @@ export const updateTransaction = async (req: Request, res: Response, next: NextF
   }
 };
 
-export default { getTransactions, getTransactionsForMe, getTransactionById, createTransaction, updateTransaction };
+export default {
+  getTransactions,
+  getTransactionsForMe,
+  getTransactionById,
+  createTransaction,
+  updateTransaction,
+};

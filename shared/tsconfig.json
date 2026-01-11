@@ -1,17 +1,12 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"esModuleInterop": true,
-		"declaration": true,
-		"outDir": "./dist",
-		"module": "ESNext",
-		"moduleResolution": "node"
-	},
-	"include": [
-		"schemas/**/*"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
-	]
+  "compilerOptions": {
+    "target": "ES2022",
+    "esModuleInterop": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "module": "ESNext",
+    "moduleResolution": "node"
+  },
+  "include": ["schemas/**/*", "*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

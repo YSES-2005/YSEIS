@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import itemService from '@/services/itemService';
+import { itemService } from '@/services/itemService';
 
 export function useItemsViewModel() {
   const [search, setSearch] = useState('');
