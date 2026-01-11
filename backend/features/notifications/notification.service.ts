@@ -31,7 +31,6 @@ export const notify = async (
 
     if (options?.shouldEmail) {
       const user = await UserModel.findById(recipientId);
-      // baguhin nyo nlng yung message format
       if (user && user.email) {
         const htmlContent = `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
