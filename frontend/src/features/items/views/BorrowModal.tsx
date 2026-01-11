@@ -20,12 +20,15 @@ import {
   FieldLabel,
   FieldError,
 } from '@/components/ui/field';
+import { Spinner } from '@/components/ui/spinner';
+import { DatePicker } from '@/components/ui/date-picker';
 
 type Props = {
   open: boolean;
   item: Item | null;
   form: BorrowFormData;
   errors: Partial<Record<keyof BorrowFormData, string>>;
+  isBorrowing: boolean;
   onSubmit: () => void;
   onClose: () => void;
   setField: <K extends keyof BorrowFormData>(
@@ -39,6 +42,7 @@ export function BorrowModal({
   item,
   form,
   errors,
+  isBorrowing,
   onSubmit,
   onClose,
   setField,
@@ -66,20 +70,6 @@ export function BorrowModal({
           </DialogHeader>
 
           <FieldGroup>
-            {/* Full Name */}
-            <Field>
-              <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-              <Input
-                id="fullName"
-                type="text"
-                value={form.fullName}
-                onChange={e => setField('fullName', e.target.value)}
-                placeholder="Juan Dela Cruz"
-                aria-invalid={!!errors.fullName}
-              />
-              <FieldError>{errors.fullName}</FieldError>
-            </Field>
-
             {/* Quantity and Date Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field>
@@ -99,11 +89,10 @@ export function BorrowModal({
 
               <Field>
                 <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
-                <Input
-                  id="returnDate"
-                  type="date"
+                <DatePicker
                   value={form.returnDate}
-                  onChange={e => setField('returnDate', e.target.value)}
+                  onChange={date => setField('returnDate', date)}
+                  disabled={{ before: new Date() }}
                   aria-invalid={!!errors.returnDate}
                 />
                 <FieldError>{errors.returnDate}</FieldError>
@@ -147,6 +136,7 @@ export function BorrowModal({
                 type="submit"
                 variant={form.urgent ? 'destructive' : 'default'}
               >
+                {isBorrowing && <Spinner />}
                 {form.urgent ? 'Urgent Borrow' : 'Submit'}
               </Button>
             </div>

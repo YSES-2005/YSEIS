@@ -19,7 +19,6 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -29,7 +28,8 @@ import {
   FieldLabel,
   FieldError,
 } from '@/components/ui/field';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, X } from 'lucide-react';
+import { DatePicker } from '@/components/ui/date-picker';
 
 type Props = {
   open: boolean;
@@ -127,29 +127,12 @@ export function MultiBorrowModal({
 
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-              <Input
-                id="fullName"
-                type="text"
-                value={form.fullName}
-                onChange={e => setField('fullName', e.target.value)}
-                placeholder="Juan Dela Cruz"
-                aria-invalid={!!errors.fullName}
-              />
-              <FieldError>{errors.fullName}</FieldError>
-            </Field>
-
-            <Field>
               <FieldLabel>Selected Items</FieldLabel>
               <div className="flex flex-col gap-2">
                 {form.items.length === 0 ? (
                   <p className="text-muted-foreground">No items added yet.</p>
                 ) : (
                   form.items.map((entry: (typeof form.items)[0]) => {
-                    const isQuantityInvalid =
-                      entry.quantity < 1 ||
-                      entry.quantity > entry.item.quantity;
-
                     return (
                       <Card
                         key={entry.item.id}
@@ -159,13 +142,6 @@ export function MultiBorrowModal({
                           <span className="font-medium text-sm">
                             {entry.item.name}
                           </span>
-                          {isQuantityInvalid && (
-                            <p className="text-[0.8rem] font-medium text-destructive">
-                              {entry.quantity < 1
-                                ? 'Min 1'
-                                : `Max ${entry.item.quantity}`}
-                            </p>
-                          )}
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -178,7 +154,11 @@ export function MultiBorrowModal({
                               updateItemQuantity(entry.item.id!, -1)
                             }
                           >
-                            <Minus className="h-4 w-4" />
+                            {entry.quantity === 1 ? (
+                              <X className="size-4" />
+                            ) : (
+                              <Minus className="size-4" />
+                            )}
                           </Button>
 
                           <span className="w-6 text-center text-sm font-medium">
@@ -190,6 +170,7 @@ export function MultiBorrowModal({
                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
+                            disabled={entry.quantity >= entry.item.quantity}
                             onClick={() =>
                               updateItemQuantity(entry.item.id!, 1)
                             }
@@ -208,11 +189,10 @@ export function MultiBorrowModal({
             {/* Return Date */}
             <Field>
               <FieldLabel htmlFor="returnDate">Return Date</FieldLabel>
-              <Input
-                id="returnDate"
-                type="date"
+              <DatePicker
                 value={form.returnDate}
-                onChange={e => setField('returnDate', e.target.value)}
+                onChange={date => setField('returnDate', date)}
+                disabled={{ before: new Date() }}
                 aria-invalid={!!errors.returnDate}
               />
               <FieldError>{errors.returnDate}</FieldError>
