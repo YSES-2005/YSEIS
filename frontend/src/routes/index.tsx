@@ -1,6 +1,5 @@
-import { ComponentExample } from '@/components/component-example';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  component: ComponentExample,
+  loader: () => redirect({ to: '/dashboard' }),
 });
