@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import TransactionModel from './transaction.model';
+import ItemModel from '../items/item.model';
 import { UserModel } from '../users/user.model';
 import { notify } from '../notifications/notification.service';
 import { BadRequestError, NotFoundError, ForbiddenError } from '../../errors';
@@ -101,7 +102,12 @@ export const createTransaction = async (
     });
 
     await transaction.save();
-
+    const itemStatus = await ItemModel.findById(item);
+    if (itemStatus && itemStatus.status === 'unavailable') {
+      throw new BadRequestError(
+        'Cannot create transaction: Item is unavailable.'
+      );
+    }
     const admins = await UserModel.find({ role: 'admin' });
     if (admins.length > 0) {
       await transaction.populate(['item', 'borrower']);
@@ -137,6 +143,7 @@ export const createTransaction = async (
   }
 };
 
+// PUT /api/transactions/:id (Update status / Return item)
 export const updateTransaction = async (
   req: AuthRequest,
   res: Response,
@@ -167,9 +174,29 @@ export const updateTransaction = async (
         throw new ForbiddenError('Admin required to change status');
       }
 
+      if (
+        payload.approvalStatus === 'approved' &&
+        transaction.approvalStatus !== 'approved'
+      ) {
+        const itemToUpdate = await ItemModel.findById(transaction.item);
+        if (!itemToUpdate)
+          throw new NotFoundError('Item record not found in inventory');
+
+        if (
+          itemToUpdate.quantity < 1 ||
+          itemToUpdate.status === 'unavailable'
+        ) {
+          throw new BadRequestError(
+            `Cannot approve: "${itemToUpdate.name}" is out of stock.`
+          );
+        }
+
+        itemToUpdate.quantity -= 1;
+        await itemToUpdate.save();
+      }
+
       transaction.approvalStatus = payload.approvalStatus;
 
-      // notify the user if their transaction is approved
       if (payload.approvalStatus === 'approved') {
         await notify(
           populatedBorrower._id.toString(),
@@ -193,19 +220,39 @@ export const updateTransaction = async (
       if (populatedBorrower._id.toString() !== uid && role !== 'admin') {
         throw new ForbiddenError('Not allowed to return this item');
       }
-      transaction.returned = true;
-      transaction.returnedAt = new Date();
 
-      // send an email to all admins that the item is back
-      const admin = await UserModel.findOne({ role: 'admin' });
-      if (admin) {
-        await notify(
-          (admin._id as Types.ObjectId).toString(),
-          'Item Returned',
-          `${borrowerName} has returned the item: "${itemName}".`,
-          'INFO',
-          { shouldEmail: false }
-        );
+      if (!transaction.returned) {
+        // fetch item to increment stock
+        const itemToUpdate = await ItemModel.findById(transaction.item);
+        if (itemToUpdate) {
+          itemToUpdate.quantity += 1;
+
+          if (
+            itemToUpdate.quantity > 0 &&
+            itemToUpdate.status === 'unavailable'
+          ) {
+            itemToUpdate.status = 'available';
+          }
+          await itemToUpdate.save();
+        }
+
+        transaction.returned = true;
+        transaction.returnedAt = new Date();
+
+        const admins = await UserModel.find({ role: 'admin' });
+        if (admins.length > 0) {
+          await Promise.all(
+            admins.map(admin =>
+              notify(
+                (admin._id as Types.ObjectId).toString(),
+                'Item Returned',
+                `${borrowerName} has returned the item: "${itemName}".`,
+                'INFO',
+                { shouldEmail: false }
+              )
+            )
+          );
+        }
       }
     }
 
