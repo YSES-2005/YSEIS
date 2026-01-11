@@ -1,27 +1,51 @@
-import { useState } from 'react';
+import { queryClient } from '@/lib/queryClient';
+import { transactionService } from '@/services/transactionService';
 import {
   borrowFormSchema,
   type BorrowFormData,
   type ItemPopulated as Item,
 } from '@schemas/itemSchema';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 type BorrowValidationErrors = Partial<Record<keyof BorrowFormData, string>>;
 
 export function useBorrowViewModel({
   item,
-  onSubmit,
+  onSuccess,
 }: {
   item: Item | null;
-  onSubmit: (data: BorrowFormData) => void;
+  onSuccess: () => void;
 }) {
   const [form, setForm] = useState<BorrowFormData>({
-    fullName: '',
     quantity: 1,
-    returnDate: '',
+    returnDate: undefined,
     purpose: '',
     urgent: false,
   });
   const [errors, setErrors] = useState<BorrowValidationErrors>({});
+
+  const createTransactionMutation = useMutation({
+    mutationFn: (data: {
+      item: string;
+      purpose: string;
+      urgency: boolean;
+      returnDate: Date;
+    }) =>
+      transactionService.createTransaction({
+        item: data.item,
+        purpose: data.purpose,
+        urgency: data.urgency,
+        returnDate: data.returnDate,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions-me'] });
+      toast.success('Borrow request submitted successfully');
+      onSuccess();
+    },
+  });
 
   const setField = <K extends keyof BorrowFormData>(
     field: K,
@@ -60,16 +84,21 @@ export function useBorrowViewModel({
   };
 
   const submit = () => {
-    if (!validate()) return;
-    onSubmit(form);
+    if (!validate() || !item?.id) return;
+
+    createTransactionMutation.mutate({
+      item: item.id,
+      purpose: form.purpose,
+      urgency: form.urgent,
+      returnDate: form.returnDate!,
+    });
     reset();
   };
 
   const reset = () => {
     setForm({
-      fullName: '',
       quantity: 1,
-      returnDate: '',
+      returnDate: undefined,
       purpose: '',
       urgent: false,
     });
@@ -82,5 +111,6 @@ export function useBorrowViewModel({
     setField,
     submit,
     reset,
+    isLoading: createTransactionMutation.isPending,
   };
 }

@@ -4,7 +4,7 @@ const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 
-const dateFromString = z.preprocess((val) => {
+const dateFromString = z.preprocess(val => {
   if (val instanceof Date) return val;
   if (typeof val === 'string' || typeof val === 'number') {
     const d = new Date(val);
@@ -20,18 +20,20 @@ export const transactionCreateSchema = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean(),
   returnDate: dateFromString,
-  approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional().default('pending'),
+  approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional(),
 });
 
 // Schema for updating a transaction
-export const transactionUpdateSchema = z.object({
-  approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional(),
-  returnDate: dateFromString.optional(),
-  purpose: z.string().min(1).optional(),
-  urgency: z.boolean().optional(),
-}).refine(data => Object.keys(data).length > 0, {
-  message: 'At least one field must be provided for update',
-});
+export const transactionUpdateSchema = z
+  .object({
+    approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional(),
+    returnDate: dateFromString.optional(),
+    purpose: z.string().min(1).optional(),
+    urgency: z.boolean().optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided for update',
+  });
 
 export const transactionSchema = z.object({
   id: objectIdSchema.optional(),

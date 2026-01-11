@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type {
-  ItemPopulated as Item,
-  BorrowFormData,
-  MultiBorrowFormState,
-} from '@schemas/itemSchema';
+import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import { useItemsViewModel } from '../viewmodels/useItemsViewModel';
 import { useBorrowViewModel } from '../viewmodels/useBorrowViewModel';
 import { useMultiBorrowViewModel } from '../viewmodels/useMultiBorrowViewModel';
@@ -69,8 +65,7 @@ export function ItemsView() {
 
   const availableItems = items.filter(item => item.status === 'available');
 
-  const handleBorrowSubmit = (data: BorrowFormData) => {
-    console.log('Borrow request:', data);
+  const handleBorrowSuccess = () => {
     setBorrowOpen(false);
     setSelectedItem(null);
   };
@@ -81,7 +76,11 @@ export function ItemsView() {
     setField: setBorrowField,
     submit: submitBorrow,
     reset: resetBorrow,
-  } = useBorrowViewModel({ item: selectedItem, onSubmit: handleBorrowSubmit });
+    isLoading: isBorrowing,
+  } = useBorrowViewModel({
+    item: selectedItem,
+    onSuccess: handleBorrowSuccess,
+  });
 
   const handleOpenBorrow = (item: Item) => {
     setSelectedItem(item);
@@ -95,8 +94,7 @@ export function ItemsView() {
     resetBorrow();
   };
 
-  const handleMultiBorrowSubmit = (data: MultiBorrowFormState) => {
-    console.log('Multi-borrow request:', data);
+  const handleMultiBorrowSuccess = () => {
     setMultiBorrowOpen(false);
     setShowCheckboxes(false);
     setSelectedItems(new Set());
@@ -110,9 +108,11 @@ export function ItemsView() {
     addItem,
     submit: submitMultiBorrow,
     reset: resetMultiBorrow,
+    currentImageIndex,
+    setCurrentImageIndex,
     syncWithSelection,
   } = useMultiBorrowViewModel({
-    onSubmit: handleMultiBorrowSubmit,
+    onSuccess: handleMultiBorrowSuccess,
   });
 
   const handleOpenMultiBorrow = () => {
@@ -155,7 +155,6 @@ export function ItemsView() {
     addItem(item);
     setSelectedItems(prev => new Set(prev).add(item.id!));
     setShowCheckboxes(true);
-    setMultiBorrowOpen(false);
   };
 
   const handleOpenFilterPanel = () => {
@@ -336,6 +335,7 @@ export function ItemsView() {
         item={selectedItem}
         form={borrowForm}
         errors={borrowErrors}
+        isBorrowing={isBorrowing}
         onSubmit={submitBorrow}
         onClose={handleCloseBorrow}
         setField={setBorrowField}
@@ -351,8 +351,8 @@ export function ItemsView() {
         setField={setMultiBorrowField}
         addItem={handleAddItemToMultiBorrow}
         updateItemQuantity={updateItemQuantity}
-        currentImageIndex={0}
-        setCurrentImageIndex={() => {}}
+        currentImageIndex={currentImageIndex}
+        setCurrentImageIndex={setCurrentImageIndex}
       />
     </div>
   );

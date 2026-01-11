@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { queryClient } from '@/lib/queryClient';
+import { transactionService } from '@/services/transactionService';
 import type {
   ItemPopulated as Item,
   Item as SchemaItem,
@@ -7,6 +8,9 @@ import {
   multiBorrowFormSchema,
   type MultiBorrowFormState,
 } from '@schemas/itemSchema';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 type MultiBorrowValidationErrors = Partial<
   Record<keyof MultiBorrowFormState, string>
@@ -37,19 +41,48 @@ type MultiBorrowItemEntry = {
 };
 
 export function useMultiBorrowViewModel({
-  onSubmit,
+  onSuccess,
 }: {
-  onSubmit: (data: MultiBorrowFormState) => void;
+  onSuccess?: () => void;
 }) {
   const [form, setForm] = useState<MultiBorrowFormState>({
-    fullName: '',
     items: [],
-    returnDate: '',
+    returnDate: undefined,
     purpose: '',
     urgent: false,
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [errors, setErrors] = useState<MultiBorrowValidationErrors>({});
+
+  const createMultiTransactionMutation = useMutation({
+    mutationFn: async (data: MultiBorrowFormState) => {
+      const returnDate = data.returnDate
+        ? new Date(data.returnDate)
+        : new Date();
+      const transactions = await Promise.all(
+        data.items.map(entry =>
+          transactionService.createTransaction({
+            item: entry.item.id!,
+            purpose: data.purpose,
+            urgency: data.urgent,
+            returnDate,
+            approvalStatus: 'pending',
+          })
+        )
+      );
+      return transactions;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions-me'] });
+      toast.success(
+        variables.items.length === 1
+          ? 'Borrow request submitted successfully'
+          : `${variables.items.length} borrow requests submitted successfully`
+      );
+      onSuccess?.();
+    },
+  });
 
   const setField = <K extends keyof MultiBorrowFormState>(
     field: K,
@@ -67,11 +100,13 @@ export function useMultiBorrowViewModel({
   const updateItemQuantity = (itemId: string, delta: number) => {
     setForm((prev: MultiBorrowFormState) => ({
       ...prev,
-      items: prev.items.map((entry: MultiBorrowItemEntry) =>
-        entry.item.id === itemId
-          ? { ...entry, quantity: Math.max(1, entry.quantity + delta) }
-          : entry
-      ),
+      items: prev.items
+        .map((entry: MultiBorrowItemEntry) =>
+          entry.item.id === itemId
+            ? { ...entry, quantity: entry.quantity + delta }
+            : entry
+        )
+        .filter((entry: MultiBorrowItemEntry) => entry.quantity > 0),
     }));
   };
 
@@ -100,9 +135,10 @@ export function useMultiBorrowViewModel({
     }
     const fieldErrors = result.error.flatten().fieldErrors;
     const extractedErrors = Object.fromEntries(
-      Object.entries(fieldErrors).map(
-        ([key, val]: [string, unknown]) => [key, (val as string[] | undefined)?.[0]]
-      )
+      Object.entries(fieldErrors).map(([key, val]: [string, unknown]) => [
+        key,
+        (val as string[] | undefined)?.[0],
+      ])
     ) as MultiBorrowValidationErrors;
     setErrors(extractedErrors);
     return false;
@@ -110,15 +146,14 @@ export function useMultiBorrowViewModel({
 
   const submit = () => {
     if (!validate()) return;
-    onSubmit(form);
+    createMultiTransactionMutation.mutate(form);
     reset();
   };
 
   const reset = () => {
     setForm({
-      fullName: '',
       items: [],
-      returnDate: '',
+      returnDate: undefined,
       purpose: '',
       urgent: false,
     });
@@ -128,7 +163,9 @@ export function useMultiBorrowViewModel({
 
   const syncWithSelection = (selectedItems: Item[]) => {
     setForm((prev: MultiBorrowFormState) => {
-      const currentItemsMap = new Map(prev.items.map((i: MultiBorrowItemEntry) => [i.item.id, i]));
+      const currentItemsMap = new Map(
+        prev.items.map((i: MultiBorrowItemEntry) => [i.item.id, i])
+      );
       const newItems = selectedItems.map(item => {
         const existing = currentItemsMap.get(item.id);
         if (existing) return existing;
@@ -149,5 +186,6 @@ export function useMultiBorrowViewModel({
     reset,
     setCurrentImageIndex,
     syncWithSelection,
+    isLoading: createMultiTransactionMutation.isPending,
   };
 }

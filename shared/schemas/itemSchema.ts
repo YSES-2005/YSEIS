@@ -32,25 +32,23 @@ export type ItemPopulated = Omit<Item, 'custodian'> & {
 };
 
 const baseBorrowSchema = z.object({
-  fullName: z
-    .string()
-    .min(1, 'Full name is required')
-    .min(2, 'Full name must be at least 2 characters')
-    .max(100, 'Full name must not exceed 100 characters'),
   returnDate: z
-    .string()
-    .min(1, 'Return date is required')
+    .date()
+    .optional()
+    .refine(date => !!date, { message: 'Return date is required' })
     .refine(date => {
-      const d = new Date(date);
+      if (!date) return true;
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return d >= today;
+      return date >= today;
     }, 'Return date cannot be in the past')
     .refine(date => {
-      const d = new Date(date);
+      if (!date) return true;
+
       const maxDate = new Date();
       maxDate.setFullYear(maxDate.getFullYear() + 1);
-      return d <= maxDate;
+      return date <= maxDate;
     }, 'Return date cannot be more than 1 year from today'),
   purpose: z
     .string()
