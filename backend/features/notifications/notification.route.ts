@@ -139,4 +139,3 @@ notificationsRouter.patch('/read-all', markAllAsRead);
 notificationsRouter.delete('/:id', deleteNotification);
 
 export default notificationsRouter;
-
