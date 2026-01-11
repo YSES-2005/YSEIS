@@ -16,7 +16,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {/* Your Navbar would go here */}
       <ThemeProvider>
         <Outlet />
-        <Toaster />
+        <Toaster position="top-center" />
       </ThemeProvider>
 
       {import.meta.env.DEV && (
