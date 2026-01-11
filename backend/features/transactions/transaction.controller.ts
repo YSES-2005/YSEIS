@@ -187,7 +187,7 @@ export const updateTransaction = async (
           itemToUpdate.status === 'unavailable'
         ) {
           throw new BadRequestError(
-            `Cannot approve: "${itemToUpdate.name}" is out of stock.`
+            `Cannot approve: "${itemToUpdate.name}" is out of unavailable.`
           );
         }
 
