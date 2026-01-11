@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const NotificationSchema = z.object({
   _id: z.string(),
   recipient: z.string(), // The User ID
-  type: z.enum(['INFO', 'WARNING', 'SUCCESS', 'ERROR']),
-  title: z.string().min(1),
+  type: z.enum(['INFO', 'WARNING', 'SUCCESS', 'ERROR']), // notification type
+  title: z.string().min(1), 
   message: z.string().min(1),
   isRead: z.boolean(),
   
