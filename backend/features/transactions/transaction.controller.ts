@@ -113,9 +113,10 @@ export const updateTransaction = async (
     }
 
     if (payload.approvalStatus) {
-      if (role !== 'admin') {
+      if (role !== 'admin' && payload.approvalStatus !== 'released') {
         throw new ForbiddenError('Admin required to change status');
       }
+
       transaction.approvalStatus = payload.approvalStatus;
     }
 

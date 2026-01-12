@@ -17,7 +17,7 @@ const TransactionsSchema = new mongoose.Schema(
     returnDate: { type: Date, required: true },
     approvalStatus: {
       type: String,
-      enum: ['approved', 'disapproved', 'pending'],
+      enum: ['approved', 'disapproved', 'pending', 'released', 'completed'],
       default: 'pending',
       required: true,
     },

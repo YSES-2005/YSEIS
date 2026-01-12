@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Item } from './itemSchema';
 
 const objectIdSchema = z
   .string()
@@ -13,6 +14,14 @@ const dateFromString = z.preprocess(val => {
   return val;
 }, z.date());
 
+const approvalStatusEnum = z.enum([
+  'approved',
+  'disapproved',
+  'pending',
+  'released',
+  'completed',
+]);
+
 // Schema for creating a new transaction
 export const transactionCreateSchema = z.object({
   item: objectIdSchema,
@@ -20,13 +29,13 @@ export const transactionCreateSchema = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean(),
   returnDate: dateFromString,
-  approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional(),
+  approvalStatus: approvalStatusEnum.optional(),
 });
 
 // Schema for updating a transaction
 export const transactionUpdateSchema = z
   .object({
-    approvalStatus: z.enum(['approved', 'disapproved', 'pending']).optional(),
+    approvalStatus: approvalStatusEnum.optional(),
     returnDate: dateFromString.optional(),
     purpose: z.string().min(1).optional(),
     urgency: z.boolean().optional(),
@@ -43,9 +52,7 @@ export const transactionSchema = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean(),
   returnDate: dateFromString,
-  approvalStatus: z.enum(['approved', 'disapproved', 'pending']),
-  returned: z.boolean().optional(),
-  returnedAt: dateFromString.optional(),
+  approvalStatus: approvalStatusEnum,
   updated_at: z.date().optional(),
   created_at: z.date().optional(),
 });
@@ -53,3 +60,6 @@ export const transactionSchema = z.object({
 export type Transaction = z.infer<typeof transactionSchema>;
 export type TransactionCreate = z.infer<typeof transactionCreateSchema>;
 export type TransactionUpdate = z.infer<typeof transactionUpdateSchema>;
+export type TransactionPopulated = Omit<Transaction, 'item'> & {
+  item: Item;
+};
