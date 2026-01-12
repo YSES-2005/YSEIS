@@ -18,12 +18,13 @@ const TransactionsSchema = new mongoose.Schema(
     returnDate: { type: Date, required: true },
     approvalStatus: {
       type: String,
-      enum: ['approved', 'disapproved', 'pending', 'released', 'completed'],
+      enum: ['approved', 'disapproved', 'pending', 'released', 'completed', 'cancelled'],
       default: 'pending',
       required: true,
     },
     returned: { type: Boolean, default: false },
     returnedAt: { type: Date },
+    batchId: { type: String, index: true }, 
   },
   {
     timestamps: {
