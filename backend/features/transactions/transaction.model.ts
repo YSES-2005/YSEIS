@@ -18,13 +18,20 @@ const TransactionsSchema = new mongoose.Schema(
     returnDate: { type: Date, required: true },
     approvalStatus: {
       type: String,
-      enum: ['approved', 'disapproved', 'pending', 'released', 'completed', 'cancelled'],
+      enum: [
+        'approved',
+        'disapproved',
+        'pending',
+        'released',
+        'completed',
+        'cancelled',
+      ],
       default: 'pending',
       required: true,
     },
     returned: { type: Boolean, default: false },
     returnedAt: { type: Date },
-    batchId: { type: String, index: true }, 
+    batchId: { type: String, index: true },
   },
   {
     timestamps: {
@@ -33,5 +40,12 @@ const TransactionsSchema = new mongoose.Schema(
     },
   }
 );
+
+TransactionsSchema.virtual('id').get(function (this: any) {
+  return this._id?.toString();
+});
+
+TransactionsSchema.set('toJSON', { virtuals: true });
+TransactionsSchema.set('toObject', { virtuals: true });
 
 export default mongoose.model('Transaction', TransactionsSchema);
