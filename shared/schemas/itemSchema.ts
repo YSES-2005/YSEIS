@@ -28,7 +28,7 @@ export const updateItemSchema = itemSchema
 export type Item = z.infer<typeof itemSchema>;
 
 export type ItemPopulated = Omit<Item, 'custodian'> & {
-  custodian: string | { name?: string; email?: string };
+  custodian: { name?: string; email?: string; avatar?: string };
 };
 
 const baseBorrowSchema = z.object({

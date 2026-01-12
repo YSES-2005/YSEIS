@@ -112,7 +112,7 @@ export const getItemById = async (
       throw new NotFoundError('Item not found');
     }
 
-    res.json({ data: item });
+    res.json({ item });
   } catch (error) {
     next(error);
   }
