@@ -30,6 +30,7 @@ export const transactionUpdateSchema = z
     returnDate: dateFromString.optional(),
     purpose: z.string().min(1).optional(),
     urgency: z.boolean().optional(),
+    returned: z.boolean().optional(),
   })
   .refine(data => Object.keys(data).length > 0, {
     message: 'At least one field must be provided for update',
@@ -43,6 +44,8 @@ export const transactionSchema = z.object({
   urgency: z.boolean(),
   returnDate: dateFromString,
   approvalStatus: z.enum(['approved', 'disapproved', 'pending']),
+  returned: z.boolean().optional(),
+  returnedAt: dateFromString.optional(),
   updated_at: z.date().optional(),
   created_at: z.date().optional(),
 });
