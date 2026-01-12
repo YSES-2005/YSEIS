@@ -36,4 +36,10 @@ export const itemService = {
       pagination: response.pagination,
     };
   },
+
+  async getItemById(id: string): Promise<ItemPopulated> {
+    const { item } = await api.get<{ item: ItemPopulated }>(`/items/${id}`);
+
+    return item;
+  },
 };

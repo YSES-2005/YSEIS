@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
-import { badgeVariants } from "./badge.variants" 
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
+import { type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+import { badgeVariants } from './badge.variants';
 
 function Badge({
   className,
-  variant = "default",
+  variant = 'default',
   render,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+}: useRender.ComponentProps<'span'> & VariantProps<typeof badgeVariants>) {
   return useRender({
-    defaultTagName: "span",
-    props: mergeProps<"span">(
+    defaultTagName: 'span',
+    props: mergeProps<'span'>(
       {
         className: cn(badgeVariants({ className, variant })),
       },
@@ -22,10 +22,10 @@ function Badge({
     ),
     render,
     state: {
-      slot: "badge",
+      slot: 'badge',
       variant,
     },
-  })
+  });
 }
 
-export { Badge } 
+export { Badge };
