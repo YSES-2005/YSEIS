@@ -12,6 +12,7 @@ const TransactionsSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    quantity: { type: Number, required: true, default: 1, min: 1 },
     purpose: { type: String, required: true },
     urgency: { type: Boolean, required: true },
     returnDate: { type: Date, required: true },
