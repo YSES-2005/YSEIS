@@ -73,10 +73,9 @@ export const transactionCreateSchema = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean(),
   returnDate: dateFromString,
-  approvalStatus: z
-    .enum(['approved', 'disapproved', 'pending'])
-    .optional()
-    .default('pending'),
+  approvalStatus: approvalStatusEnum,
+  updated_at: z.date().optional(),
+  created_at: z.date().optional(),
 });
 
 export type Transaction = z.infer<typeof transactionSchema>;
