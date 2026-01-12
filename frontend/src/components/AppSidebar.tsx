@@ -57,7 +57,7 @@ const data = {
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="overflow-y-hidden">
       <SidebarHeader className="w-full px-2 pb-4">
         <OrgSwitcher orgs={data.orgs} />
       </SidebarHeader>
