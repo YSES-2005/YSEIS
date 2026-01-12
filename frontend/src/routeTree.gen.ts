@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/_dashboard'
 import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions'
+import { Route as AuthDashboardSettingsRouteImport } from './routes/_auth/_dashboard/settings'
 import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory'
 import { Route as AuthDashboardDashboardRouteImport } from './routes/_auth/_dashboard/dashboard'
 import { Route as AuthDashboardBorrowRouteImport } from './routes/_auth/_dashboard/borrow'
@@ -42,6 +43,11 @@ const AuthDashboardTransactionsRoute =
     path: '/transactions',
     getParentRoute: () => AuthDashboardRoute,
   } as any)
+const AuthDashboardSettingsRoute = AuthDashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthDashboardRoute,
+} as any)
 const AuthDashboardInventoryRoute = AuthDashboardInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/borrow': typeof AuthDashboardBorrowRoute
   '/dashboard': typeof AuthDashboardDashboardRoute
   '/inventory': typeof AuthDashboardInventoryRoute
+  '/settings': typeof AuthDashboardSettingsRoute
   '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesByTo {
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/borrow': typeof AuthDashboardBorrowRoute
   '/dashboard': typeof AuthDashboardDashboardRoute
   '/inventory': typeof AuthDashboardInventoryRoute
+  '/settings': typeof AuthDashboardSettingsRoute
   '/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRoutesById {
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/_auth/_dashboard/borrow': typeof AuthDashboardBorrowRoute
   '/_auth/_dashboard/dashboard': typeof AuthDashboardDashboardRoute
   '/_auth/_dashboard/inventory': typeof AuthDashboardInventoryRoute
+  '/_auth/_dashboard/settings': typeof AuthDashboardSettingsRoute
   '/_auth/_dashboard/transactions': typeof AuthDashboardTransactionsRoute
 }
 export interface FileRouteTypes {
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/borrow'
     | '/dashboard'
     | '/inventory'
+    | '/settings'
     | '/transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -101,6 +111,7 @@ export interface FileRouteTypes {
     | '/borrow'
     | '/dashboard'
     | '/inventory'
+    | '/settings'
     | '/transactions'
   id:
     | '__root__'
@@ -111,6 +122,7 @@ export interface FileRouteTypes {
     | '/_auth/_dashboard/borrow'
     | '/_auth/_dashboard/dashboard'
     | '/_auth/_dashboard/inventory'
+    | '/_auth/_dashboard/settings'
     | '/_auth/_dashboard/transactions'
   fileRoutesById: FileRoutesById
 }
@@ -157,6 +169,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardTransactionsRouteImport
       parentRoute: typeof AuthDashboardRoute
     }
+    '/_auth/_dashboard/settings': {
+      id: '/_auth/_dashboard/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthDashboardSettingsRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
     '/_auth/_dashboard/inventory': {
       id: '/_auth/_dashboard/inventory'
       path: '/inventory'
@@ -185,6 +204,7 @@ interface AuthDashboardRouteChildren {
   AuthDashboardBorrowRoute: typeof AuthDashboardBorrowRoute
   AuthDashboardDashboardRoute: typeof AuthDashboardDashboardRoute
   AuthDashboardInventoryRoute: typeof AuthDashboardInventoryRoute
+  AuthDashboardSettingsRoute: typeof AuthDashboardSettingsRoute
   AuthDashboardTransactionsRoute: typeof AuthDashboardTransactionsRoute
 }
 
@@ -192,6 +212,7 @@ const AuthDashboardRouteChildren: AuthDashboardRouteChildren = {
   AuthDashboardBorrowRoute: AuthDashboardBorrowRoute,
   AuthDashboardDashboardRoute: AuthDashboardDashboardRoute,
   AuthDashboardInventoryRoute: AuthDashboardInventoryRoute,
+  AuthDashboardSettingsRoute: AuthDashboardSettingsRoute,
   AuthDashboardTransactionsRoute: AuthDashboardTransactionsRoute,
 }
 
