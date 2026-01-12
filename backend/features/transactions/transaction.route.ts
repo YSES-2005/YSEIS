@@ -199,6 +199,13 @@ export default transactionRouter;
  *           type: string
  *           enum: [approved, disapproved, pending]
  *           description: Current approval status
+ *         returned:
+ *           type: boolean
+ *           description: Whether the item has been returned
+ *         returnedAt:
+ *           type: string
+ *           format: date-time
+ *           description: When the item was returned
  *         updated_at:
  *           type: string
  *           format: date-time
@@ -241,4 +248,7 @@ export default transactionRouter;
  *           type: string
  *           format: date-time
  *           description: Updated return date
+ *         returned:
+ *           type: boolean
+ *           description: Set to true when returning the item
  */
