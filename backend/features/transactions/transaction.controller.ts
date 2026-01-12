@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import TransactionModel from './transaction.model';
 import { BadRequestError, NotFoundError, ForbiddenError } from '../../errors';
 
+//TODO: add pagination, filtering, handle multiborrow requests etc.
+
 // GET /api/transactions?status=pending this is for admin
 export const getTransactions = async (
   req: Request,
