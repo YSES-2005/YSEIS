@@ -20,6 +20,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, CircleArrowDown } from 'lucide-react';
+import { getCustodianDisplay } from '@/lib/utils';
 
 type Props = {
   items: ItemPopulated[];
@@ -44,13 +45,6 @@ export function ItemTable({
   onToggleAll,
   showCheckboxes,
 }: Props) {
-  // helper to safely get custodian name
-  const getCustodianDisplay = (custodian: Item['custodian']) => {
-    if (!custodian) return '—';
-    if (typeof custodian === 'string') return custodian;
-    return custodian.name || custodian.email || '—';
-  };
-
   const isAllAvailableSelected =
     items.length > 0 &&
     items
@@ -58,7 +52,7 @@ export function ItemTable({
       .every(item => selectedItems.has(item.id!));
 
   return (
-    <div className="space-y-4 bg-sidebar p-2 rounded-md">
+    <div className="space-y-4 bg-card p-2 rounded-2xl">
       <div className="rounded-md">
         <Table>
           <TableHeader>
