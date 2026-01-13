@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useAutoLogout } from '@/features/auth/components/AutoLogoutProvider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Settings } from 'lucide-react';
 
 export const Route = createFileRoute('/_auth/_dashboard/settings')({
   component: SettingsPage,
@@ -12,11 +13,9 @@ function SettingsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences here.
-        </p>
+      <div className="flex items-center gap-2">
+        <Settings className="h-6 w-6" />
+        <h1>Settings</h1>
       </div>
 
       <div className="border rounded-lg p-6">
