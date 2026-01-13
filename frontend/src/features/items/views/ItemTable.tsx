@@ -36,6 +36,8 @@ type Props = {
   onPageChange: (page: number) => void;
   onBorrow: (item: Item) => void;
   onEdit: (item: Item) => void;
+  /** Optional delete handler invoked with the item to delete */
+  onDelete?: (item: Item) => void;
   selectedItems: Set<string>;
   onToggleSelection: (itemId: string) => void;
   onToggleAll: () => void;
@@ -49,6 +51,7 @@ export function ItemTable({
   onPageChange,
   onBorrow,
   onEdit,
+  onDelete,
   selectedItems,
   onToggleSelection,
   onToggleAll,
@@ -160,7 +163,11 @@ export function ItemTable({
                         >
                           <SquarePen className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="outline">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => onDelete?.(item)}
+                        >
                           <Trash className="h-4 w-4" />
                         </Button>
                       </div>

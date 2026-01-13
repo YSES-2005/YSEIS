@@ -29,6 +29,15 @@ import { useCreateItemViewModel } from '../viewmodels/useCreateItemViewModel';
 import { CreateItemModal } from './CreateItemModal';
 import { useEditItemViewModel } from '../viewmodels/useEditItemViewModel';
 import { EditItemModal } from './EditItemModal';
+import { useDeleteViewModel } from '../viewmodels/useDeleteViewModel';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 export function ItemsView() {
   const { user } = useUser();
@@ -70,6 +79,8 @@ export function ItemsView() {
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
   const [createItemOpen, setCreateItemOpen] = useState(false);
   const [editItemOpen, setEditItemOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
 
   const availableItems = items.filter(
     item => item.status === 'available' && item.quantity > 0
@@ -247,6 +258,20 @@ export function ItemsView() {
     resetEditItem();
   };
 
+  const { deleteItem, isDeleting } = useDeleteViewModel();
+
+  const handleDeleteItem = (item: Item) => {
+    setItemToDelete(item);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!itemToDelete) return;
+    deleteItem(itemToDelete.id!);
+    setDeleteOpen(false);
+    setItemToDelete(null);
+  };
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -396,6 +421,7 @@ export function ItemsView() {
           onPageChange={setCurrentPage}
           onBorrow={handleOpenBorrow}
           onEdit={handleOpenEditItem}
+          onDelete={handleDeleteItem}
           selectedItems={selectedItems}
           onToggleSelection={handleToggleSelection}
           onToggleAll={handleToggleAll}
@@ -447,6 +473,45 @@ export function ItemsView() {
         onSubmit={submitEditItem}
         setField={setEditItemField}
       />
+
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={isOpen => {
+          if (!isOpen) {
+            setDeleteOpen(false);
+            setItemToDelete(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-6">
+          <DialogHeader>
+            <DialogTitle>Delete item</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{itemToDelete?.name}"? This
+              action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteOpen(false);
+                setItemToDelete(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

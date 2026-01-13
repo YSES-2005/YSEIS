@@ -49,6 +49,10 @@ export const itemService = {
     return item;
   },
 
+  async deleteItem(id: string): Promise<void> {
+    await api.delete(`/items/${id}`);
+  },
+
   async getItemById(id: string): Promise<ItemPopulated> {
     const { item } = await api.get<{ item: ItemPopulated }>(`/items/${id}`);
 
