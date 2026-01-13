@@ -74,7 +74,7 @@ export function NotificationItem({
         <div className="flex items-center gap-2 pr-2">
           {/* timestamp */}
           <span className="text-[10px] text-muted-foreground whitespace-nowrap tabular-nums">
-            {timestamp.toString()}
+            {timestamp ? new Date(timestamp).toLocaleString() : ''}
           </span>
 
           {/* unread indicator */}
