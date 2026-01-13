@@ -10,8 +10,8 @@ export const notificationSchema = z.object({
 
   relatedEntityId: z.string().optional().nullable(), // e.g., Item ID or Transaction ID
   relatedModel: z.enum(['Item', 'Transaction']).optional().nullable(),
-  created_at: z.coerce.date(),
-  updated_at: z.coerce.date().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 export const createNotificationSchema = notificationSchema.omit({
