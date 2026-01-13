@@ -9,7 +9,7 @@ export function useNotificationViewModel() {
   const { data, isLoading } = useQuery<NotificationsResponse>({
     queryKey: ['notifications'],
     queryFn: notificationService.getNotifications,
-    refetchInterval: 5000,  // refetch every 5 seconds
+    refetchInterval: 5000, // refetch every 5 seconds
   });
 
   const notifications = data?.notifications || [];
@@ -17,7 +17,7 @@ export function useNotificationViewModel() {
 
   // filter for tabs (all and unread)
   const allNotifications = notifications;
-  const unreadNotifications = notifications.filter(n => n.unread);
+  const unreadNotifications = notifications.filter(n => n.isRead);
 
   // mark as read
   const markAsReadMutation = useMutation({

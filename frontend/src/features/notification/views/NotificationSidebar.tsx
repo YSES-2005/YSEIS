@@ -1,26 +1,17 @@
-import {
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { CheckCheck } from "lucide-react";
-import { NotificationItem } from "./NotificationView";
-import { useNotificationViewModel } from "../viewmodels/useNotificationViewModel";
+import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CheckCheck } from 'lucide-react';
+import { NotificationItem } from './NotificationView';
+import { useNotificationViewModel } from '../viewmodels/useNotificationViewModel';
 
 export function NotificationSidebar() {
-  const { 
-    allNotifications, 
-    unreadNotifications, 
-    unreadCount, 
+  const {
+    allNotifications,
+    unreadNotifications,
+    unreadCount,
     markAsRead,
     markAllAsRead,
-    deleteNotification
+    deleteNotification,
   } = useNotificationViewModel();
 
   return (
@@ -28,7 +19,6 @@ export function NotificationSidebar() {
       <SheetHeader className="p-6 pb-2">
         <SheetTitle className="flex items-center justify-between gap-2 pr-6">
           Notifications
-
           <div className="flex items-center gap-1.5">
             {/* unread ount indicator */}
             {unreadCount > 0 && (
@@ -36,8 +26,7 @@ export function NotificationSidebar() {
                 {unreadCount} unread
               </span>
             )}
-            
-            
+
             {/* mark all as read button */}
             {unreadCount > 0 && (
               <button
@@ -51,7 +40,7 @@ export function NotificationSidebar() {
           </div>
         </SheetTitle>
       </SheetHeader>
-      
+
       {/* tabs for All and Unread */}
       <Tabs defaultValue="all" className="flex-1 flex flex-col overflow-hidden">
         <div className="px-6">
@@ -62,19 +51,18 @@ export function NotificationSidebar() {
         </div>
 
         <div className="flex-1 mt-4 border-t overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          
           {/* all notifications */}
           <TabsContent value="all" className="m-0 outline-none">
             {allNotifications.length > 0 ? (
-              allNotifications.map((n) => (
+              allNotifications.map(n => (
                 <NotificationItem
                   key={`all-${n.id}`}
                   id={n.id}
                   type={n.type}
                   title={n.title}
                   message={n.message}
-                  timestamp={n.time}
-                  isRead={!n.unread}
+                  timestamp={n.created_at}
+                  isRead={!n.isRead}
                   onClick={() => markAsRead(n.id)}
                   onDelete={() => deleteNotification(n.id)}
                 />
@@ -87,14 +75,14 @@ export function NotificationSidebar() {
           {/* unread notifications */}
           <TabsContent value="unread" className="m-0 outline-none">
             {unreadNotifications.length > 0 ? (
-              unreadNotifications.map((n) => (
+              unreadNotifications.map(n => (
                 <NotificationItem
                   key={`unread-${n.id}`}
                   id={n.id}
                   type={n.type}
                   title={n.title}
                   message={n.message}
-                  timestamp={n.time}
+                  timestamp={n.created_at}
                   isRead={false}
                   onClick={() => markAsRead(n.id)}
                   onDelete={() => deleteNotification(n.id)}
@@ -110,7 +98,11 @@ export function NotificationSidebar() {
   );
 }
 
-function EmptyState({ message = "No notifications yet" }: { message?: string }) {
+function EmptyState({
+  message = 'No notifications yet',
+}: {
+  message?: string;
+}) {
   return (
     <div className="p-8 text-center text-sm text-muted-foreground animate-in fade-in duration-500">
       {message}
