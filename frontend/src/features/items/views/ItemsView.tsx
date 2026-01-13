@@ -63,7 +63,7 @@ export function ItemsView() {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
 
-  const availableItems = items.filter(item => item.status === 'available');
+  const availableItems = items.filter(item => item.status === 'available' && item.quantity > 0);
 
   const handleBorrowSuccess = () => {
     setBorrowOpen(false);

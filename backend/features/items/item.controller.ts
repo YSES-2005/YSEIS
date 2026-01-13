@@ -26,7 +26,18 @@ export const getItems = async (
 
     // filter by status
     if (status && status !== 'all') {
-      query.status = status;
+      if (status === 'available') {
+        query.status = 'available';
+        query.quantity = { $gt: 0 };
+      } else if (status === 'unavailable') {
+        delete query.status;
+        query.$and = [
+          { status: { $ne: 'deleted' } },
+          { $or: [{ status: 'unavailable' }, { quantity: 0 }] },
+        ];
+      } else {
+        query.status = status;
+      }
     }
 
     // filter by type
@@ -136,7 +147,7 @@ export const createItem = async (
     });
 
     await newItem.save();
-    res.status(201).json({ newItem });
+    res.status(201).json({ data: newItem });
   } catch (error) {
     next(error);
   }
@@ -167,7 +178,7 @@ export const updateItem = async (
       throw new NotFoundError('Item not found');
     }
 
-    res.json({ item });
+    res.json({ data: item });
   } catch (error) {
     next(error);
   }
@@ -193,7 +204,7 @@ export const deleteItem = async (
       throw new NotFoundError('Item not found');
     }
 
-    res.json({ item });
+    res.json({ data: item });
   } catch (error) {
     next(error);
   }

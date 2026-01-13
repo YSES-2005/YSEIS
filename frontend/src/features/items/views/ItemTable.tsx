@@ -48,7 +48,7 @@ export function ItemTable({
   const isAllAvailableSelected =
     items.length > 0 &&
     items
-      .filter(item => item.status === 'available')
+      .filter(item => item.status === 'available' && item.quantity > 0)
       .every(item => selectedItems.has(item.id!));
 
   return (
@@ -76,7 +76,7 @@ export function ItemTable({
           </TableHeader>
           <TableBody>
             {items.map(item => {
-              const isAvailable = item.status === 'available';
+              const isAvailable = item.status === 'available' && item.quantity > 0;
               const itemId = item.id!;
 
               return (
