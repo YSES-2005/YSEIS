@@ -63,6 +63,7 @@ export function useMultiBorrowViewModel({
         data.items.map(entry =>
           transactionService.createTransaction({
             item: entry.item.id!,
+            // quantity: entry.quantity,
             purpose: data.purpose,
             urgency: data.urgent,
             returnDate,

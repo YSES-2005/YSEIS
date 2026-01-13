@@ -29,12 +29,14 @@ export function useBorrowViewModel({
   const createTransactionMutation = useMutation({
     mutationFn: (data: {
       item: string;
+      quantity: number;
       purpose: string;
       urgency: boolean;
       returnDate: Date;
     }) =>
       transactionService.createTransaction({
         item: data.item,
+        quantity: data.quantity,
         purpose: data.purpose,
         urgency: data.urgency,
         returnDate: data.returnDate,
@@ -89,6 +91,7 @@ export function useBorrowViewModel({
 
     createTransactionMutation.mutate({
       item: item.id,
+      quantity: form.quantity,
       purpose: form.purpose,
       urgency: form.urgent,
       returnDate: form.returnDate!,

@@ -70,6 +70,7 @@ const baseRequestFields = z.object({
 export const transactionCreateSchema = z.object({
   item: objectIdSchema,
   borrower: objectIdSchema.optional(),
+  quantity: z.number().int().min(1).optional().default(1),
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean(),
   returnDate: dateFromString,
