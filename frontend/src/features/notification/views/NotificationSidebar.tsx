@@ -1,7 +1,7 @@
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button'; 
-import { CheckCheck, Loader2 } from 'lucide-react'; 
+import { Button } from '@/components/ui/button';
+import { CheckCheck, Loader2 } from 'lucide-react';
 import { NotificationItem } from './NotificationView';
 import { useNotificationViewModel } from '../viewmodels/useNotificationViewModel';
 
@@ -10,7 +10,7 @@ export function NotificationSidebar() {
     allNotifications,
     unreadNotifications,
     unreadCount,
-    isLoading, 
+    isLoading,
     isMarkingAllRead,
     markAsRead,
     markAllAsRead,
@@ -22,7 +22,7 @@ export function NotificationSidebar() {
       <SheetHeader className="p-6 pb-2">
         <SheetTitle className="flex items-center justify-between gap-2 pr-6">
           <span>Notifications</span>
-          
+
           <div className="flex items-center gap-2">
             {/* Unread Indicator */}
             {unreadCount > 0 && (
@@ -30,14 +30,12 @@ export function NotificationSidebar() {
                 {unreadCount} new
               </span>
             )}
-
-            {/* Mark All Read Button */}
             {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-6 px-2 text-[10px] sm:text-xs hover:bg-secondary/80"
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault();
                   markAllAsRead();
                 }}
@@ -54,7 +52,6 @@ export function NotificationSidebar() {
           </div>
         </SheetTitle>
       </SheetHeader>
-
       <Tabs defaultValue="all" className="flex-1 flex flex-col overflow-hidden">
         <div className="px-6">
           <TabsList className="grid w-full grid-cols-2">
@@ -64,7 +61,6 @@ export function NotificationSidebar() {
         </div>
 
         <div className="flex-1 mt-4 border-t overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden relative">
-          
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -76,12 +72,12 @@ export function NotificationSidebar() {
                 {allNotifications?.length > 0 ? (
                   allNotifications.map(n => (
                     <NotificationItem
-                      key={`all-${n.id}`} 
+                      key={`all-${n.id}`}
                       id={n.id}
                       type={n.type}
                       title={n.title}
                       message={n.message}
-                      timestamp={n.createdAt}
+                      timestamp={n.created_at}
                       isRead={n.isRead}
                       onClick={() => markAsRead(n.id)}
                       onDelete={() => deleteNotification(n.id)}
@@ -102,7 +98,7 @@ export function NotificationSidebar() {
                       type={n.type}
                       title={n.title}
                       message={n.message}
-                      timestamp={n.createdAt}
+                      timestamp={n.created_at}
                       isRead={false} // Always false in this tab visually
                       onClick={() => markAsRead(n.id)}
                       onDelete={() => deleteNotification(n.id)}
@@ -120,14 +116,18 @@ export function NotificationSidebar() {
   );
 }
 
-function EmptyState({ message = 'No notifications yet' }: { message?: string }) {
+function EmptyState({
+  message = 'No notifications yet',
+}: {
+  message?: string;
+}) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-in fade-in duration-500">
       <div className="bg-muted/50 p-3 rounded-full mb-3">
-
         <CheckCheck className="h-6 w-6 text-muted-foreground/50" />
       </div>
       <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
 }
+
