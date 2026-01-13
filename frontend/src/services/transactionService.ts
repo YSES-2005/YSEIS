@@ -5,7 +5,16 @@ import type {
   TransactionUpdate,
 } from '@schemas/transactionSchema';
 
-type TransactionsResponse = { transactions: TransactionPopulated[] };
+type TransactionsResponse = {
+  transactions: TransactionPopulated[];
+  pagination?: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
+};
+
 type TransactionResponse = { transaction: TransactionPopulated };
 
 export const transactionService = {
@@ -22,14 +31,19 @@ export const transactionService = {
 
   async getTransactions(params?: {
     status?: string;
-  }): Promise<TransactionPopulated[]> {
-    const { transactions } = await api.get<TransactionsResponse>(
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    transactions: TransactionPopulated[];
+    pagination?: TransactionsResponse['pagination'];
+  }> {
+    const { transactions, pagination } = await api.get<TransactionsResponse>(
       '/transactions',
       {
         params,
       }
     );
-    return transactions;
+    return { transactions, pagination };
   },
 
   async getTransactionsForMe(): Promise<TransactionPopulated[]> {

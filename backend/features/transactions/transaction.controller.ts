@@ -22,27 +22,83 @@ interface AuthRequest extends Request {
   userRole?: string;
 }
 
-// GET /api/transactions?status=pending (for admin)
+// GET /api/transactions
 export const getTransactions = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const status = req.query.status as string | undefined;
-    const filter = status ? { approvalStatus: status } : {};
+    const {
+      status,
+      search,
+      startDate,
+      endDate,
+      page = '1',
+      limit = '10',
+    } = req.query as Record<string, string | undefined>;
 
-    const transactions = await TransactionModel.find(filter)
-      .populate('item', 'name')
-      .populate('borrower', 'name email');
+    const filter: Record<string, any> = {};
 
-    res.json({ transactions });
+    // filter by status
+    if (status && status !== 'all') {
+      filter.approvalStatus = status;
+    }
+
+    // Date Range Filter (based on created_at or createdAt)
+    if (startDate || endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (startDate) dateFilter.$gte = new Date(startDate);
+      if (endDate) {
+        const d = new Date(endDate);
+        d.setHours(23, 59, 59, 999);
+        dateFilter.$lte = d;
+      }
+      filter.createdAt = dateFilter;
+    }
+
+    if (search) {
+      const regex = new RegExp(search, 'i');
+      const [users, items] = await Promise.all([
+        UserModel.find({ name: regex }).select('_id'),
+        ItemModel.find({ name: regex }).select('_id'),
+      ]);
+
+      filter.$or = [
+        { borrower: { $in: users.map(u => u._id) } },
+        { item: { $in: items.map(i => i._id) } },
+      ];
+    }
+
+    // pagination
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.max(1, parseInt(limit));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [transactions, total] = await Promise.all([
+      TransactionModel.find(filter)
+        .populate('item', 'name')
+        .populate('borrower', 'name email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum),
+      TransactionModel.countDocuments(filter),
+    ]);
+
+    res.json({
+      transactions,
+      pagination: {
+        total,
+        page: pageNum,
+        pages: Math.ceil(total / limitNum),
+      },
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// GET /api/transactions/me (for authenticated user)
+// GET /api/transactions/me
 export const getTransactionsForMe = async (
   req: AuthRequest,
   res: Response,
@@ -50,9 +106,15 @@ export const getTransactionsForMe = async (
 ) => {
   try {
     const uid = req.userId;
-    const transactions = await TransactionModel.find({ borrower: uid })
+    // optional: add status filter for user's own view too?
+    const { status } = req.query;
+    const filter: any = { borrower: uid };
+    if (status) filter.approvalStatus = status;
+
+    const transactions = await TransactionModel.find(filter)
       .populate('item', 'name')
-      .populate('borrower', 'name email');
+      .populate('borrower', 'name email')
+      .sort({ createdAt: -1 });
 
     res.json({ transactions });
   } catch (error) {
@@ -82,15 +144,34 @@ export const getTransactionById = async (
   }
 };
 
-// POST /api/transactions (user creates a borrow request)
+// POST /api/transactions
 export const createTransaction = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { item, purpose, urgency, returnDate } = req.body;
+    const { item, purpose, urgency, returnDate, quantity } = req.body;
     const borrower = req.userId;
+
+    const requestedQty = quantity ? parseInt(quantity) : 1;
+    if (requestedQty < 1)
+      throw new BadRequestError('Quantity must be at least 1');
+
+    const itemDoc = await ItemModel.findById(item);
+    if (!itemDoc) {
+      throw new NotFoundError('Item not found');
+    }
+
+    if (
+      itemDoc.status === 'unavailable' ||
+      itemDoc.status === 'deleted' ||
+      itemDoc.quantity < requestedQty
+    ) {
+      throw new BadRequestError(
+        `Cannot create transaction: Item is unavailable or insufficient stock (Requested: ${requestedQty}, Available: ${itemDoc.quantity}).`
+      );
+    }
 
     const transaction = new TransactionModel({
       item,
@@ -98,34 +179,25 @@ export const createTransaction = async (
       purpose,
       urgency,
       returnDate,
+      quantity: requestedQty, 
       approvalStatus: 'pending',
     });
 
     await transaction.save();
-    const itemStatus = await ItemModel.findById(item);
-    if (itemStatus && itemStatus.status === 'unavailable') {
-      throw new BadRequestError(
-        'Cannot create transaction: Item is unavailable.'
-      );
-    }
+
     const admins = await UserModel.find({ role: 'admin' });
     if (admins.length > 0) {
       await transaction.populate(['item', 'borrower']);
-
       const populatedBorrower =
         transaction.borrower as unknown as PopulatedUser;
       const populatedItem = transaction.item as unknown as PopulatedItem;
 
-      const borrowerName = populatedBorrower.name;
-      const itemName = populatedItem.name;
-
-      // send an email to all admins
       await Promise.all(
         admins.map(admin =>
           notify(
             (admin._id as Types.ObjectId).toString(),
             'New Borrow Request',
-            `${borrowerName} has requested to borrow ${itemName}.`,
+            `${populatedBorrower.name} requested ${requestedQty}x ${populatedItem.name}.`,
             'INFO',
             {
               shouldEmail: true,
@@ -143,7 +215,7 @@ export const createTransaction = async (
   }
 };
 
-// PUT /api/transactions/:id (Update status / Return item)
+// PUT /api/transactions/:id
 export const updateTransaction = async (
   req: AuthRequest,
   res: Response,
@@ -166,8 +238,7 @@ export const updateTransaction = async (
     const populatedBorrower = transaction.borrower as unknown as PopulatedUser;
     const populatedItem = transaction.item as unknown as PopulatedItem;
 
-    const itemName = populatedItem.name;
-    const borrowerName = populatedBorrower.name;
+    const transactionQty = (transaction as any).quantity || 1;
 
     if (payload.approvalStatus) {
       if (role !== 'admin' && payload.approvalStatus !== 'released') {
@@ -178,39 +249,38 @@ export const updateTransaction = async (
         payload.approvalStatus === 'approved' &&
         transaction.approvalStatus !== 'approved'
       ) {
-        const itemToUpdate = await ItemModel.findById(transaction.item);
-        if (!itemToUpdate)
-          throw new NotFoundError('Item record not found in inventory');
+        
+        const updatedItem = await ItemModel.findOneAndUpdate(
+          {
+            _id: transaction.item,
+            quantity: { $gte: transactionQty }, // condition: enough stock
+            status: { $ne: 'unavailable' },
+          },
+          { $inc: { quantity: -transactionQty } }, // atomic decrement
+          { new: true }
+        );
 
-        if (
-          itemToUpdate.quantity < 1 ||
-          itemToUpdate.status === 'unavailable'
-        ) {
+        if (!updatedItem) {
           throw new BadRequestError(
-            `Cannot approve: "${itemToUpdate.name}" is out of unavailable.`
+            `Cannot approve: Insufficient stock for "${populatedItem.name}".`
           );
         }
 
-        itemToUpdate.quantity -= 1;
-        await itemToUpdate.save();
+        if (updatedItem.quantity === 0) {
+          updatedItem.status = 'unavailable';
+          await updatedItem.save();
+        }
       }
 
       transaction.approvalStatus = payload.approvalStatus;
 
-      if (payload.approvalStatus === 'approved') {
+      if (['approved', 'disapproved'].includes(payload.approvalStatus)) {
+        const isApproved = payload.approvalStatus === 'approved';
         await notify(
           populatedBorrower._id.toString(),
-          'Request Approved',
-          `Your borrow request for "${itemName}" has been approved.`,
-          'SUCCESS',
-          { shouldEmail: true }
-        );
-      } else if (payload.approvalStatus === 'disapproved') {
-        await notify(
-          populatedBorrower._id.toString(),
-          'Request Declined',
-          `Your borrow request for "${itemName}" has been declined.`,
-          'ERROR',
+          isApproved ? 'Request Approved' : 'Request Declined',
+          `Your request for ${transactionQty}x "${populatedItem.name}" has been ${payload.approvalStatus}.`,
+          isApproved ? 'SUCCESS' : 'ERROR',
           { shouldEmail: true }
         );
       }
@@ -222,18 +292,16 @@ export const updateTransaction = async (
       }
 
       if (!transaction.returned) {
-        // fetch item to increment stock
-        const itemToUpdate = await ItemModel.findById(transaction.item);
-        if (itemToUpdate) {
-          itemToUpdate.quantity += 1;
+        const updatedItem = await ItemModel.findByIdAndUpdate(
+          transaction.item,
+          { $inc: { quantity: transactionQty } }, // atomic increment
+          { new: true }
+        );
 
-          if (
-            itemToUpdate.quantity > 0 &&
-            itemToUpdate.status === 'unavailable'
-          ) {
-            itemToUpdate.status = 'available';
-          }
-          await itemToUpdate.save();
+        // If item was previously unavailable (0 stock), make it available again
+        if (updatedItem && updatedItem.status === 'unavailable') {
+          updatedItem.status = 'available';
+          await updatedItem.save();
         }
 
         transaction.returned = true;
@@ -246,7 +314,7 @@ export const updateTransaction = async (
               notify(
                 (admin._id as Types.ObjectId).toString(),
                 'Item Returned',
-                `${borrowerName} has returned the item: "${itemName}".`,
+                `${populatedBorrower.name} returned ${transactionQty}x "${populatedItem.name}".`,
                 'INFO',
                 { shouldEmail: false }
               )
@@ -256,6 +324,7 @@ export const updateTransaction = async (
       }
     }
 
+    // Update other fields if provided
     if (payload.purpose) transaction.purpose = payload.purpose;
     if (payload.returnDate) transaction.returnDate = payload.returnDate;
     if (payload.urgency !== undefined) transaction.urgency = payload.urgency;
