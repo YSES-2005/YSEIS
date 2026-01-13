@@ -19,8 +19,15 @@ import {
 } from '@/components/ui/pagination';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, CircleArrowDown } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleArrowDown,
+  Trash,
+  SquarePen,
+} from 'lucide-react';
 import { getCustodianDisplay } from '@/lib/utils';
+import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
 
 type Props = {
   items: ItemPopulated[];
@@ -45,6 +52,7 @@ export function ItemTable({
   onToggleAll,
   showCheckboxes,
 }: Props) {
+  const { isAdmin } = useAuthViewModel();
   const isAllAvailableSelected =
     items.length > 0 &&
     items
@@ -76,7 +84,8 @@ export function ItemTable({
           </TableHeader>
           <TableBody>
             {items.map(item => {
-              const isAvailable = item.status === 'available' && item.quantity > 0;
+              const isAvailable =
+                item.status === 'available' && item.quantity > 0;
               const itemId = item.id!;
 
               return (
@@ -139,14 +148,26 @@ export function ItemTable({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      disabled={!isAvailable}
-                      onClick={() => onBorrow(item)}
-                    >
-                      <CircleArrowDown />
-                      Borrow
-                    </Button>
+                    {/* Show borrow button for non-admins, edit/delete for admins */}
+                    {!isAdmin ? (
+                      <Button
+                        variant="outline"
+                        disabled={!isAvailable}
+                        onClick={() => onBorrow(item)}
+                      >
+                        <CircleArrowDown />
+                        Borrow
+                      </Button>
+                    ) : (
+                      <div className="flex justify-end gap-2">
+                        <Button size="icon" variant="outline">
+                          <SquarePen className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="outline">
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               );

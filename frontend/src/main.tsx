@@ -2,46 +2,40 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './index.css';
-import { routeTree } from './routeTree.gen.ts';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { queryClient } from './lib/queryClient.ts';
-import { QueryClientProvider, queryOptions } from '@tanstack/react-query';
-import { authService } from './services/authService.ts';
+import { QueryClientProvider } from '@tanstack/react-query';
 import AutoLogoutProvider from './features/auth/components/AutoLogoutProvider.tsx';
-import { isAxiosError } from 'axios';
+import { RouterProvider } from '@tanstack/react-router';
+import { router, userQueryConfig } from './router/router.ts';
+import type { RouterContext } from './router/context.ts';
+import { useAuthViewModel } from './features/auth/viewmodels/useAuthViewModel.ts';
 
-export const userQueryKey = 'user';
+export function AppRouter() {
+  const auth = useAuthViewModel();
 
-export const userQueryConfig = queryOptions({
-  queryKey: [userQueryKey],
-  queryFn: async ({ signal }) => {
-    return await authService.getCurrentUser({ signal });
-  },
-  staleTime: Infinity,
-  retry: (failureCount, error) => {
-    if (isAxiosError(error) && error.response?.status === 401) {
-      return false;
-    }
-    return failureCount < 3;
-  },
-});
+  if (auth.isLoading) {
+    return null;
+  }
 
-export const router = createRouter({
-  routeTree,
-  context: {
-    queryClient,
-    getUser: () => queryClient.ensureQueryData(userQueryConfig),
-  },
-  defaultPreload: 'intent',
-  defaultPreloadStaleTime: 0,
-  scrollRestoration: true,
-});
+  return (
+    <RouterProvider
+      router={router}
+      context={
+        {
+          queryClient,
+          authUser: auth.user,
+          getUser: () => queryClient.ensureQueryData(userQueryConfig),
+        } as RouterContext
+      }
+    />
+  );
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AutoLogoutProvider>
-        <RouterProvider router={router} />
+        <AppRouter />
       </AutoLogoutProvider>
     </QueryClientProvider>
   </StrictMode>

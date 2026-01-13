@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, createContext, useContext, useState } from 'react';
-import { router } from '@/main';
+import React, {
+  useEffect,
+  useRef,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
+import { router } from '@/router/router';
 import { useLogout } from '@/hooks/useLogout';
 import { toast } from 'sonner';
 import { DEFAULT_USER_SETTINGS } from '@/types/userSettings';
@@ -15,7 +21,9 @@ interface AutoLogoutContextType {
   settings: UserSettings;
 }
 
-const AutoLogoutContext = createContext<AutoLogoutContextType | undefined>(undefined);
+const AutoLogoutContext = createContext<AutoLogoutContextType | undefined>(
+  undefined
+);
 
 export const useAutoLogout = () => {
   const context = useContext(AutoLogoutContext);
@@ -50,7 +58,7 @@ export default function AutoLogoutProvider({
   }, [settings]);
 
   const setIsEnabled = (enabled: boolean) => {
-    setSettings((prev) => ({ ...prev, autoLogout: enabled }));
+    setSettings(prev => ({ ...prev, autoLogout: enabled }));
   };
 
   const clearTimers = () => {
@@ -76,7 +84,7 @@ export default function AutoLogoutProvider({
 
   const resetTimers = () => {
     if (!isEnabled) return;
-    
+
     clearTimers();
     warningTimer.current = window.setTimeout(
       showWarning,
@@ -121,7 +129,7 @@ export default function AutoLogoutProvider({
     };
   }, [isEnabled]);
 
-    return (
+  return (
     <AutoLogoutContext.Provider value={{ isEnabled, setIsEnabled, settings }}>
       {children}
     </AutoLogoutContext.Provider>

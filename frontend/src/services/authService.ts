@@ -1,6 +1,6 @@
 import { api } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
-import { router, userQueryKey } from '@/main';
+import { router, userQueryKey } from '../router/router';
 import { type User } from '@schemas/userSchema';
 import type { AxiosRequestConfig } from 'axios';
 

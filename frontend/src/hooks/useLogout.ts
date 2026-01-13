@@ -1,6 +1,6 @@
 import { authService } from '@/services/authService';
 import { queryClient } from '@/lib/queryClient';
-import { router } from '@/main';
+import { router } from '../router/router';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

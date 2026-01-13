@@ -60,10 +60,12 @@ io.on('connection', socket => {
 // Express Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL?.replace(/\/$/, ''),
-    credentials: true,
+    origin: 'http://localhost:5173',
+    credentials: true, // Allow cookies/headers to be sent
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   })
 );
+
 app.use(express.json());
 
 // Swagger Docs

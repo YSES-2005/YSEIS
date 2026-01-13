@@ -24,8 +24,10 @@ import {
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Package, Search, Filter, Layers } from 'lucide-react';
+import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
 
 export function ItemsView() {
+  const { isAdmin } = useAuthViewModel();
   const {
     items,
     isLoading,
@@ -63,7 +65,9 @@ export function ItemsView() {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
 
-  const availableItems = items.filter(item => item.status === 'available' && item.quantity > 0);
+  const availableItems = items.filter(
+    item => item.status === 'available' && item.quantity > 0
+  );
 
   const handleBorrowSuccess = () => {
     setBorrowOpen(false);
@@ -301,14 +305,17 @@ export function ItemsView() {
             </PopoverContent>
           </Popover>
 
-          <Button
-            onClick={handleOpenMultiBorrow}
-            disabled={availableItems.length == 0}
-            variant={availableItems.length === 0 ? 'ghost' : 'neutral'}
-          >
-            <Layers className="mr-2 h-4 w-4" />
-            Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
-          </Button>
+          {/* Show multi-borrow button for non-admin users */}
+          {!isAdmin && (
+            <Button
+              onClick={handleOpenMultiBorrow}
+              disabled={availableItems.length == 0}
+              variant={availableItems.length === 0 ? 'ghost' : 'neutral'}
+            >
+              <Layers className="mr-2 h-4 w-4" />
+              Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
+            </Button>
+          )}
         </div>
       </div>
 

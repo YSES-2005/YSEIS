@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { userQueryConfig } from '@/main';
+import { userQueryConfig } from '../router/router';
 
 export function useUser() {
   const { data, refetch } = useSuspenseQuery(userQueryConfig);

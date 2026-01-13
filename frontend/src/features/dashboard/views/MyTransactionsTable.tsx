@@ -25,6 +25,7 @@ import { type BadgeVariantKey } from '@/components/ui/badge.variants';
 import { ChevronLeft, ChevronRight, CircleX, Clock2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
 
 type Props = {
   transactions: TransactionPopulated[];
@@ -117,6 +118,7 @@ export function MyTransactionsTable({
   className,
   cancelRequest,
 }: Props) {
+  const { isAdmin } = useAuthViewModel();
   const table = useReactTable({
     data: transactions,
     columns,
@@ -131,7 +133,15 @@ export function MyTransactionsTable({
     <div className={cn(' p-4 flex flex-col', className)}>
       <div className="overflow-hidden">
         <div className="flex place-items-center justify-between mb-4">
-          <h2 className="text-xl font-light tracking-tighter">Your Requests</h2>
+          {!isAdmin ? (
+            <h2 className="text-xl font-light tracking-tighter">
+              Your Requests
+            </h2>
+          ) : (
+            <h2 className="text-xl font-light tracking-tighter">
+              Pending Requests
+            </h2>
+          )}
           <div className="flex items-center justify-end space-x-1 mt-auto">
             <Button
               variant="outline"
