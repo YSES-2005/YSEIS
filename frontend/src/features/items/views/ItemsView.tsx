@@ -30,14 +30,7 @@ import { CreateItemModal } from './CreateItemModal';
 import { useEditItemViewModel } from '../viewmodels/useEditItemViewModel';
 import { EditItemModal } from './EditItemModal';
 import { useDeleteViewModel } from '../viewmodels/useDeleteViewModel';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import DeleteItemModal from './DeleteItemModal';
 
 export function ItemsView() {
   const { user } = useUser();
@@ -474,44 +467,16 @@ export function ItemsView() {
         setField={setEditItemField}
       />
 
-      <Dialog
+      <DeleteItemModal
         open={deleteOpen}
-        onOpenChange={isOpen => {
-          if (!isOpen) {
-            setDeleteOpen(false);
-            setItemToDelete(null);
-          }
+        item={itemToDelete}
+        onClose={() => {
+          setDeleteOpen(false);
+          setItemToDelete(null);
         }}
-      >
-        <DialogContent className="sm:max-w-md p-6">
-          <DialogHeader>
-            <DialogTitle>Delete item</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete "{itemToDelete?.name}"? This
-              action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteOpen(false);
-                setItemToDelete(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
