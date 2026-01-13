@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemModel from './item.model';
+import { UserModel } from '../users/user.model'; 
 import { NotFoundError } from '../../errors';
 
-//gets all items
-//GET api/items
+// GET api/items
 export const getItems = async (
   req: Request,
   res: Response,
@@ -21,16 +21,13 @@ export const getItems = async (
       limit = '10',
     } = req.query as Record<string, string | undefined>;
 
-    // add query object
     const query: Record<string, any> = { status: { $ne: 'deleted' } };
 
-    // filter by status
     if (status && status !== 'all') {
       if (status === 'available') {
         query.status = 'available';
         query.quantity = { $gt: 0 };
       } else if (status === 'unavailable') {
-        delete query.status;
         query.$and = [
           { status: { $ne: 'deleted' } },
           { $or: [{ status: 'unavailable' }, { quantity: 0 }] },
@@ -40,20 +37,10 @@ export const getItems = async (
       }
     }
 
-    // filter by type
-    if (type) {
-      query.type = type;
-    }
+    if (type) query.type = type;
 
-    // search by name (case-insensitive regex)
-    if (search) {
-      query.name = { $regex: new RegExp(search, 'i') };
-    }
+    if (search) query.name = { $regex: new RegExp(search, 'i') };
 
-    // Note: custodian filter will be applied after populate
-    // since we need to search in populated name/email fields
-
-    // date range filtering
     if (startDate || endDate) {
       const range: Record<string, Date> = {};
       if (startDate) range.$gte = new Date(startDate);
@@ -65,31 +52,30 @@ export const getItems = async (
       query.updated_at = range;
     }
 
+    if (custodian) {
+      const matchingUsers = await UserModel.find({
+        $or: [
+            { name: { $regex: new RegExp(custodian, 'i') } },
+            { email: { $regex: new RegExp(custodian, 'i') } }
+        ]
+      }).select('_id'); 
+
+      const userIds = matchingUsers.map(u => u._id);
+      query.custodian = { $in: userIds };
+    }
+
     const pageNumber = Math.max(1, parseInt(page));
     const limitNumber = Math.max(1, parseInt(limit));
     const skip = (pageNumber - 1) * limitNumber;
 
-    let itemsQuery = ItemModel.find(query)
-      .populate('custodian', 'name email avatar')
-      .sort({ updated_at: -1 });
-
-    // Get total count before pagination
-    const totalCount = await ItemModel.countDocuments(query);
-
-    // Apply pagination
-    let items = await itemsQuery.skip(skip).limit(limitNumber);
-
-    // Apply custodian filter if provided (after populate)
-    if (custodian) {
-      const custodianLower = custodian.toLowerCase();
-      items = items.filter((item: any) => {
-        const custodianObj = item.custodian;
-        if (!custodianObj) return false;
-        const name = custodianObj.name?.toLowerCase() || '';
-        const email = custodianObj.email?.toLowerCase() || '';
-        return name.includes(custodianLower) || email.includes(custodianLower);
-      });
-    }
+    const [items, totalCount] = await Promise.all([
+        ItemModel.find(query)
+            .populate('custodian', 'name email avatar')
+            .sort({ updated_at: -1 })
+            .skip(skip)
+            .limit(limitNumber),
+        ItemModel.countDocuments(query)
+    ]);
 
     res.json({
       data: items,
