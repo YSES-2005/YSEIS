@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Bell, Circle, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatDistanceToNow, formatRelative } from 'date-fns';
 
 export interface NotificationItemProps {
   id: string;
@@ -74,7 +75,7 @@ export function NotificationItem({
         <div className="flex items-center gap-2 pr-2">
           {/* timestamp */}
           <span className="text-[10px] text-muted-foreground whitespace-nowrap tabular-nums">
-            {timestamp ? new Date(timestamp).toLocaleString() : ''}
+            {formatDistanceToNow(new Date(timestamp))}
           </span>
 
           {/* unread indicator */}
