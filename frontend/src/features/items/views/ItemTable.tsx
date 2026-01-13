@@ -130,7 +130,7 @@ export function ItemTable({
                       <Avatar className="size-4 rounded-full">
                         <AvatarImage src={item.custodian.avatar} />
                         <AvatarFallback className="rounded-lg text-[0.6rem]">
-                          {item.custodian.name.slice(0, 2)}
+                          {item.custodian.name?.slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
                       {getCustodianDisplay(item.custodian)}
