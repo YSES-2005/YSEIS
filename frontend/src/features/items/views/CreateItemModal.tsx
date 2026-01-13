@@ -14,6 +14,15 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from '@/components/ui/combobox';
+import useUsersViewModel from '../viewmodels/useUsersViewModel';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -42,6 +51,8 @@ export function CreateItemModal({
   onClose,
   setField,
 }: Props) {
+  const { options, isLoading } = useUsersViewModel();
+
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit();
@@ -87,15 +98,48 @@ export function CreateItemModal({
           </FieldGroup>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="custodian"> Custodian (WIP) </FieldLabel>
-              <Input
-                id="custodian"
-                type="text"
-                placeholder="Item custodian"
+              <FieldLabel htmlFor="custodian"> Custodian </FieldLabel>
+              <Combobox
+                items={options}
                 value={form.custodian}
-                onChange={e => setField('custodian', e.target.value)}
-                aria-invalid={!!errors.custodian}
-              />
+                onValueChange={val => {
+                  console.log(val);
+                  setField(
+                    'custodian' as any,
+                    val === '' ? undefined : (val as any)
+                  );
+                }}
+              >
+                <ComboboxInput
+                  id="custodian"
+                  placeholder={
+                    isLoading ? 'Loading users...' : 'Select a custodian'
+                  }
+                  value={
+                    form.custodian
+                      ? options.find(o => o.value === form.custodian)?.label
+                      : 'Select a custodian'
+                  }
+                  showClear
+                  disabled={isLoading}
+                  className="w-[200px]"
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>
+                    {isLoading ? 'Loading users...' : 'No users found.'}
+                  </ComboboxEmpty>
+                  <ComboboxList>
+                    {opt => (
+                      <ComboboxItem
+                        key={(opt as any).value}
+                        value={(opt as any).value}
+                      >
+                        {(opt as any).label}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
               <FieldError>{errors.custodian}</FieldError>
             </Field>
           </FieldGroup>

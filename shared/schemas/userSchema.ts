@@ -13,4 +13,15 @@ export const userSchema = z.object({
     .optional(),
 });
 
+const objectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
+
+export const userListSchema = z.object({
+  _id: objectIdSchema,
+  name: z.string().min(1, 'Name is required'),
+});
+
+export type UserListItem = z.infer<typeof userListSchema>;
+
 export type User = z.infer<typeof userSchema>;
