@@ -28,7 +28,7 @@ export const updateItemSchema = itemSchema
 export type Item = z.infer<typeof itemSchema>;
 
 export type ItemPopulated = Omit<Item, 'custodian'> & {
-  custodian: { name?: string; email?: string; avatar?: string };
+  custodian: { id?: string; name?: string; email?: string; avatar?: string };
 };
 
 export type ItemUpdate = z.infer<typeof updateItemSchema>;

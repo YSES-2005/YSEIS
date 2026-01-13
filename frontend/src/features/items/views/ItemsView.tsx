@@ -24,13 +24,11 @@ import {
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Package, Search, Filter, Layers, Plus } from 'lucide-react';
-<<<<<<< HEAD
 import { useUser } from '@/hooks/useUser';
-=======
-import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
 import { useCreateItemViewModel } from '../viewmodels/useCreateItemViewModel';
 import { CreateItemModal } from './CreateItemModal';
->>>>>>> 7d73c7f (feat: connect add item button to modal)
+import { useEditItemViewModel } from '../viewmodels/useEditItemViewModel';
+import { EditItemModal } from './EditItemModal';
 
 export function ItemsView() {
   const { user } = useUser();
@@ -55,7 +53,6 @@ export function ItemsView() {
     totalPages,
   } = useItemsViewModel();
 
-  console.log(items);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [tempCustodian, setTempCustodian] = useState('');
   const [tempType, setTempType] = useState<string | null>(null);
@@ -72,6 +69,7 @@ export function ItemsView() {
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
   const [createItemOpen, setCreateItemOpen] = useState(false);
+  const [editItemOpen, setEditItemOpen] = useState(false);
 
   const availableItems = items.filter(
     item => item.status === 'available' && item.quantity > 0
@@ -221,6 +219,34 @@ export function ItemsView() {
     resetCreateItem();
   };
 
+  const editItemSuccess = () => {
+    setEditItemOpen(false);
+    resetEditItem();
+  };
+
+  const {
+    form: editItemForm,
+    errors: editItemErrors,
+    setField: setEditItemField,
+    submit: submitEditItem,
+    reset: resetEditItem,
+  } = useEditItemViewModel({
+    item: selectedItem,
+    onSuccess: editItemSuccess,
+  });
+
+  const handleOpenEditItem = (item: Item) => {
+    setSelectedItem(item);
+    resetEditItem();
+    setEditItemOpen(true);
+  };
+
+  const handleCloseEditItem = () => {
+    setEditItemOpen(false);
+    setSelectedItem(null);
+    resetEditItem();
+  };
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -341,7 +367,7 @@ export function ItemsView() {
 
           {/* Show multi-borrow button for non-admin users */}
           {user?.role === 'admin' ? (
-            <Button variant="neutral">
+            <Button variant="neutral" onClick={handleOpenCreateItem}>
               <Plus className="mr-2 h-4 w-4" />
               Add Item
             </Button>
@@ -354,14 +380,6 @@ export function ItemsView() {
               <Layers className="mr-2 h-4 w-4" />
               Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
             </Button>
-<<<<<<< HEAD
-=======
-          ) : (
-            <Button variant="neutral" onClick={handleOpenCreateItem}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Item
-            </Button>
->>>>>>> 7d73c7f (feat: connect add item button to modal)
           )}
         </div>
       </div>
@@ -377,6 +395,7 @@ export function ItemsView() {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
           onBorrow={handleOpenBorrow}
+          onEdit={handleOpenEditItem}
           selectedItems={selectedItems}
           onToggleSelection={handleToggleSelection}
           onToggleAll={handleToggleAll}
@@ -417,6 +436,16 @@ export function ItemsView() {
         onClose={handleCloseCreateItem}
         onSubmit={submitCreateItem}
         setField={setCreateItemField}
+      />
+
+      <EditItemModal
+        open={editItemOpen}
+        form={editItemForm}
+        errors={editItemErrors}
+        isCreating={false}
+        onClose={handleCloseEditItem}
+        onSubmit={submitEditItem}
+        setField={setEditItemField}
       />
     </div>
   );

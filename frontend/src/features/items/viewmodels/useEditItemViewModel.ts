@@ -1,10 +1,9 @@
 import { queryClient } from '@/lib/queryClient';
 import { itemService } from '@/services/itemService';
-import { itemSchema } from '@schemas/itemSchema';
+import { updateItemSchema } from '@schemas/itemSchema';
 import type {
   ItemPopulated as Item,
   ItemUpdate as SchemaUpdateItem,
-  Item as SchemaItem,
 } from '@schemas/itemSchema';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -16,16 +15,16 @@ export function useEditItemViewModel({
   item,
   onSuccess,
 }: {
-  item: SchemaItem;
+  item: Item | null;
   onSuccess?: (item: Item) => void;
 }) {
   const [form, setForm] = useState<SchemaUpdateItem>({
-    avatar: item.avatar,
-    name: item.name,
-    type: item.type,
-    quantity: item.quantity,
-    custodian: item.custodian,
-    location: item.location,
+    avatar: item?.avatar,
+    name: item?.name,
+    type: item?.type,
+    quantity: item?.quantity,
+    custodian: item?.custodian.id,
+    location: item?.location,
   });
   const [errors, setErrors] = useState<EditItemValidationErrors>({});
 
@@ -66,7 +65,8 @@ export function useEditItemViewModel({
   };
 
   const validate = (): boolean => {
-    const result = itemSchema.safeParse(form);
+    console.log(form);
+    const result = updateItemSchema.safeParse(form);
     if (result.success) {
       setErrors({});
       return true;
@@ -90,12 +90,12 @@ export function useEditItemViewModel({
 
   const reset = () => {
     setForm({
-      avatar: item.avatar,
-      name: item.name,
-      type: item.type,
-      quantity: item.quantity,
-      custodian: item.custodian,
-      location: item.location,
+      avatar: item?.avatar,
+      name: item?.name,
+      type: item?.type,
+      quantity: item?.quantity,
+      custodian: item?.custodian.id,
+      location: item?.location,
     });
     setErrors({});
   };

@@ -21,11 +21,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import type { Item } from '@schemas/itemSchema';
+import type { Item, ItemPopulated } from '@schemas/itemSchema';
 
 type Props = {
   open: boolean;
-  form: Item;
+  form: ItemPopulated;
   errors: Partial<Record<keyof Item, string>>;
   isCreating: boolean;
   onSubmit: () => void;
@@ -92,7 +92,7 @@ export function CreateItemModal({
                 id="custodian"
                 type="text"
                 placeholder="Item custodian"
-                value={form.custodian}
+                value={form.custodian.id}
                 onChange={e => setField('custodian', e.target.value)}
                 aria-invalid={!!errors.custodian}
               />

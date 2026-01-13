@@ -35,6 +35,7 @@ type Props = {
   totalPages: number;
   onPageChange: (page: number) => void;
   onBorrow: (item: Item) => void;
+  onEdit: (item: Item) => void;
   selectedItems: Set<string>;
   onToggleSelection: (itemId: string) => void;
   onToggleAll: () => void;
@@ -47,6 +48,7 @@ export function ItemTable({
   totalPages,
   onPageChange,
   onBorrow,
+  onEdit,
   selectedItems,
   onToggleSelection,
   onToggleAll,
@@ -151,7 +153,11 @@ export function ItemTable({
                     {/* Show borrow button for non-admins, edit/delete for admins */}
                     {user?.role === 'admin' ? (
                       <div className="flex justify-end gap-2">
-                        <Button size="icon" variant="outline">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => onEdit(item)}
+                        >
                           <SquarePen className="h-4 w-4" />
                         </Button>
                         <Button size="icon" variant="outline">

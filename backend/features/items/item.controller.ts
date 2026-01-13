@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemModel from './item.model';
-import { UserModel } from '../users/user.model'; 
+import { UserModel } from '../users/user.model';
 import { NotFoundError } from '../../errors';
 
 // GET api/items
@@ -55,10 +55,10 @@ export const getItems = async (
     if (custodian) {
       const matchingUsers = await UserModel.find({
         $or: [
-            { name: { $regex: new RegExp(custodian, 'i') } },
-            { email: { $regex: new RegExp(custodian, 'i') } }
-        ]
-      }).select('_id'); 
+          { name: { $regex: new RegExp(custodian, 'i') } },
+          { email: { $regex: new RegExp(custodian, 'i') } },
+        ],
+      }).select('_id');
 
       const userIds = matchingUsers.map(u => u._id);
       query.custodian = { $in: userIds };
@@ -69,12 +69,12 @@ export const getItems = async (
     const skip = (pageNumber - 1) * limitNumber;
 
     const [items, totalCount] = await Promise.all([
-        ItemModel.find(query)
-            .populate('custodian', 'name email avatar')
-            .sort({ updated_at: -1 })
-            .skip(skip)
-            .limit(limitNumber),
-        ItemModel.countDocuments(query)
+      ItemModel.find(query)
+        .populate('custodian', 'name email avatar')
+        .sort({ updated_at: -1 })
+        .skip(skip)
+        .limit(limitNumber),
+      ItemModel.countDocuments(query),
     ]);
 
     res.json({
