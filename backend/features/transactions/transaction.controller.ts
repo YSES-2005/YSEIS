@@ -54,7 +54,7 @@ export const getTransactions = async (
         d.setHours(23, 59, 59, 999);
         dateFilter.$lte = d;
       }
-      filter.createdAt = dateFilter;
+      filter.created_at = dateFilter;
     }
 
     if (search) {
@@ -79,7 +79,7 @@ export const getTransactions = async (
       TransactionModel.find(filter)
         .populate('item', 'name')
         .populate('borrower', 'name email')
-        .sort({ createdAt: -1 })
+        .sort({ created_at: -1 })
         .skip(skip)
         .limit(limitNum),
       TransactionModel.countDocuments(filter),
@@ -114,7 +114,7 @@ export const getTransactionsForMe = async (
     const transactions = await TransactionModel.find(filter)
       .populate('item', 'name')
       .populate('borrower', 'name email')
-      .sort({ createdAt: -1 });
+      .sort({ created_at: -1 });
 
     res.json({ transactions });
   } catch (error) {
