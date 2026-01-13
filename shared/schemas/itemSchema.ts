@@ -10,7 +10,7 @@ export const itemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   type: z.string().min(1, 'Type is required'),
   quantity: z.number().int().nonnegative('Quantity must be 0 or more'),
-  custodian: objectIdSchema,
+  custodian: objectIdSchema.optional(),
   location: z.string().min(1, 'Location is required'),
   status: z.enum(['available', 'unavailable', 'deleted']),
   created_at: z.coerce.date().optional(),
@@ -30,6 +30,8 @@ export type Item = z.infer<typeof itemSchema>;
 export type ItemPopulated = Omit<Item, 'custodian'> & {
   custodian: { name?: string; email?: string; avatar?: string };
 };
+
+export type ItemUpdate = z.infer<typeof updateItemSchema>;
 
 const baseBorrowSchema = z.object({
   returnDate: z
