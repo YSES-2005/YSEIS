@@ -11,6 +11,12 @@ export const userSchema = z.object({
     .int()
     .min(0, 'Urgent borrow uses must be 0 or more')
     .optional(),
+  preferences: z
+    .object({
+      emailAlerts: z.boolean().default(true),
+      dueDateReminders: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 const objectIdSchema = z
