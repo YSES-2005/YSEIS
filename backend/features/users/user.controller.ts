@@ -48,4 +48,34 @@ export const getUserById = async (
   }
 };
 
-export default { me, getUsers, getUserById };
+export const updateMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.userId;
+    if (!id) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { name, avatar, preferences } = req.body;
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (avatar) updateData.avatar = avatar;
+    if (preferences) updateData.preferences = preferences;
+
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    return res.json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default { me, getUsers, getUserById, updateMe };

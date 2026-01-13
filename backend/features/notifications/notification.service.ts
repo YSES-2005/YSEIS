@@ -32,7 +32,21 @@ export const notify = async (
     if (options?.shouldEmail) {
       const user = await UserModel.findById(recipientId);
       if (user && user.email) {
-        const htmlContent = `
+        // Check preferences
+        const prefs = user.preferences || {
+          emailAlerts: true,
+          dueDateReminders: true,
+        };
+
+        let shouldSend = prefs.emailAlerts;
+
+        // If this is a due date reminder, use that preference instead
+        if (title.includes('Due Date Reminder')) {
+          shouldSend = prefs.dueDateReminders;
+        }
+
+        if (shouldSend) {
+          const htmlContent = `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
             <h2 style="color: #333;">${title}</h2>
             <p style="font-size: 16px; color: #555;">${message}</p>
@@ -44,9 +58,10 @@ export const notify = async (
           </div>
         `;
 
-        sendEmail(user.email, title, htmlContent).catch(err =>
-          console.error(`Failed to email user ${user.email}:`, err)
-        );
+          sendEmail(user.email, title, htmlContent).catch(err =>
+            console.error(`Failed to email user ${user.email}:`, err)
+          );
+        }
       }
     }
 
