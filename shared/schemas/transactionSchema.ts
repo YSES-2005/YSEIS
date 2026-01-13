@@ -71,36 +71,16 @@ export const transactionCreateSchema = z.object({
   item: objectIdSchema,
   borrower: objectIdSchema.optional(),
   purpose: z.string().min(1, 'Purpose is required'),
-  urgency: z.boolean().default(false),
-  returnDate: futureDateSchema,
+  urgency: z.boolean(),
+  returnDate: dateFromString,
+  approvalStatus: z
+    .enum(['approved', 'disapproved', 'pending'])
+    .optional()
+    .default('pending'),
 });
-
-// single borrow mode
-const singleTransactionInput = baseRequestFields.extend({
-  item: objectIdSchema,
-  quantity: z.coerce.number().int().min(1).default(1),
-  // Strict exclusion: 'items' must NOT exist
-  items: z.undefined(),
-});
-
-// multi borrow mode
-const itemEntry = z.object({
-  item: objectIdSchema,
-  quantity: z.coerce.number().int().min(1).default(1),
-});
-
-const multiTransactionInput = baseRequestFields.extend({
-  items: z.array(itemEntry).min(1, 'At least one item required'),
-  item: z.undefined(),
-});
-
-export const transactionRequestSchema = z.union([
-  singleTransactionInput,
-  multiTransactionInput,
-]);
 
 export type Transaction = z.infer<typeof transactionSchema>;
-export type TransactionRequest = z.infer<typeof transactionRequestSchema>;
+export type TransactionCreate = z.infer<typeof transactionCreateSchema>;
 export type TransactionUpdate = z.infer<typeof transactionUpdateSchema>;
 export type ApprovalStatus = z.infer<typeof approvalStatusEnum>;
 
