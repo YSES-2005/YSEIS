@@ -24,7 +24,13 @@ import {
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Package, Search, Filter, Layers, Plus } from 'lucide-react';
+<<<<<<< HEAD
 import { useUser } from '@/hooks/useUser';
+=======
+import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
+import { useCreateItemViewModel } from '../viewmodels/useCreateItemViewModel';
+import { CreateItemModal } from './CreateItemModal';
+>>>>>>> 7d73c7f (feat: connect add item button to modal)
 
 export function ItemsView() {
   const { user } = useUser();
@@ -49,12 +55,13 @@ export function ItemsView() {
     totalPages,
   } = useItemsViewModel();
 
+  console.log(items);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [tempCustodian, setTempCustodian] = useState('');
   const [tempType, setTempType] = useState<string | null>(null);
   const [tempStatus, setTempStatus] = useState<
     'available' | 'unavailable' | null
-  >('available');
+  >(null);
   const [tempStartDate, setTempStartDate] = useState('');
   const [tempEndDate, setTempEndDate] = useState('');
 
@@ -64,6 +71,7 @@ export function ItemsView() {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
+  const [createItemOpen, setCreateItemOpen] = useState(false);
 
   const availableItems = items.filter(
     item => item.status === 'available' && item.quantity > 0
@@ -185,6 +193,32 @@ export function ItemsView() {
     setTempStatus('available');
     setTempStartDate('');
     setTempEndDate('');
+  };
+
+  const handleCreateItemSuccess = () => {
+    setCreateItemOpen(false);
+    resetCreateItem();
+  };
+
+  const {
+    form: createItemForm,
+    errors: createItemErrors,
+    setField: setCreateItemField,
+    submit: submitCreateItem,
+    reset: resetCreateItem,
+    isLoading: isCreatingItem,
+  } = useCreateItemViewModel({
+    onSuccess: handleCreateItemSuccess,
+  });
+
+  const handleOpenCreateItem = () => {
+    resetCreateItem();
+    setCreateItemOpen(true);
+  };
+
+  const handleCloseCreateItem = () => {
+    setCreateItemOpen(false);
+    resetCreateItem();
   };
 
   return (
@@ -320,6 +354,14 @@ export function ItemsView() {
               <Layers className="mr-2 h-4 w-4" />
               Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
             </Button>
+<<<<<<< HEAD
+=======
+          ) : (
+            <Button variant="neutral" onClick={handleOpenCreateItem}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Item
+            </Button>
+>>>>>>> 7d73c7f (feat: connect add item button to modal)
           )}
         </div>
       </div>
@@ -365,6 +407,16 @@ export function ItemsView() {
         updateItemQuantity={updateItemQuantity}
         currentImageIndex={currentImageIndex}
         setCurrentImageIndex={setCurrentImageIndex}
+      />
+
+      <CreateItemModal
+        open={createItemOpen}
+        form={createItemForm}
+        errors={createItemErrors}
+        isCreating={isCreatingItem}
+        onClose={handleCloseCreateItem}
+        onSubmit={submitCreateItem}
+        setField={setCreateItemField}
       />
     </div>
   );
