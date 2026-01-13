@@ -5,9 +5,9 @@ import { toast } from 'sonner';
 import { DEFAULT_USER_SETTINGS } from '@/types/userSettings';
 import type { UserSettings } from '@/types/userSettings';
 
-const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 10 * 1000; //logout in half an hour
+const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; //logout in half an hour
 const WARNING_DURATION =
-  Number(import.meta.env.VITE_IDLE_WARNING) || 5 * 1000; //logout warning 5 mins from logout i.e 25 mins
+  Number(import.meta.env.VITE_IDLE_WARNING) || 300 * 1000; //logout warning 5 mins from logout i.e 25 mins
 
 interface AutoLogoutContextType {
   isEnabled: boolean;
