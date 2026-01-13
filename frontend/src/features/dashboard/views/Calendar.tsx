@@ -17,6 +17,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
+import { Calendar1 } from 'lucide-react';
 
 type Props = {
   className: string;
@@ -163,6 +164,14 @@ export function Calendar({ items, className }: Props) {
                                   </AvatarFallback>
                                 </Avatar>
                                 {getCustodianDisplay(item.custodian)}
+                              </Badge>
+                              {'   '}at{'   '}
+                              <Badge
+                                variant={'outline'}
+                                className="text-neutral-foreground border-neutral-foreground text-[0.6rem]"
+                              >
+                                <Calendar1 />
+                                {item.returnDate.toLocaleDateString()}
                               </Badge>
                             </ItemDescription>
                           </ItemContent>
