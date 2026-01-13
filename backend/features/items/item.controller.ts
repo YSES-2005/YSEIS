@@ -133,7 +133,7 @@ export const createItem = async (
     });
 
     await newItem.save();
-    res.status(201).json({ data: newItem });
+    res.status(201).json({ newItem });
   } catch (error) {
     next(error);
   }
@@ -164,7 +164,7 @@ export const updateItem = async (
       throw new NotFoundError('Item not found');
     }
 
-    res.json({ data: item });
+    res.json({ item });
   } catch (error) {
     next(error);
   }
@@ -190,7 +190,7 @@ export const deleteItem = async (
       throw new NotFoundError('Item not found');
     }
 
-    res.json({ data: item });
+    res.json({ item });
   } catch (error) {
     next(error);
   }
