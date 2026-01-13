@@ -1,5 +1,6 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
+import type { BadgeVariantKey } from '@/components/ui/badge.variants';
 import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import {
@@ -16,7 +17,7 @@ type Props = {
   className: string;
 };
 
-const statusVariant: Record<string, string> = {
+const statusVariant: Record<string, BadgeVariantKey> = {
   approved: 'success',
   pending: 'warning',
   disapproved: 'destructive',
@@ -37,7 +38,7 @@ export function Greetings({ counts, className }: Props) {
         className
       )}
     >
-      <h1 className="text-5xl font-extralight -tracking-wider shrink-0">
+      <h1 className="text-5xl font-extralight -tracking-wider flex-1">
         Musta, {user?.name.split(' ')[0]}
       </h1>
 
@@ -46,7 +47,7 @@ export function Greetings({ counts, className }: Props) {
         <BadgeIcon />
       </div>
 
-      <div className="flex justify-end ml-auto sm:size-full gap-4 sm:gap-0.5">
+      <div className="flex justify-end ml-auto sm:size-full gap-4 sm:gap-0.5 shrink-0 w-fit!">
         {['approved', 'pending', 'disapproved'].map(status => {
           const Icon = statusIcon[status];
 
