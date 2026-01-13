@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { NotificationModel } from './notification.model';
+import NotificationModel from './notification.model';
 
 /**
  * Get notifications for the current user
@@ -17,8 +17,7 @@ export const getNotifications = async (req: Request, res: Response) => {
     // fetch notifications sorted by newest first
     const notifications = await NotificationModel.find({ recipient: userId })
       .sort({ createdAt: -1 })
-      .limit(limit)
-      .lean();
+      .limit(limit);
 
     // count unread notifications
     const unreadCount = await NotificationModel.countDocuments({
@@ -63,7 +62,9 @@ export const markAsRead = async (req: Request, res: Response) => {
     return res.status(200).json(notification);
   } catch (error) {
     console.error('Error marking notification as read:', error);
-    return res.status(500).json({ error: 'Failed to mark notification as read' });
+    return res
+      .status(500)
+      .json({ error: 'Failed to mark notification as read' });
   }
 };
 
@@ -90,7 +91,9 @@ export const markAllAsRead = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error marking all notifications as read:', error);
-    return res.status(500).json({ error: 'Failed to mark all notifications as read' });
+    return res
+      .status(500)
+      .json({ error: 'Failed to mark all notifications as read' });
   }
 };
 
@@ -116,7 +119,9 @@ export const deleteNotification = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Notification not found' });
     }
 
-    return res.status(200).json({ message: 'Notification deleted successfully' });
+    return res
+      .status(200)
+      .json({ message: 'Notification deleted successfully' });
   } catch (error) {
     console.error('Error deleting notification:', error);
     return res.status(500).json({ error: 'Failed to delete notification' });

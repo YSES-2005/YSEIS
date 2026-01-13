@@ -1,4 +1,4 @@
-import { NotificationModel } from './notification.model';
+import NotificationModel from './notification.model';
 import { UserModel } from '../users/user.model';
 import { io } from '../../server';
 import { sendEmail } from '../../services/email.service';
@@ -31,7 +31,7 @@ export const notify = async (
 
     if (options?.shouldEmail) {
       const user = await UserModel.findById(recipientId);
-      // baguhin nyo nlng yung message format 
+      // baguhin nyo nlng yung message format
       if (user && user.email) {
         const htmlContent = `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
@@ -44,8 +44,8 @@ export const notify = async (
             </p>
           </div>
         `;
-        
-        sendEmail(user.email, title, htmlContent).catch(err => 
+
+        sendEmail(user.email, title, htmlContent).catch(err =>
           console.error(`Failed to email user ${user.email}:`, err)
         );
       }
@@ -57,3 +57,4 @@ export const notify = async (
     return null;
   }
 };
+

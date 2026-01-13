@@ -1,18 +1,31 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+
 import mongoose from 'mongoose';
+
+mongoose.plugin(schema => {
+  schema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: (_, ret: any) => {
+      delete ret._id;
+      return ret;
+    },
+  });
+});
+
 import cors from 'cors';
-import http from 'http'; 
-import { Server } from 'socket.io'; 
+import http from 'http';
+import { Server } from 'socket.io';
 import itemsRouter from './features/items/item.route';
 import transactionRouter from './features/transactions/transaction.route';
 import usersRouter from './features/users/user.route';
 import authRouter from './features/auth/auth.route';
-import notificationRouter from './features/notifications/notification.route'; 
+import notificationRouter from './features/notifications/notification.route';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/error';
-import { startNotificationScheduler } from './features/notifications/notification.cron'; 
+import { startNotificationScheduler } from './features/notifications/notification.cron';
 
 dotenv.config();
 
@@ -22,13 +35,14 @@ const httpServer = http.createServer(app);
 
 export const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL?.replace(/\/$/, '') || 'http://localhost:5173',
+    origin:
+      process.env.FRONTEND_URL?.replace(/\/$/, '') || 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true,
   },
 });
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   console.log('Client connected:', socket.id);
 
   socket.on('join_user_room', (userId: string) => {
@@ -69,7 +83,7 @@ app.use('/api/items', itemsRouter);
 app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/notifications', notificationRouter); 
+app.use('/api/notifications', notificationRouter);
 
 // Error Handler
 app.use(
@@ -85,14 +99,13 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    
-    startNotificationScheduler(); 
+
+    startNotificationScheduler();
   })
   .catch(err =>
     console.warn('MongoDB connection warning:', err.message || err)
   );
 
 const PORT = Number(process.env.PORT) || 5000;
-
 
 httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

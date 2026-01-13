@@ -1,8 +1,8 @@
 import cron from 'node-cron';
 import { notify } from './notification.service';
 
-import ItemModel from '../items/item.model'; 
-import TransactionModel from '../transactions/transaction.model'; 
+import ItemModel from '../items/item.model';
+import TransactionModel from '../transactions/transaction.model';
 
 export const startNotificationScheduler = () => {
   console.log('Notification Scheduler Initialized');
@@ -16,14 +16,14 @@ export const startNotificationScheduler = () => {
       // find items with low stock that are not deleted
       const lowStockItems = await ItemModel.find({
         quantity: { $lte: LOW_STOCK_THRESHOLD },
-        status: { $ne: 'deleted' }
+        status: { $ne: 'deleted' },
       }).populate('custodian');
 
       for (const item of lowStockItems) {
-        const custodian = item.custodian as any; 
+        const custodian = item.custodian as any;
 
         if (custodian && custodian._id) {
-           await notify(
+          await notify(
             custodian._id.toString(),
             'Low Stock Alert',
             `Your item "${item.name}" is running low on stock (${item.quantity} remaining).`,
@@ -31,7 +31,7 @@ export const startNotificationScheduler = () => {
             {
               shouldEmail: true,
               relatedEntityId: item._id.toString(),
-              relatedModel: 'Item'
+              relatedModel: 'Item',
             }
           );
         }
@@ -46,14 +46,13 @@ export const startNotificationScheduler = () => {
     const today = new Date();
 
     try {
-      
       const overdueTransactions = await TransactionModel.find({
         approvalStatus: 'approved',
         returned: false,
-        returnDate: { $lt: today }
+        returnDate: { $lt: today },
       })
-      .populate('borrower') 
-      .populate('item');    
+        .populate('borrower')
+        .populate('item');
 
       for (const txn of overdueTransactions) {
         const borrower = txn.borrower as any;
@@ -68,7 +67,7 @@ export const startNotificationScheduler = () => {
             {
               shouldEmail: true,
               relatedEntityId: txn._id.toString(),
-              relatedModel: 'Transaction'
+              relatedModel: 'Transaction',
             }
           );
         }
@@ -78,3 +77,4 @@ export const startNotificationScheduler = () => {
     }
   });
 };
+

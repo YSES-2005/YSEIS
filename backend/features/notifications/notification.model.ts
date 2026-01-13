@@ -1,34 +1,36 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface INotification extends Omit<Notification, '_id' | 'recipient'>, Document {
-  recipient: mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const NotificationSchema = new Schema(
+const NotificationsSchema = new mongoose.Schema(
   {
-    recipient: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
+    recipient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
-      index: true 
+      index: true,
     },
-    type: { 
-      type: String, 
-      enum: ['INFO', 'WARNING', 'SUCCESS', 'ERROR'], 
-      default: 'INFO' 
+    type: {
+      type: String,
+      enum: ['INFO', 'WARNING', 'SUCCESS', 'ERROR'],
+      default: 'INFO',
     },
     title: { type: String, required: true },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
-    
-    relatedEntityId: { type: Schema.Types.ObjectId },
-    relatedModel: { type: String, enum: ['Item', 'Transaction'] }
+
+    relatedEntityId: { type: mongoose.Schema.Types.ObjectId },
+    relatedModel: { type: String, enum: ['Item', 'Transaction'] },
   },
-  { 
-    timestamps: true 
+  {
+    timestamps: {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
   }
 );
 
-export const NotificationModel = mongoose.model<INotification>('Notification', NotificationSchema);
+NotificationsSchema.virtual('id').get(function (this: any) {
+  return this._id?.toString();
+});
+NotificationsSchema.set('toObject', { virtuals: true });
+
+export default mongoose.model('Notification', NotificationsSchema);

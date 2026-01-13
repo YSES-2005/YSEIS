@@ -44,8 +44,6 @@ const TransactionsSchema = new mongoose.Schema(
 TransactionsSchema.virtual('id').get(function (this: any) {
   return this._id?.toString();
 });
-
-TransactionsSchema.set('toJSON', { virtuals: true });
 TransactionsSchema.set('toObject', { virtuals: true });
 
 export default mongoose.model('Transaction', TransactionsSchema);

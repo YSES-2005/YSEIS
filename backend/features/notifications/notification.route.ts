@@ -4,7 +4,7 @@ import {
   markAsRead,
   markAllAsRead,
   deleteNotification,
-} from "./notification.controller";
+} from './notification.controller';
 import { authenticate } from '../../middleware/auth';
 
 const notificationsRouter = express.Router();
@@ -139,3 +139,4 @@ notificationsRouter.patch('/read-all', markAllAsRead);
 notificationsRouter.delete('/:id', deleteNotification);
 
 export default notificationsRouter;
+

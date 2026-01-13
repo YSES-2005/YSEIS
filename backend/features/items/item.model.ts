@@ -27,12 +27,9 @@ const ItemsSchema = new mongoose.Schema(
   }
 );
 
-// expose `id` as a virtual that will map to MongoDB's `_id`
 ItemsSchema.virtual('id').get(function (this: any) {
   return this._id?.toString();
 });
-
-ItemsSchema.set('toJSON', { virtuals: true });
 ItemsSchema.set('toObject', { virtuals: true });
 
 export default mongoose.model('Item', ItemsSchema);
