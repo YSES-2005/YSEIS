@@ -9,13 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Bell, Sun, Shield, User } from 'lucide-react';
@@ -95,20 +88,7 @@ export function SettingsView() {
                 className="bg-muted text-muted-foreground" 
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="department">Department / Organization</Label>
-              {/* Remove this if wala ng time hahah */}
-              <Select defaultValue="Projects and Activities">
-                <SelectTrigger id="department">
-                  <SelectValue/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Projects and Activities">Projects and Activities</SelectItem>
-                  <SelectItem value="Finance">Finance</SelectItem>
-                  <SelectItem value="Human Resources">Human Resources</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            
           </div>
         </CardContent>
       </Card>
@@ -170,7 +150,7 @@ export function SettingsView() {
              <div className="flex items-center justify-between space-x-2">
                 <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer items-start text-left">
                   <span>Dark Mode</span>
-                  <span className="font-normal text-xs text-muted-foreground">
+                  <span className="font-normal text-muted-foreground">
                     Switch between light and dark themes.
                   </span>
                 </Label>
@@ -199,7 +179,7 @@ export function SettingsView() {
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="auto-logout" className="flex flex-col space-y-1 cursor-pointer items-start text-left">
                 <span>Auto Logout</span>
-                <span className="font-normal text-xs text-muted-foreground">
+                <span className="font-normal text-muted-foreground">
                   Automatically log out after 30 minutes of inactivity.
                 </span>
               </Label>
