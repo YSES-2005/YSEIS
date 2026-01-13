@@ -14,6 +14,7 @@ export function DashboardView() {
     currentItemIndex,
     setCurrentItemIndex,
     markAsReleased,
+    cancelRequest,
   } = useDashboardViewModel();
 
   return (
@@ -33,6 +34,7 @@ export function DashboardView() {
           className="w-full min-h-60"
           approvedItems={readyForPickupItems}
           markAsReleased={markAsReleased}
+          cancelRequest={cancelRequest}
         />
       </div>
       <Calendar
@@ -42,6 +44,7 @@ export function DashboardView() {
       <MyTransactionsTable
         className="col-span-4 row-span-12 col-start-9"
         transactions={transactions}
+        cancelRequest={cancelRequest}
       />
     </div>
   );

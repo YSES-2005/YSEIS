@@ -131,13 +131,27 @@ export function useDashboardViewModel() {
 
   const { mutate: markAsReleased } = useMutation({
     mutationFn: async (transactionId: string) => {
-      console.log(transactionId);
       return transactionService.updateTransaction(transactionId, {
         approvalStatus: 'released',
       });
     },
     onSuccess: () => {
       toast.success('Item marked as released');
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    },
+    onError: error => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: cancelRequest } = useMutation({
+    mutationFn: async (transactionId: string) => {
+      return transactionService.updateTransaction(transactionId, {
+        approvalStatus: 'cancelled',
+      });
+    },
+    onSuccess: () => {
+      toast.success('Request cancelled.');
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
     },
     onError: error => {
@@ -154,5 +168,6 @@ export function useDashboardViewModel() {
     currentItemIndex,
     setCurrentItemIndex,
     markAsReleased,
+    cancelRequest,
   } as const;
 }

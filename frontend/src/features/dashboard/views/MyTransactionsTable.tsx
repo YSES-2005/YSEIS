@@ -13,16 +13,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { TransactionPopulated } from '@schemas/transactionSchema';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, CircleX, Clock2 } from 'lucide-react';
+import { type BadgeVariantKey } from '@/components/ui/badge.variants';
+import { ChevronLeft, ChevronRight, CircleX, Clock2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 type Props = {
   transactions: TransactionPopulated[];
   className: string;
+  cancelRequest: (transactionId: string) => void;
 };
 
 const columns: ColumnDef<TransactionPopulated>[] = [
@@ -58,25 +65,66 @@ const columns: ColumnDef<TransactionPopulated>[] = [
     cell: ({ row }) => {
       const status = row.original.approvalStatus;
 
-      const variant =
-        status === 'pending' ? 'soft-warning' : 'soft-destructive';
+      const statusVariantMap: Record<string, BadgeVariantKey> = {
+        pending: 'soft-warning',
+        disapproved: 'soft-destructive',
+        cancelled: 'soft-secondary',
+      };
 
       return (
-        <Badge className="capitalize" variant={variant}>
+        <Badge className="capitalize" variant={statusVariantMap[status]}>
           {status === 'pending' ? <Clock2 /> : <CircleX />}
           <span className="text-[0.6rem]">{status}</span>
         </Badge>
       );
     },
   },
+  {
+    id: 'actions',
+    cell: ({ row, table }) => {
+      const transactionId = row.original.id;
+      const meta = table.options.meta as {
+        cancelRequest: (id: string) => void;
+      };
+
+      if (!transactionId) return;
+
+      return (
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                size="icon-sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => meta.cancelRequest(transactionId)}
+              />
+            }
+          >
+            <X />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-[0.6rem]">I don't want this item anymore. :(</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    },
+  },
 ];
 
-export function MyTransactionsTable({ transactions, className }: Props) {
+export function MyTransactionsTable({
+  transactions,
+  className,
+  cancelRequest,
+}: Props) {
   const table = useReactTable({
     data: transactions,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    meta: {
+      cancelRequest,
+    },
   });
 
   return (

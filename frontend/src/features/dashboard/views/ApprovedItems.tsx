@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn, getCustodianDisplay } from '@/lib/utils';
-import { Check, CheckCircle, MapPin } from 'lucide-react';
+import { Check, CheckCircle, MapPin, X } from 'lucide-react';
 import {
   Item,
   ItemGroup,
@@ -25,12 +25,14 @@ type Props = {
   className: string;
   approvedItems: ItemWithTransactionId[];
   markAsReleased: (transactionId: string) => void;
+  cancelRequest: (transactionId: string) => void;
 };
 
 export function ApprovedItems({
   className,
   approvedItems,
   markAsReleased,
+  cancelRequest,
 }: Props) {
   return (
     <Card
@@ -109,6 +111,26 @@ export function ApprovedItems({
                       <TooltipContent>
                         <p className="text-[0.6rem]">
                           I already picked this up.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            size="icon-sm"
+                            variant="outline"
+                            className="rounded-full"
+                            onClick={() => cancelRequest(item.transactionId)}
+                          />
+                        }
+                      >
+                        <X />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-[0.6rem]">
+                          I don't want this item anymore. :(
                         </p>
                       </TooltipContent>
                     </Tooltip>
