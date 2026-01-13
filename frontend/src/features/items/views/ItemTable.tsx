@@ -130,12 +130,12 @@ export function ItemTable({
                   <TableCell className="capitalize">{item.type}</TableCell>
                   <TableCell className="text-muted-foreground">
                     <Badge variant={'outline'} className="pl-0.5 pr-1.5">
-                      <Avatar className="size-4 rounded-full">
+                      {/* <Avatar className="size-4 rounded-full">
                         <AvatarImage src={item.custodian.avatar} />
                         <AvatarFallback className="rounded-lg text-[0.6rem]">
                           {item.custodian.name?.slice(0, 2)}
                         </AvatarFallback>
-                      </Avatar>
+                      </Avatar> */}
                       {getCustodianDisplay(item.custodian)}
                     </Badge>
                   </TableCell>

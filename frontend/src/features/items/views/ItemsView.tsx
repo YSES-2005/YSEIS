@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Package, Search, Filter, Layers } from 'lucide-react';
+import { Package, Search, Filter, Layers, Plus } from 'lucide-react';
 import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
 
 export function ItemsView() {
@@ -306,7 +306,7 @@ export function ItemsView() {
           </Popover>
 
           {/* Show multi-borrow button for non-admin users */}
-          {!isAdmin && (
+          {!isAdmin ? (
             <Button
               onClick={handleOpenMultiBorrow}
               disabled={availableItems.length == 0}
@@ -314,6 +314,11 @@ export function ItemsView() {
             >
               <Layers className="mr-2 h-4 w-4" />
               Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
+            </Button>
+          ) : (
+            <Button variant="neutral">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Item
             </Button>
           )}
         </div>
