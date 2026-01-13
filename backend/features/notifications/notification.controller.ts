@@ -16,7 +16,7 @@ export const getNotifications = async (req: Request, res: Response) => {
 
     // fetch notifications sorted by newest first
     const notifications = await NotificationModel.find({ recipient: userId })
-      .sort({ createdAt: -1 })
+      .sort({ created_at: -1 })
       .limit(limit);
 
     // count unread notifications
