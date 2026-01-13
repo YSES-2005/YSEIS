@@ -27,7 +27,7 @@ import {
   SquarePen,
 } from 'lucide-react';
 import { getCustodianDisplay } from '@/lib/utils';
-import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
+import { useUser } from '@/hooks/useUser';
 
 type Props = {
   items: ItemPopulated[];
@@ -52,7 +52,7 @@ export function ItemTable({
   onToggleAll,
   showCheckboxes,
 }: Props) {
-  const { isAdmin } = useAuthViewModel();
+  const { user } = useUser();
   const isAllAvailableSelected =
     items.length > 0 &&
     items
@@ -149,16 +149,7 @@ export function ItemTable({
                   </TableCell>
                   <TableCell className="text-right">
                     {/* Show borrow button for non-admins, edit/delete for admins */}
-                    {!isAdmin ? (
-                      <Button
-                        variant="outline"
-                        disabled={!isAvailable}
-                        onClick={() => onBorrow(item)}
-                      >
-                        <CircleArrowDown />
-                        Borrow
-                      </Button>
-                    ) : (
+                    {user?.role === 'admin' ? (
                       <div className="flex justify-end gap-2">
                         <Button size="icon" variant="outline">
                           <SquarePen className="h-4 w-4" />
@@ -167,6 +158,15 @@ export function ItemTable({
                           <Trash className="h-4 w-4" />
                         </Button>
                       </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        disabled={!isAvailable}
+                        onClick={() => onBorrow(item)}
+                      >
+                        <CircleArrowDown />
+                        Borrow
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>

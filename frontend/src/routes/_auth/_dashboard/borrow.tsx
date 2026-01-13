@@ -1,9 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { adminGuard } from '@/router/guard/adminGuard';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth/_dashboard/borrow')({
-  // Admin guard to protect this route
-  beforeLoad: adminGuard,
+  beforeLoad: async ({ context }) => {
+    const user = await context.getUser();
+    if (user?.role !== 'admin') {
+      throw redirect({ to: '/dashboard' });
+    }
+  },
   component: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Borrow Request</h1>

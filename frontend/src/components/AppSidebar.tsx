@@ -17,7 +17,7 @@ import {
 import { OrgSwitcher } from './OrgSwitcher';
 import { NavItems } from './NavItems';
 import { NavUser } from './NavUser';
-import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
+import { useUser } from '@/hooks/useUser';
 
 const data = {
   orgs: [
@@ -39,7 +39,7 @@ const data = {
       title: 'Borrow Requests',
       url: '/borrow',
       icon: ReplaceIcon,
-      adminOnly: true, // Only visible to admin users
+      adminOnly: true,
     },
     {
       title: 'Transaction History',
@@ -62,16 +62,11 @@ const data = {
 };
 
 export function AppSidebar() {
-  const { isAdmin, isLoading } = useAuthViewModel();
+  const { user } = useUser();
 
-  // Filter navigation items based on user role
-  const filteredNavMain = data.navMain.filter(item => {
-    if (item.adminOnly && !isAdmin) return false;
-    return true;
-  });
-
-  // Show nothing while loading auth state
-  if (isLoading) return null;
+  const filteredNavMain = data.navMain.filter(
+    item => !item.adminOnly || user?.role === 'admin'
+  );
 
   return (
     <Sidebar collapsible="icon" className="overflow-y-hidden">

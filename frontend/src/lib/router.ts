@@ -3,8 +3,8 @@ import { routeTree } from '../routeTree.gen.ts';
 import { queryClient } from '../lib/queryClient.ts';
 import { queryOptions } from '@tanstack/react-query';
 import { authService } from '../services/authService.ts';
-import type { RouterContext } from './context.ts';
 import { isAxiosError } from 'axios';
+
 export const userQueryKey = 'user';
 
 export const userQueryConfig = queryOptions({
@@ -24,10 +24,9 @@ export const userQueryConfig = queryOptions({
 export const router = createRouter({
   routeTree,
   context: {
-    authUser: null,
     queryClient,
     getUser: () => queryClient.ensureQueryData(userQueryConfig),
-  } as RouterContext,
+  },
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,

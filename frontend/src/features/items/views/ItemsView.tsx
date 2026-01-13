@@ -24,10 +24,10 @@ import {
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Package, Search, Filter, Layers, Plus } from 'lucide-react';
-import { useAuthViewModel } from '@/features/auth/viewmodels/useAuthViewModel';
+import { useUser } from '@/hooks/useUser';
 
 export function ItemsView() {
-  const { isAdmin } = useAuthViewModel();
+  const { user } = useUser();
   const {
     items,
     isLoading,
@@ -306,7 +306,12 @@ export function ItemsView() {
           </Popover>
 
           {/* Show multi-borrow button for non-admin users */}
-          {!isAdmin ? (
+          {user?.role === 'admin' ? (
+            <Button variant="neutral">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Item
+            </Button>
+          ) : (
             <Button
               onClick={handleOpenMultiBorrow}
               disabled={availableItems.length == 0}
@@ -314,11 +319,6 @@ export function ItemsView() {
             >
               <Layers className="mr-2 h-4 w-4" />
               Multi Borrow {selectedItems.size > 0 && `(${selectedItems.size})`}
-            </Button>
-          ) : (
-            <Button variant="neutral">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Item
             </Button>
           )}
         </div>

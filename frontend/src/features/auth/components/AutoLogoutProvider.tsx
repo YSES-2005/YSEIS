@@ -5,11 +5,11 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import { router } from '@/router/router';
 import { useLogout } from '@/hooks/useLogout';
 import { toast } from 'sonner';
 import { DEFAULT_USER_SETTINGS } from '@/types/userSettings';
 import type { UserSettings } from '@/types/userSettings';
+import { router } from '@/lib/router';
 
 const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; //logout in half an hour
 const WARNING_DURATION =
