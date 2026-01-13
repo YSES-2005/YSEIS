@@ -1,34 +1,62 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationService } from '@/services/notificationService';
-import type { NotificationsResponse } from '@/services/notificationService';
+import type { NotificationsResponse} from '@/services/notificationService'; // Assuming NotificationItem type exists
+import { useEffect } from 'react';
+import { useUser } from '@/hooks/useUser';
+import { socket } from '@/lib/socket';
+import { toast } from 'sonner';
 
 export function useNotificationViewModel() {
   const queryClient = useQueryClient();
+  const { user } = useUser();
+  
+  const userId = user && '_id' in user ? (user as any)._id : (user as any)?.id;
 
-  //get notifications using TanStack Query
+  useEffect(() => {
+    if (!userId) return;
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+    
+    socket.emit('join_user_room', userId);
+
+    const handleNewNotification = (notification: any) => {
+       queryClient.invalidateQueries({ queryKey: ['notifications'] });
+       
+       toast.info(notification.title, {
+          description: notification.message,
+          id: notification._id || notification.id 
+       });
+    };
+    
+    socket.on('new_notification', handleNewNotification);
+
+    return () => {
+      socket.off('new_notification', handleNewNotification);
+    };
+  }, [userId, queryClient]); 
+
   const { data, isLoading } = useQuery<NotificationsResponse>({
     queryKey: ['notifications'],
     queryFn: notificationService.getNotifications,
-    refetchInterval: 5000, // refetch every 5 seconds
+    staleTime: Infinity, 
   });
 
   const notifications = data?.notifications || [];
   const unreadCount = data?.unreadCount || 0;
 
-  // filter for tabs (all and unread)
   const allNotifications = notifications;
-  const unreadNotifications = notifications.filter(n => n.isRead);
+  const unreadNotifications = notifications.filter(n => !n.isRead);
 
-  // mark as read
+  
   const markAsReadMutation = useMutation({
     mutationFn: notificationService.markAsRead,
     onSuccess: () => {
-      // refresh notifications after marking as read
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
 
-  // mark all as read
   const markAllAsReadMutation = useMutation({
     mutationFn: notificationService.markAllAsRead,
     onSuccess: () => {
@@ -36,7 +64,6 @@ export function useNotificationViewModel() {
     },
   });
 
-  // delete notification
   const deleteNotificationMutation = useMutation({
     mutationFn: notificationService.deleteNotification,
     onSuccess: () => {
@@ -44,25 +71,15 @@ export function useNotificationViewModel() {
     },
   });
 
-  const markAsRead = (id: string) => {
-    markAsReadMutation.mutate(id);
-  };
-
-  const markAllAsRead = () => {
-    markAllAsReadMutation.mutate();
-  };
-
-  const deleteNotification = (id: string) => {
-    deleteNotificationMutation.mutate(id);
-  };
-
   return {
     isLoading,
     unreadCount,
     allNotifications,
     unreadNotifications,
-    deleteNotification,
-    markAsRead,
-    markAllAsRead,
+    deleteNotification: (id: string) => deleteNotificationMutation.mutate(id),
+    markAsRead: (id: string) => markAsReadMutation.mutate(id),
+    markAllAsRead: () => markAllAsReadMutation.mutate(),
+    isMarkingRead: markAsReadMutation.isPending,
+    isMarkingAllRead: markAllAsReadMutation.isPending,
   };
 }
