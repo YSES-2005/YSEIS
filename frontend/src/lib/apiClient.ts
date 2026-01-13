@@ -15,7 +15,7 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? import.meta.env.API_URL ?? '';
 
-const apiClient = Axios.create({
+export const apiClient = Axios.create({
   baseURL: BASE_URL,
 });
 
@@ -43,5 +43,5 @@ export const api = {
   patch: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     apiClient.patch<T, T>(url, data, config),
   delete: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.delete<T, T>(url, data, config),
+    apiClient.delete<T, T>(url, { ...config, data }),
 };
