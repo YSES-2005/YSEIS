@@ -2,26 +2,20 @@ FROM node:20-slim
 
 WORKDIR /usr/src/app
 
-# Ensure non-interactive pnpm behavior
 ENV CI=true
 
-# Copy package manifest and pnpm lockfile for reproducible installs
 COPY backend/package.json backend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
 
-# Enable pnpm, build shared, and install backend dependencies
 RUN corepack enable && corepack prepare pnpm@latest --activate && \
     (cd /usr/src/shared && pnpm install --frozen-lockfile && pnpm build) && \
     pnpm install --frozen-lockfile
 
-# Copy source code for development
 COPY backend/ .
 
-# Expose development port
 EXPOSE 5000
 
 ENV NODE_ENV=development
 
-# Run the TypeScript app in dev mode using ts-node-dev
 CMD ["pnpm", "dev"]
 
