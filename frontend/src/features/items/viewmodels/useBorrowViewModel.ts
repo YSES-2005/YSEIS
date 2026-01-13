@@ -38,6 +38,7 @@ export function useBorrowViewModel({
         purpose: data.purpose,
         urgency: data.urgency,
         returnDate: data.returnDate,
+        approvalStatus: 'pending',
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
