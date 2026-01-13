@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { Item } from './itemSchema'; 
+import { Item } from './itemSchema';
 
 const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 
-const dateFromString = z.preprocess((val) => {
+const dateFromString = z.preprocess(val => {
   if (val instanceof Date) return val;
   if (typeof val === 'string' || typeof val === 'number') {
     const d = new Date(val);
@@ -14,8 +14,8 @@ const dateFromString = z.preprocess((val) => {
   return val;
 }, z.date());
 
-const futureDateSchema = dateFromString.refine((date) => date > new Date(), {
-  message: "Return date must be in the future",
+const futureDateSchema = dateFromString.refine(date => date > new Date(), {
+  message: 'Return date must be in the future',
 });
 
 export const approvalStatusEnum = z.enum([
@@ -24,11 +24,11 @@ export const approvalStatusEnum = z.enum([
   'pending',
   'released',
   'completed',
-  'cancelled'
+  'cancelled',
 ]);
 
 export const transactionSchema = z.object({
-  _id: objectIdSchema.optional(), 
+  id: objectIdSchema.optional(),
   item: objectIdSchema,
   borrower: objectIdSchema,
   quantity: z.number().int().min(1), // ensure integer
@@ -39,11 +39,11 @@ export const transactionSchema = z.object({
 
   returned: z.boolean().default(false),
   returnedAt: z.date().nullable().optional(),
-  // group items  
+  // group items
   batchId: z.string().optional(),
-  
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
 });
 
 // for updating transactions
@@ -55,7 +55,7 @@ export const transactionUpdateSchema = z
     urgency: z.boolean().optional(),
     returned: z.boolean().optional(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine(data => Object.keys(data).length > 0, {
     message: 'At least one field must be provided for update',
   });
 
@@ -63,36 +63,24 @@ export const transactionUpdateSchema = z
 const baseRequestFields = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean().default(false),
-  returnDate: futureDateSchema, 
-  borrower: objectIdSchema.optional(), 
+  returnDate: futureDateSchema,
+  borrower: objectIdSchema.optional(),
 });
 
-// single borrow mode
-const singleTransactionInput = baseRequestFields.extend({
+export const transactionCreateSchema = z.object({
   item: objectIdSchema,
-  quantity: z.coerce.number().int().min(1).default(1),
-  // Strict exclusion: 'items' must NOT exist
-  items: z.undefined(), 
+  borrower: objectIdSchema.optional(),
+  purpose: z.string().min(1, 'Purpose is required'),
+  urgency: z.boolean(),
+  returnDate: dateFromString,
+  approvalStatus: z
+    .enum(['approved', 'disapproved', 'pending'])
+    .optional()
+    .default('pending'),
 });
-
-// multi borrow mode
-const itemEntry = z.object({
-  item: objectIdSchema,
-  quantity: z.coerce.number().int().min(1).default(1),
-});
-
-const multiTransactionInput = baseRequestFields.extend({
-  items: z.array(itemEntry).min(1, "At least one item required"),
-  item: z.undefined(), 
-});
-
-export const transactionRequestSchema = z.union([
-  singleTransactionInput, 
-  multiTransactionInput
-]);
 
 export type Transaction = z.infer<typeof transactionSchema>;
-export type TransactionRequest = z.infer<typeof transactionRequestSchema>; 
+export type TransactionCreate = z.infer<typeof transactionCreateSchema>;
 export type TransactionUpdate = z.infer<typeof transactionUpdateSchema>;
 export type ApprovalStatus = z.infer<typeof approvalStatusEnum>;
 
@@ -103,5 +91,5 @@ export type TransactionPopulated = Omit<Transaction, 'item' | 'borrower'> & {
     name: string;
     email: string;
     avatar?: string;
-  }; 
+  };
 };
