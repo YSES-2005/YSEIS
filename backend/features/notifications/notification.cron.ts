@@ -76,4 +76,46 @@ export const startNotificationScheduler = () => {
       console.error('Error in Overdue Cron:', error);
     }
   });
+
+  // Due date reminder every day at 9 AM
+  cron.schedule('0 9 * * *', async () => {
+    console.log('Running Due Date Reminder Check...');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const startOfTomorrow = new Date(tomorrow.setHours(0, 0, 0, 0));
+    const endOfTomorrow = new Date(tomorrow.setHours(23, 59, 59, 999));
+
+    try {
+      const dueTransactions = await TransactionModel.find({
+        approvalStatus: { $in: ['approved', 'released'] },
+        returned: false,
+        returnDate: { $gte: startOfTomorrow, $lte: endOfTomorrow },
+      })
+        .populate('borrower')
+        .populate('item');
+
+      for (const txn of dueTransactions) {
+        const borrower = txn.borrower as any;
+        const item = txn.item as any;
+
+        if (borrower && borrower._id && item) {
+          await notify(
+            borrower._id.toString(),
+            'Due Date Reminder',
+            `Reminder: Your item "${item.name}" is due for return tomorrow.`,
+            'INFO',
+            {
+              shouldEmail: true,
+              relatedEntityId: txn._id.toString(),
+              relatedModel: 'Transaction',
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error in Due Date Reminder Cron:', error);
+    }
+  });
 };

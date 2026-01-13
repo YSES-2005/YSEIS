@@ -8,6 +8,10 @@ export interface UserDocument extends Document {
   role: 'admin' | 'user';
   avatar?: string;
   urgent_borrow_uses: number;
+  preferences: {
+    emailAlerts: boolean;
+    dueDateReminders: boolean;
+  };
   comparePassword: (password: string) => Promise<boolean>;
 }
 
@@ -24,6 +28,10 @@ const userSchema = new Schema<UserDocument>(
     },
     avatar: { type: String },
     urgent_borrow_uses: { type: Number, default: 0 },
+    preferences: {
+      emailAlerts: { type: Boolean, default: true },
+      dueDateReminders: { type: Boolean, default: true },
+    },
   },
   { timestamps: true }
 );

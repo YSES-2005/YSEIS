@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticate, authorize, Role } from '../../middleware/auth';
-import { me, getUsers, getUserById } from './user.controller';
+import { me, getUsers, getUserById, updateMe } from './user.controller';
 
 const usersRouter = express.Router();
 
@@ -30,6 +30,36 @@ const usersRouter = express.Router();
  *         description: Unauthorized
  */
 usersRouter.get('/me', authenticate, me);
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   patch:
+ *     summary: Update current user's info
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               avatar:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: The updated user's information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ */
+usersRouter.patch('/me', authenticate, updateMe);
 
 /**
  * @swagger
