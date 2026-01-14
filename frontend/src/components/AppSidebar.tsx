@@ -14,10 +14,10 @@ import {
   SidebarContent,
   SidebarHeader,
 } from '@/components/ui/sidebar';
-import { OrgSwitcher } from './OrgSwitcher';
 import { NavItems } from './NavItems';
 import { NavUser } from './NavUser';
 import { useUser } from '@/hooks/useUser';
+import logo from '@/assets/logo.png';
 
 const data = {
   orgs: [
@@ -71,7 +71,14 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="overflow-y-hidden">
       <SidebarHeader className="w-full px-2 pb-4">
-        <OrgSwitcher orgs={data.orgs} />
+        <div className="flex place-items-center">
+          <img
+            src={logo}
+            alt="YSES Logo"
+            className="size-10 w-auto drop-shadow-md"
+          />
+          <div className="text-xl font-light tracking-tighter">YSEIS</div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavItems items={filteredNavMain} />
