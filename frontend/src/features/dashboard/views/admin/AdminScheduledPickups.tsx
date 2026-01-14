@@ -93,6 +93,7 @@ export function AdminScheduledPickups({
           </ItemGroup>
         ) : (
           <EmptyIndicatorWithMessage
+            className="max-h-30"
             message={`No scheduled pickups for ${formatRelative(pickupDate, new Date()).split(' ')[0]}`}
           />
         )}

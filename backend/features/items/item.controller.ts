@@ -223,19 +223,30 @@ export const getInventoryStats = async (
     const [totalItemsResult, releasedTransactions] = await Promise.all([
       ItemModel.aggregate([
         { $match: { status: { $ne: 'deleted' } } },
-        { $group: { _id: null, totalQuantity: { $sum: '$quantity' } } },
+        {
+          $group: {
+            _id: null,
+            totalQuantity: { $sum: '$quantity' },
+            totalItems: { $sum: 1 }, // Counts the number of documents found
+          },
+        },
       ]),
       TransactionModel.find({ approvalStatus: 'released' }),
     ]);
 
     const totalInventory = totalItemsResult[0]?.totalQuantity || 0;
+    const totalItemCount = totalItemsResult[0]?.totalItems || 0;
+
     const totalInField = releasedTransactions.reduce(
       (sum, t) => sum + (t.quantity || 0),
       0
     );
+
     const totalInShelf = totalInventory - totalInField;
 
     res.json({
+      totalItems: totalItemCount,
+      totalQuantity: totalInventory,
       inField: totalInField,
       inShelf: totalInShelf,
     });

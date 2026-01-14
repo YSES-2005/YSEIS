@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { BellIcon, UserIcon } from 'lucide-react';
+import { BellIcon } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/ModeToggle';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
@@ -36,10 +36,6 @@ export function Header() {
             />
             <NotificationSidebar />
           </Sheet>
-
-          <Button variant="outline" className="p-2 hover:bg-muted">
-            <UserIcon />
-          </Button>
         </div>
       </div>
     </header>

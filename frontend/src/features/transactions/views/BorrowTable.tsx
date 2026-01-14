@@ -106,7 +106,16 @@ export function BorrowTable({
                     onClick={e => e.stopPropagation()}
                   >
                     {/* Show borrow button for non-admins, edit/delete for admins */}
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-2 *:rounded-full">
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => {
+                          onDisapproveBorrow(borrow);
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                       <Button
                         disabled={!isAvailable}
                         size="icon"
@@ -116,15 +125,6 @@ export function BorrowTable({
                         }}
                       >
                         <Check className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => {
-                          onDisapproveBorrow(borrow);
-                        }}
-                      >
-                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

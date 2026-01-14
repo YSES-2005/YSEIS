@@ -3,6 +3,8 @@ import type { ItemPopulated, Item, ItemUpdate } from '@schemas/itemSchema';
 import type { ApiResponse } from '@schemas/apiTypes';
 
 export type InventoryStats = {
+  totalItems: number;
+  totalQuantity: number;
   inField: number;
   inShelf: number;
 };

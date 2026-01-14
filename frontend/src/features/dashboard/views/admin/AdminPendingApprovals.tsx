@@ -12,6 +12,8 @@ import { CheckCheck, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, getCustodianDisplay } from '@/lib/utils';
 import type { ItemWithTransactionId } from '../../viewmodels/useDashboardViewModel';
+import { useState } from 'react';
+import { ConfirmUpdateBorrowModal } from '@/features/transactions/views/ConfirmUpdateBorrowModal';
 
 type Props = {
   items: ItemWithTransactionId[];
@@ -45,6 +47,8 @@ const columns: ColumnDef<ItemWithTransactionId>[] = [
     cell: ({ row }) => {
       const custodian = row.original.custodian;
 
+      if (!custodian) return;
+
       return (
         <Badge variant={'outline'} className="pl-0.5 pr-1.5 font-normal">
           <Avatar className="size-4 rounded-full">
@@ -61,13 +65,13 @@ const columns: ColumnDef<ItemWithTransactionId>[] = [
   {
     id: 'actions',
     cell: ({ row, table }) => {
-      const transactionId = row.original.id;
+      const transaction = row.original;
       const meta = table.options.meta as {
-        disapprove: (id: string) => void;
-        approve: (id: string) => void;
+        disapprove: (transaction: ItemWithTransactionId) => void;
+        approve: (transaction: ItemWithTransactionId) => void;
       };
 
-      if (!transactionId) return;
+      if (!transaction) return;
 
       return (
         <div className="flex gap-0.5 place-items-center">
@@ -75,7 +79,7 @@ const columns: ColumnDef<ItemWithTransactionId>[] = [
             size="icon-sm"
             variant="destructive"
             className="rounded-full"
-            onClick={() => meta.disapprove(transactionId)}
+            onClick={() => meta.disapprove(transaction)}
           >
             <X />
           </Button>
@@ -84,7 +88,7 @@ const columns: ColumnDef<ItemWithTransactionId>[] = [
             size="icon-sm"
             variant="success"
             className="rounded-full"
-            onClick={() => meta.approve(transactionId)}
+            onClick={() => meta.approve(transaction)}
           >
             <CheckCheck />
           </Button>
@@ -100,19 +104,36 @@ export function AdminPendingApprovals({
   disapprove,
   approve,
 }: Props) {
+  const [selectedItem, setSelectedItem] =
+    useState<ItemWithTransactionId | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<
+    'approved' | 'disapproved' | null
+  >('approved');
+
   const table = useReactTable({
     data: items,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     meta: {
-      approve,
-      disapprove,
+      approve: (transaction: ItemWithTransactionId) => {
+        setSelectedItem(transaction);
+        setApprovalStatus('approved');
+      },
+      disapprove: (transaction: ItemWithTransactionId) => {
+        setSelectedItem(transaction);
+        setApprovalStatus('disapproved');
+      },
     },
   });
 
   return (
-    <div className={cn(' p-4 flex flex-col', className)}>
+    <div
+      className={cn(
+        ' p-4 flex flex-col bg-muted/40 dark:bg-muted/10',
+        className
+      )}
+    >
       <div className="overflow-hidden">
         <div className="flex place-items-center justify-between mb-4">
           <h2 className="text-xl font-light tracking-tighter">
@@ -171,6 +192,25 @@ export function AdminPendingApprovals({
           </TableBody>
         </Table>
       </div>
+
+      <ConfirmUpdateBorrowModal
+        open={!!selectedItem}
+        approvalStatus={approvalStatus!}
+        borrow={selectedItem}
+        onClose={() => {
+          setSelectedItem(null);
+        }}
+        onConfirm={() => {
+          if (!selectedItem) return;
+          if (!selectedItem.id) return;
+
+          if (approvalStatus === 'approved') {
+            approve(selectedItem.id);
+          } else if (approvalStatus === 'disapproved') {
+            disapprove(selectedItem.id);
+          }
+        }}
+      />
     </div>
   );
 }

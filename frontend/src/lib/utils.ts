@@ -15,17 +15,28 @@ export const getCustodianDisplay = (
   return custodian.name || custodian.email || '—';
 };
 
-export const getPageNumbers = (currentPage: number, totalPages: number, maxVisible: number = 5) => {
-    const pages = [];
-    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-    const end = Math.min(totalPages, start + maxVisible - 1);
+export const getPageNumbers = (
+  currentPage: number,
+  totalPages: number,
+  maxVisible: number = 5
+) => {
+  const pages = [];
+  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  const end = Math.min(totalPages, start + maxVisible - 1);
 
-    if (end - start + 1 < maxVisible) {
-        start = Math.max(1, end - maxVisible + 1);
-    }
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1);
+  }
 
-    for (let i = start; i <= end; i++) {
-        pages.push(i);
-    }
-    return pages;
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+};
+
+export const pluralize = (word: string, quantity: number): string => {
+  if (quantity >= 2) {
+    return `${word}s`;
+  }
+  return word;
 };

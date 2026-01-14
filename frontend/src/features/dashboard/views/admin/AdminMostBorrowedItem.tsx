@@ -12,7 +12,7 @@ export function AdminMostBorrowedItem({ item, className }: Props) {
   return (
     <div
       className={cn(
-        ' w-full h-full flex place-items-center p-4 text-sm bg-muted/40',
+        ' w-full h-full flex place-items-center p-4 text-sm bg-accent-foreground',
         className
       )}
     >

@@ -14,7 +14,6 @@ export function useUpdateTransactionViewModel({
   transaction: Transaction | null;
   onSuccess?: (t: Transaction) => void;
 }) {
-  console.log(transaction);
   const queryClient = useQueryClient();
   const [approvalStatus, setApprovalStatus] = useState<
     'approved' | 'disapproved'
@@ -23,7 +22,6 @@ export function useUpdateTransactionViewModel({
     mutationFn: (data: { id: string; payload: TransactionUpdatePayload }) =>
       transactionService.updateTransaction(data.id, data.payload),
     onSuccess: (data: Transaction) => {
-      // refresh related queries so UI updates (lists, dashboards, etc.)
       void queryClient.refetchQueries({ queryKey: ['borrows'], type: 'all' });
       toast.success('Transaction updated successfully');
       onSuccess?.(data);

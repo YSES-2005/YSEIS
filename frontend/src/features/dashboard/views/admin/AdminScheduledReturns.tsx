@@ -17,8 +17,8 @@ export function AdminScheduledReturns({ toReturnItems, className }: Props) {
       )}
     >
       <CardHeader>
-        <CardTitle className="flex w-full">
-          <div className="text-xl font-light tracking-tighter">For Return</div>
+        <CardTitle className="flex w-full text-xl font-light tracking-tighter">
+          For Return
         </CardTitle>
       </CardHeader>
       <CardContent className="flex w-full gap-1 overflow-y-scroll overflow-x-hidden flex-wrap">

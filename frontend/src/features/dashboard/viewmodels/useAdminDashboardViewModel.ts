@@ -39,12 +39,12 @@ export function useAdminDashboardViewModel() {
   );
 
   const { data: pendingData, isLoading: isLoadingPending } = useQuery({
-    queryKey: ['transactions', 'list', 'pending'],
+    queryKey: ['transactions', 'borrows', 'pending'],
     queryFn: () => transactionService.getTransactions({ status: 'pending' }),
   });
 
   const { data: approvedData, isLoading: isLoadingApproved } = useQuery({
-    queryKey: ['transactions', 'list', 'approved'],
+    queryKey: ['transactions', 'borrows', 'approved'],
     queryFn: () =>
       transactionService.getTransactions({
         status: 'approved',
@@ -52,7 +52,7 @@ export function useAdminDashboardViewModel() {
   });
 
   const { data: releasedData, isLoading: isLoadingReleased } = useQuery({
-    queryKey: ['transactions', 'list', 'released'],
+    queryKey: ['transactions', 'borrows', 'released'],
     queryFn: () => transactionService.getTransactions({ status: 'released' }),
   });
 

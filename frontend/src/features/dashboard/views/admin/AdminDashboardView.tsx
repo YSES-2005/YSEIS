@@ -30,34 +30,34 @@ export function AdminDashboardView() {
         borrowingTrends={borrowingTrends}
         groupBy={borrowingTrendsGroupBy}
         setGroupBy={setBorrowingTrendsGroupBy}
-        className="col-span-8 row-span-10 col-start-1 row-start-9 not-xl:p-2 not-xl:bg-card/40"
+        className="col-span-8 row-span-9 row-start-2 col-start-1  not-xl:p-2 not-xl:pt-0 not-xl:bg-card/40"
       />
       <AdminMostBorrowedItem
         item={mostBorrowedItem}
-        className="col-span-4 row-span-2 col-start-5 row-start-1"
+        className="col-span-4 row-span-1 col-start-5 row-start-1"
       />
       <AdminLowStocks
         items={lowStockItems}
-        className="col-span-4 row-span-8 col-start-1 row-start-1 xs:max-xl:aspect-video"
+        className=" xs:max-xl:aspect-video col-span-4 row-span-6 col-start-9 border-b"
       />
       <AdminInventoryStats
         stats={inventoryStats}
-        className="col-span-4 row-span-6 col-start-5 row-start-3"
+        className="col-span-4 row-span-8 col-start-5 row-start-11"
       />
       <AdminPendingApprovals
-        className="col-span-4 row-span-4 col-start-9 border-b rounded-none! "
+        className="col-span-4 row-span-8 col-start-1 row-start-11"
         items={pendingItems}
         disapprove={disapproveRequest}
         approve={approveRequest}
       />
       <AdminScheduledPickups
-        className="col-span-4 row-span-7 col-start-9 border-b rounded-none! ml-auto min-w-80"
+        className="col-span-4 row-span-6 col-start-9 border-b rounded-none!"
         approvedItems={toPickupItems}
         pickupDate={pickupDate}
         setPickupDate={setPickupDate}
       />
       <AdminScheduledReturns
-        className="col-span-4 row-span-7 col-start-9 rounded-none! ml-auto min-w-80"
+        className="col-span-4 row-span-6 col-start-9 rounded-none!"
         toReturnItems={toReturnItems}
       />
     </div>

@@ -103,7 +103,6 @@ export function CreateItemModal({
                 items={options}
                 value={form.custodian}
                 onValueChange={val => {
-                  console.log(val);
                   setField(
                     'custodian' as any,
                     val === '' ? undefined : (val as any)

@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { cn, getCustodianDisplay } from '@/lib/utils';
+import { cn, getCustodianDisplay, pluralize } from '@/lib/utils';
 import { Check, CheckCircle, MapPin, X } from 'lucide-react';
 import {
   Item,
@@ -50,7 +50,8 @@ export function ApprovedItems({
                 className="shadow shadow-success-foreground dark:shadow-none"
               >
                 <CheckCircle />
-                You have {approvedItems.length} items ready for pick up!
+                You have {approvedItems.length}{' '}
+                {pluralize('item', approvedItems.length)} ready for pick up!
               </Badge>
             </div>
             <ItemGroup className="overflow-y-scroll gap-y-1">

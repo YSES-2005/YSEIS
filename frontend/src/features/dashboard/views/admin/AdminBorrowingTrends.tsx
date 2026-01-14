@@ -1,4 +1,4 @@
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { Area, AreaChart, XAxis } from 'recharts';
 
 import {
   Card,
@@ -47,7 +47,6 @@ export function AdminBorrowingTrends({
   setGroupBy,
   className,
 }: Props) {
-  console.dir(borrowingTrends);
   return (
     <Card className={cn('pt-0 ring-0 bg-background', className)}>
       <CardHeader className="flex items-center gap-2 space-y-0 py-4 sm:flex-row">
@@ -56,7 +55,7 @@ export function AdminBorrowingTrends({
             Borrow v. Returns
           </CardTitle>
           <CardDescription>
-            Showing total visitors for the last 3 months
+            Showing transaction volume for this {groupBy}.
           </CardDescription>
         </div>
         <Select

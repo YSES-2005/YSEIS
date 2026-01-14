@@ -57,7 +57,6 @@ export function EditItemModal({
   setField,
 }: Props) {
   const { options, isLoading } = useUsersViewModel();
-  console.log(options);
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit();
@@ -110,7 +109,6 @@ export function EditItemModal({
                 items={options}
                 value={form.custodian}
                 onValueChange={val => {
-                  console.log(val);
                   setField(
                     'custodian' as any,
                     val === '' ? undefined : (val as any)
@@ -201,7 +199,7 @@ export function EditItemModal({
           </FieldGroup>
           <DialogFooter>
             <Button type="submit" disabled={isCreating} className="w-full">
-              {isCreating ? <Spinner /> : 'Create Item'}
+              {isCreating ? <Spinner /> : 'Edit Item'}
             </Button>
           </DialogFooter>
         </form>
