@@ -2,6 +2,11 @@ import { api } from '@/lib/apiClient';
 import type { ItemPopulated, Item, ItemUpdate } from '@schemas/itemSchema';
 import type { ApiResponse } from '@schemas/apiTypes';
 
+export type InventoryStats = {
+  inField: number;
+  inShelf: number;
+};
+
 export type GetItemsParams = {
   search?: string;
   status?: 'available' | 'unavailable';
@@ -9,6 +14,7 @@ export type GetItemsParams = {
   custodian?: string;
   startDate?: string;
   endDate?: string;
+  quantity?: number;
   page?: number;
   limit?: number;
 };
@@ -23,6 +29,7 @@ export const itemService = {
     if (params?.search) query.search = params.search;
     if (params?.status) query.status = params.status;
     if (params?.type) query.type = params.type;
+    if (params?.quantity) query.quantity = params.quantity;
     if (params?.custodian) query.custodian = params.custodian;
     if (params?.startDate) query.startDate = params.startDate;
     if (params?.endDate) query.endDate = params.endDate;
@@ -57,5 +64,13 @@ export const itemService = {
     const { item } = await api.get<{ item: ItemPopulated }>(`/items/${id}`);
 
     return item;
+  },
+
+  async getInventoryStats(): Promise<InventoryStats> {
+    const response = await api.get<InventoryStats>(
+      '/items/analytics/inventory-stats'
+    );
+
+    return response;
   },
 };

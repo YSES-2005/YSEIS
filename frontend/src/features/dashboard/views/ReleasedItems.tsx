@@ -1,5 +1,4 @@
 import GradientBlur from '@/components/GradientBlur';
-import { ReturnTimeAgo } from '@/components/ReturnTimeAgo';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
@@ -15,20 +14,15 @@ import type { ItemWithReturnDate } from '../viewmodels/useDashboardViewModel';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { EmptyIndicator } from '@/components/EmptyIndicator';
+import { ReturnTimeAgo } from './ReturnTimeAgo';
 
 type Props = {
   className: string;
   releasedItems: ItemWithReturnDate[];
-  currentItemIndex: number;
-  setCurrentItemIndex: (index: number) => void;
 };
 
-export function ReleasedItems({
-  className,
-  releasedItems,
-  currentItemIndex,
-  setCurrentItemIndex,
-}: Props) {
+export function ReleasedItems({ className, releasedItems }: Props) {
+  const [currentItemIndex, setCurrentItemIndex] = useState<number>(0);
   const [api, setApi] = useState<CarouselApi | null>(null);
 
   useEffect(() => {

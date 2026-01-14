@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemModel from './item.model';
+import TransactionModel from '../transactions/transaction.model';
 import { UserModel } from '../users/user.model';
 import { NotFoundError } from '../../errors';
 
@@ -14,6 +15,7 @@ export const getItems = async (
       search,
       status,
       type,
+      quantity,
       custodian,
       startDate,
       endDate,
@@ -38,6 +40,21 @@ export const getItems = async (
     }
 
     if (type) query.type = type;
+
+    if (quantity?.length) {
+      const isMaxLimit = quantity.startsWith('-');
+      const val = Math.abs(parseInt(quantity));
+
+      if (!isNaN(val)) {
+        query.quantity = query.quantity || {};
+
+        if (isMaxLimit) {
+          query.quantity.$lte = val;
+        } else {
+          query.quantity.$gte = val;
+        }
+      }
+    }
 
     if (search) query.name = { $regex: new RegExp(search, 'i') };
 
@@ -196,4 +213,42 @@ export const deleteItem = async (
   }
 };
 
-export default { getItems, getItemById, createItem, updateItem, deleteItem };
+// GET api/items/analytics/inventory-stats
+export const getInventoryStats = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const [totalItemsResult, releasedTransactions] = await Promise.all([
+      ItemModel.aggregate([
+        { $match: { status: { $ne: 'deleted' } } },
+        { $group: { _id: null, totalQuantity: { $sum: '$quantity' } } },
+      ]),
+      TransactionModel.find({ approvalStatus: 'released' }),
+    ]);
+
+    const totalInventory = totalItemsResult[0]?.totalQuantity || 0;
+    const totalInField = releasedTransactions.reduce(
+      (sum, t) => sum + (t.quantity || 0),
+      0
+    );
+    const totalInShelf = totalInventory - totalInField;
+
+    res.json({
+      inField: totalInField,
+      inShelf: totalInShelf,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getItems,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem,
+  getInventoryStats,
+};

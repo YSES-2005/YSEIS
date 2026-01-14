@@ -27,6 +27,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/error';
 import { startNotificationScheduler } from './features/notifications/notification.cron';
+import analyticsRouter from './features/analytics/analytics.route';
 
 dotenv.config();
 
@@ -87,7 +88,7 @@ app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notifications', notificationRouter);
-app.use('/api/returns', returnRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // Error Handler
 app.use(

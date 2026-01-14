@@ -193,7 +193,14 @@ export function MultiBorrowModal({
                 value={form.returnDate}
                 onChange={date => setField('returnDate', date)}
                 disabled={{ before: new Date() }}
-                aria-invalid={!!errors.returnDate}
+                render={
+                  <Button
+                    variant="outline"
+                    id="returnDate"
+                    className="justify-between font-normal py-4.25 border border-input"
+                    aria-invalid={!!errors.returnDate}
+                  />
+                }
               />
               <FieldError>{errors.returnDate}</FieldError>
             </Field>

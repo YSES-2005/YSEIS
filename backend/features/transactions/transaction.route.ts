@@ -5,6 +5,7 @@ import {
   getTransactionById,
   createTransaction,
   updateTransaction,
+  getMostBorrowedItem,
 } from './transaction.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
@@ -178,6 +179,13 @@ transactionRouter.put(
   authenticate,
   validate(transactionUpdateSchema),
   updateTransaction
+);
+
+transactionRouter.get(
+  '/analytics/most-borrowed',
+  authenticate,
+  authorize(Role.ADMIN),
+  getMostBorrowedItem
 );
 
 export default transactionRouter;

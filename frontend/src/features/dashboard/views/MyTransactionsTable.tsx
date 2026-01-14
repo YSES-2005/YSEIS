@@ -46,9 +46,6 @@ const columns: ColumnDef<TransactionPopulated>[] = [
               src={transaction.item.avatar}
               className="object-cover"
             />
-            <AvatarFallback className="rounded-sm uppercase">
-              {transaction.item.name?.substring(0, 2)}
-            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium truncate max-w-[20ch]">

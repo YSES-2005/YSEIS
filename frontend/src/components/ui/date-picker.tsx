@@ -8,30 +8,35 @@ import {
 } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import type { DayPicker } from 'react-day-picker';
+import { formatRelative } from 'date-fns';
 
 type DatePickerProps = {
   value: Date | undefined;
+  relative?: boolean;
   onChange: (date: Date) => void;
 } & React.ComponentProps<typeof DayPicker> &
   Omit<React.ComponentProps<typeof Button>, 'disabled' | 'onChange'>;
 
-export function DatePicker({ value, onChange, ...props }: DatePickerProps) {
+export function DatePicker({
+  value,
+  relative,
+  onChange,
+  ...props
+}: DatePickerProps) {
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   return (
     <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
       <PopoverTrigger
-        render={
-          <Button
-            variant="outline"
-            id="returnDate"
-            className="justify-between font-normal py-4.25 border border-input"
-            aria-invalid={props['aria-invalid']}
-          />
-        }
+        render={props.render}
+        className="capitalize cursor-pointer"
       >
-        {value ? value.toLocaleDateString() : 'Select date'}
         <CalendarIcon />
+        {value
+          ? relative
+            ? formatRelative(value, new Date()).split(' ')[0]
+            : value.toLocaleDateString()
+          : 'Select date'}
       </PopoverTrigger>
       <PopoverContent className="w-auto overflow-hidden p-0" align="start">
         <Calendar
