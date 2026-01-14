@@ -38,6 +38,8 @@ export function useTransactionsViewModel() {
             if (isAdmin) {
                 return transactionService.getTransactions({
                     status: statusFilter || undefined,
+                    type: typeFilter || undefined,
+                    borrower: borrowerFilter || undefined,
                     ...({
                         search: debouncedSearch || undefined,
                         startDate: startDateFilter || undefined,
@@ -47,7 +49,13 @@ export function useTransactionsViewModel() {
                     } as any)
                 });
             } else {
-                return transactionService.getTransactionsForMe();
+                return transactionService.getTransactionsForMe({
+                    status: statusFilter || undefined,
+                    type: typeFilter || undefined,
+                    search: debouncedSearch || undefined,
+                    startDate: startDateFilter || undefined,
+                    endDate: endDateFilter || undefined,
+                });
             }
         },
     });
@@ -64,10 +72,6 @@ export function useTransactionsViewModel() {
         return () => clearTimeout(t);
     }, [search]);
 
-    // Unique types for filter dropdown (computed from current data or fetched? 
-    // In Inventory it was computed from fetched items. Here paginate data might not have all types.
-    // But for now let's compute from loaded transactions or maybe hardcode 'Property' | 'Supplies' 
-    // since those are the known types from existing code).
     const uniqueTypes = ['Property', 'Supplies'];
 
     return {
