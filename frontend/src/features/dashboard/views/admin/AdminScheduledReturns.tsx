@@ -23,19 +23,7 @@ export function AdminScheduledReturns({ toReturnItems, className }: Props) {
       </CardHeader>
       <CardContent className="flex w-full gap-1 overflow-y-scroll overflow-x-hidden flex-wrap">
         {toReturnItems.map(item => (
-          <>
-            <AdminReturnItem item={item} />
-            <AdminReturnItem
-              item={{
-                ...item,
-                name: 'Mechanical Chair',
-              }}
-            />
-            <AdminReturnItem item={item} />
-            <AdminReturnItem item={item} />
-            <AdminReturnItem item={item} />
-            <AdminReturnItem item={item} />
-          </>
+          <AdminReturnItem item={item} />
         ))}
       </CardContent>
     </Card>

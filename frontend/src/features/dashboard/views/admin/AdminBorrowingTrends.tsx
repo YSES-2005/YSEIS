@@ -9,8 +9,6 @@ import {
 } from '@/components/ui/card';
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -23,47 +21,56 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { BorrowingTrendItem, GroupBy } from '@/services/analyticsService';
+import { cn } from '@/lib/utils';
 
 const chartConfig = {
-  transactions: {
-    label: 'Transactions',
-  },
-  borrow: {
-    label: 'Borrow',
+  borrowedTransactions: {
+    label: 'Borrow ',
     color: 'var(--chart-3)',
   },
-  return: {
+  returnedTransactions: {
     label: 'Return',
     color: 'var(--chart-4)',
   },
 } satisfies ChartConfig;
 
 type Props = {
-  borrowTrend: BorrowingTrendItem[];
+  borrowingTrends: BorrowingTrendItem[];
   groupBy: GroupBy;
-  setGroupBy: (value: GroupBy | null) => void;
+  setGroupBy: (value: GroupBy) => void;
+  className: string;
 };
 
 export function AdminBorrowingTrends({
-  borrowTrend,
+  borrowingTrends,
   groupBy,
   setGroupBy,
+  className,
 }: Props) {
+  console.dir(borrowingTrends);
   return (
-    <Card className="pt-0">
+    <Card className={cn('pt-0 ring-0 bg-background', className)}>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle>Area Chart - Interactive</CardTitle>
+          <CardTitle className="text-xl font-light tracking-tighter">
+            Borrow v. Returns
+          </CardTitle>
           <CardDescription>
             Showing total visitors for the last 3 months
           </CardDescription>
         </div>
-        <Select value={groupBy} onValueChange={setGroupBy}>
+        <Select
+          value={groupBy}
+          onValueChange={value => {
+            if (!value) return;
+            setGroupBy(value);
+          }}
+        >
           <SelectTrigger
-            className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+            className="hidden w-24 rounded-lg sm:ml-auto sm:flex"
             aria-label="Select a value"
           >
-            <SelectValue />
+            <SelectValue className="capitalize" />
           </SelectTrigger>
           <SelectContent className="rounded-xl">
             <SelectItem value="day" className="rounded-lg">
@@ -81,36 +88,35 @@ export function AdminBorrowingTrends({
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="aspect-auto w-full h-56 stroke-none"
         >
-          <AreaChart data={borrowTrend}>
+          <AreaChart data={borrowingTrends}>
             <defs>
               <linearGradient id="fillReturn" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--chart-4)"
+                  stopColor="var(--color-chart-4)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--chart-4)"
+                  stopColor="var(--color-chart-4)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
               <linearGradient id="fillBorrow" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--chart-3)"
+                  stopColor="var(--color-chart-3)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--chart-3)"
+                  stopColor="var(--color-chart-3)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -140,20 +146,19 @@ export function AdminBorrowingTrends({
               }
             />
             <Area
-              dataKey="borrow"
+              dataKey="borrowedTransactions"
               type="natural"
               fill="url(#fillBorrow)"
-              stroke="var(--chart-3)"
+              stroke="var(--color-chart-3)"
               stackId="a"
             />
             <Area
-              dataKey="return"
+              dataKey="returnedTransactions"
               type="natural"
               fill="url(#fillReturn)"
-              stroke="var(--chart-4)"
+              stroke="var(--color-chart-4)"
               stackId="a"
             />
-            <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
       </CardContent>

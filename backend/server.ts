@@ -26,7 +26,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/error';
 import { startNotificationScheduler } from './features/notifications/notification.cron';
-import analyticsRouter from 'features/analytics/analytics.route';
+import analyticsRouter from './features/analytics/analytics.route';
 
 dotenv.config();
 

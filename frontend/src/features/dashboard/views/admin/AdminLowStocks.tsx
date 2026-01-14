@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/carousel';
 import { useEffect, useMemo, useState } from 'react';
 import GradientBlur from '@/components/GradientBlur';
-import { TriangleAlert, TriangleIcon } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 
 type Props = {
   items: ItemPopulated[];
@@ -48,7 +48,7 @@ export function AdminLowStocks({ items, className }: Props) {
   return (
     <Card
       className={cn(
-        'bg-muted/40 ring-0 relative h-full flex flex-col p-0 overflow-hidden',
+        'ring-0 relative h-full flex flex-col p-0 overflow-hidden',
         className
       )}
     >

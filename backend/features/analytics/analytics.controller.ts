@@ -3,31 +3,52 @@ import TransactionModel from '../transactions/transaction.model';
 
 type GroupBy = 'day' | 'week' | 'month';
 
-const getDateFormat = (groupBy: GroupBy): string => {
-  switch (groupBy) {
-    case 'day':
-      return '%Y-%m-%d';
-    case 'week':
-      return '%Y-W%V';
-    case 'month':
-      return '%Y-%m';
+const getDateGroupingExpression = (
+  groupBy: GroupBy,
+  dateField: string, // e.g., '$created_at' or '$returnedAt'
+  timezone: string
+) => {
+  if (groupBy === 'week') {
+    // 1. Truncate date to the start of the week (Monday)
+    // 2. Format that resulting date as YYYY-MM-DD
+    return {
+      $dateToString: {
+        format: '%Y-%m-%d',
+        date: {
+          $dateTrunc: {
+            date: dateField,
+            unit: 'week',
+            timezone: timezone,
+            startOfWeek: 'monday', // Or 'sunday', depending on your preference
+          },
+        },
+        timezone: timezone,
+      },
+    };
   }
+
+  // Default behavior for day and month
+  const format = groupBy === 'month' ? '%Y-%m' : '%Y-%m-%d';
+  return {
+    $dateToString: {
+      format: format,
+      date: dateField,
+      timezone: timezone,
+    },
+  };
 };
 
-const getStartDateFilter = (
-  startDate?: string
-): Record<string, Date> | undefined => {
-  if (!startDate) return undefined;
-  return { $gte: new Date(startDate) };
-};
-
-const getEndDateFilter = (
-  endDate?: string
-): Record<string, Date> | undefined => {
-  if (!endDate) return undefined;
-  const d = new Date(endDate);
-  d.setHours(23, 59, 59, 999);
-  return { $lte: d };
+const buildDateQuery = (startDate?: string, endDate?: string) => {
+  const query: Record<string, Date> = {};
+  if (startDate) {
+    query.$gte = new Date(startDate);
+  }
+  if (endDate) {
+    const d = new Date(endDate);
+    d.setHours(23, 59, 59, 999);
+    query.$lte = d;
+  }
+  return Object.keys(query).length > 0 ? query : undefined;
 };
 
 export const getBorrowingTrends = async (
@@ -46,34 +67,31 @@ export const getBorrowingTrends = async (
       groupBy?: GroupBy;
     };
 
-    const dateFormat = getDateFormat(groupBy);
-    const dateFilter: Record<string, any> = {};
+    // Removed simple getDateFormat; using logic inside the aggregation construction instead.
+    const dateQuery = buildDateQuery(startDate, endDate);
+    const timezone = '+08:00';
 
-    if (startDate) dateFilter.$gte = new Date(startDate);
-    if (endDate) {
-      const d = new Date(endDate);
-      d.setHours(23, 59, 59, 999);
-      dateFilter.$lte = d;
-    }
+    const borrowedMatch: Record<string, any> = {
+      approvalStatus: { $in: ['approved', 'released'] },
+    };
+    if (dateQuery) borrowedMatch.created_at = dateQuery;
+
+    const returnedMatch: Record<string, any> = {
+      returned: true,
+    };
+    if (dateQuery) returnedMatch.returnedAt = dateQuery;
 
     const [borrowedData, returnedData] = await Promise.all([
       TransactionModel.aggregate([
-        {
-          $match: {
-            created_at: Object.keys(dateFilter).length ? dateFilter : undefined,
-            approvalStatus: { $in: ['approved', 'released'] },
-          },
-        },
+        { $match: borrowedMatch },
         {
           $group: {
-            _id: {
-              $dateToString: { format: dateFormat, date: '$created_at' },
-            },
+            // Use the helper to determine grouping logic
+            _id: getDateGroupingExpression(groupBy, '$created_at', timezone),
             count: { $sum: '$quantity' },
             transactions: { $sum: 1 },
           },
         },
-        { $sort: { _id: 1 } },
         {
           $project: {
             _id: 0,
@@ -84,22 +102,15 @@ export const getBorrowingTrends = async (
         },
       ]),
       TransactionModel.aggregate([
-        {
-          $match: {
-            returnedAt: Object.keys(dateFilter).length ? dateFilter : undefined,
-            returned: true,
-          },
-        },
+        { $match: returnedMatch },
         {
           $group: {
-            _id: {
-              $dateToString: { format: dateFormat, date: '$returnedAt' },
-            },
+            // Use the helper here as well for returnedAt
+            _id: getDateGroupingExpression(groupBy, '$returnedAt', timezone),
             count: { $sum: '$quantity' },
             transactions: { $sum: 1 },
           },
         },
-        { $sort: { _id: 1 } },
         {
           $project: {
             _id: 0,
@@ -111,31 +122,33 @@ export const getBorrowingTrends = async (
       ]),
     ]);
 
+    // Merging Logic (Remains unchanged)
     const merged = new Map<string, any>();
-    for (const item of borrowedData) {
-      merged.set(item.date, {
-        date: item.date,
-        borrowed: item.borrowed,
-        borrowedTransactions: item.borrowedTransactions,
-        returned: 0,
-        returnedTransactions: 0,
-      });
-    }
-    for (const item of returnedData) {
-      const existing = merged.get(item.date);
-      if (existing) {
-        existing.returned = item.returned;
-        existing.returnedTransactions = item.returnedTransactions;
-      } else {
-        merged.set(item.date, {
-          date: item.date,
+
+    const getOrInit = (date: string) => {
+      if (!merged.has(date)) {
+        merged.set(date, {
+          date,
           borrowed: 0,
           borrowedTransactions: 0,
-          returned: item.returned,
-          returnedTransactions: item.returnedTransactions,
+          returned: 0,
+          returnedTransactions: 0,
         });
       }
-    }
+      return merged.get(date);
+    };
+
+    borrowedData.forEach(item => {
+      const entry = getOrInit(item.date);
+      entry.borrowed = item.borrowed;
+      entry.borrowedTransactions = item.borrowedTransactions;
+    });
+
+    returnedData.forEach(item => {
+      const entry = getOrInit(item.date);
+      entry.returned = item.returned;
+      entry.returnedTransactions = item.returnedTransactions;
+    });
 
     const result = Array.from(merged.values()).sort((a, b) =>
       a.date.localeCompare(b.date)

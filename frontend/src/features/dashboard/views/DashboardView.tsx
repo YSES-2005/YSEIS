@@ -25,8 +25,6 @@ export function DashboardView() {
         <ReleasedItems
           className="w-full min-h-60"
           releasedItems={currentlyInUseItems}
-          currentItemIndex={currentItemIndex}
-          setCurrentItemIndex={setCurrentItemIndex}
         />
         <ApprovedItems
           className="w-full min-h-60"

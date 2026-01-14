@@ -8,13 +8,11 @@ import {
 } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 import type { InventoryStats } from '@/services/itemService';
-import { TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
 
 type Props = {
   stats: InventoryStats | undefined;
-  isLoading: boolean;
   className: string;
 };
 
