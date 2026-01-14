@@ -15,9 +15,9 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { type Transaction, getColumns } from '../components/columns';
-import { TransactionTable } from '../components/TransactionTable';
-import { TransactionDetailsDialog } from '../components/TransactionDetailsDialog';
+import { type Transaction, getColumns } from './columns';
+import { TransactionTable } from './TransactionTable';
+import { TransactionDetailsDialog } from './TransactionDetailsDialog';
 
 import { useTransactionsViewModel } from '../viewmodels/useTransactionsViewModel';
 
@@ -25,6 +25,7 @@ export function TransactionsView() {
     const {
         transactions,
         isLoading,
+        error,
         search,
         setSearch,
         borrowerFilter,
@@ -37,7 +38,7 @@ export function TransactionsView() {
         setStartDateFilter,
         endDateFilter,
         setEndDateFilter,
-        uniqueTypes, // This is mock for now in VM
+        uniqueTypes, 
         currentPage,
         setCurrentPage,
         totalPages,
@@ -175,6 +176,8 @@ export function TransactionsView() {
                                                 <SelectItem value="disapproved">Declined</SelectItem>
                                                 <SelectItem value="pending">Pending</SelectItem>
                                                 <SelectItem value="returned">Returned</SelectItem>
+                                                <SelectItem value="released">Released</SelectItem>
+                                                <SelectItem value="cancelled">Cancelled</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </Field>
@@ -211,6 +214,12 @@ export function TransactionsView() {
             {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                     <div className="text-muted-foreground">Loading...</div>
+                </div>
+            ) : error ? (
+                <div className="flex items-center justify-center py-12">
+                    <div className="text-destructive font-medium">
+                        Failed to load transactions. Please try again.
+                    </div>
                 </div>
             ) : (
                 <TransactionTable
