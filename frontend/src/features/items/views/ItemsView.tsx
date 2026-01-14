@@ -31,6 +31,11 @@ import { useEditItemViewModel } from '../viewmodels/useEditItemViewModel';
 import { EditItemModal } from './EditItemModal';
 import { useDeleteViewModel } from '../viewmodels/useDeleteViewModel';
 import DeleteItemModal from './DeleteItemModal';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 
 export function ItemsView() {
   const { user } = useUser();
@@ -274,15 +279,17 @@ export function ItemsView() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="relative w-64">
-            <Search className="absolute left-2 top-1.5 h-4 w-4 text-muted-foreground" />
-            <Input
+          <InputGroup>
+            <InputGroupInput
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search"
-              className="pl-8"
+              className="text-xs"
             />
-          </div>
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
 
           <Popover open={showFilterPanel} onOpenChange={setShowFilterPanel}>
             <PopoverTrigger
@@ -294,91 +301,86 @@ export function ItemsView() {
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Filter Items</h4>
-                </div>
-                <FieldGroup>
-                  <Field>
-                    <FieldLabel htmlFor="custodian">Custodian</FieldLabel>
+            <PopoverContent className="w-80 p-4" align="end">
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="custodian">Custodian</FieldLabel>
+                  <Input
+                    id="custodian"
+                    value={tempCustodian}
+                    onChange={e => setTempCustodian(e.target.value)}
+                    placeholder="Enter custodian name"
+                  />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="type">Type</FieldLabel>
+                  <Select
+                    value={tempType || 'any'}
+                    onValueChange={val =>
+                      setTempType(val === 'any' ? null : val)
+                    }
+                  >
+                    <SelectTrigger id="type" size="sm">
+                      <SelectValue className="capitalize" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      {uniqueTypes.map(type => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() +
+                            type.slice(1).toLowerCase()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="status">Status</FieldLabel>
+                  <Select
+                    value={tempStatus || 'any'}
+                    onValueChange={val =>
+                      setTempStatus(
+                        val === 'any'
+                          ? null
+                          : (val as 'available' | 'unavailable')
+                      )
+                    }
+                  >
+                    <SelectTrigger id="status" size="sm">
+                      <SelectValue className="capitalize" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="available">Available</SelectItem>
+                      <SelectItem value="unavailable">Unavailable</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field>
+                  <FieldLabel>Last Updated</FieldLabel>
+                  <div className="flex items-center gap-2">
                     <Input
-                      id="custodian"
-                      value={tempCustodian}
-                      onChange={e => setTempCustodian(e.target.value)}
-                      placeholder="Enter custodian name"
+                      type="date"
+                      value={tempStartDate}
+                      onChange={e => setTempStartDate(e.target.value)}
                     />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="type">Type</FieldLabel>
-                    <Select
-                      value={tempType || 'any'}
-                      onValueChange={val =>
-                        setTempType(val === 'any' ? null : val)
-                      }
-                    >
-                      <SelectTrigger id="type" size="sm">
-                        <SelectValue className="capitalize" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        {uniqueTypes.map(type => (
-                          <SelectItem key={type} value={type}>
-                            {type.charAt(0).toUpperCase() +
-                              type.slice(1).toLowerCase()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="status">Status</FieldLabel>
-                    <Select
-                      value={tempStatus || 'any'}
-                      onValueChange={val =>
-                        setTempStatus(
-                          val === 'any'
-                            ? null
-                            : (val as 'available' | 'unavailable')
-                        )
-                      }
-                    >
-                      <SelectTrigger id="status" size="sm">
-                        <SelectValue className="capitalize" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="available">Available</SelectItem>
-                        <SelectItem value="unavailable">Unavailable</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>Last Updated</FieldLabel>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="date"
-                        value={tempStartDate}
-                        onChange={e => setTempStartDate(e.target.value)}
-                      />
-                      <span className="text-muted-foreground text-sm">to</span>
-                      <Input
-                        type="date"
-                        value={tempEndDate}
-                        onChange={e => setTempEndDate(e.target.value)}
-                      />
-                    </div>
-                  </Field>
-                </FieldGroup>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={handleResetFilters}>
-                    Reset
-                  </Button>
-                  <Button onClick={handleApplyFilters}>Apply</Button>
-                </div>
+                    <span className="text-muted-foreground text-sm">to</span>
+                    <Input
+                      type="date"
+                      value={tempEndDate}
+                      onChange={e => setTempEndDate(e.target.value)}
+                    />
+                  </div>
+                </Field>
+              </FieldGroup>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handleResetFilters}>
+                  Reset
+                </Button>
+                <Button onClick={handleApplyFilters}>Apply</Button>
               </div>
             </PopoverContent>
           </Popover>
