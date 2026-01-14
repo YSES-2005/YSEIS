@@ -1,7 +1,71 @@
 import { Request, Response, NextFunction } from 'express';
+import { Types } from 'mongoose';
 import ReturnModel from './return.model';
 import TransactionModel from '../transactions/transaction.model';
+import ItemModel from '../items/item.model';
+import { UserModel } from '../users/user.model';
+import { notify } from '../notifications/notification.service';
 import { NotFoundError, BadRequestError } from '../../errors';
+
+interface PopulatedUser {
+    _id: Types.ObjectId;
+    name: string;
+    email: string;
+}
+
+interface PopulatedItem {
+    _id: Types.ObjectId;
+    name: string;
+}
+
+const handleReturnCompletion = async (returnDoc: any) => {
+    const transactionDoc = await TransactionModel.findById(returnDoc.transaction)
+             .populate('item')
+             .populate('borrower');
+             
+    if (!transactionDoc) return;
+    if (transactionDoc.returned) return;
+
+    const transactionQty = (transactionDoc as any).quantity || 1;
+
+    // Increment inventory
+    const updatedItem = await ItemModel.findByIdAndUpdate(
+        transactionDoc.item,
+        { $inc: { quantity: transactionQty } }, 
+        { new: true }
+    );
+
+    // If item was previously unavailable, make it available
+    if (updatedItem && updatedItem.status === 'unavailable') {
+        updatedItem.status = 'available';
+        await updatedItem.save();
+    }
+
+    // Mark transaction as returned
+    transactionDoc.returned = true;
+    transactionDoc.returnedAt = new Date();
+    transactionDoc.approvalStatus = 'completed'; // Sync status
+    await transactionDoc.save();
+
+    // Notify Admins
+    const populatedBorrower = transactionDoc.borrower as unknown as PopulatedUser;
+    const populatedItem = transactionDoc.item as unknown as PopulatedItem;
+
+    const admins = await UserModel.find({ role: 'admin' });
+    if (admins.length > 0) {
+        await Promise.all(
+            admins.map(admin =>
+                notify(
+                    (admin._id as Types.ObjectId).toString(),
+                    'Item Returned',
+                    `${populatedBorrower.name} returned ${transactionQty}x "${populatedItem.name}".`,
+                    'INFO',
+                    { shouldEmail: false }
+                )
+            )
+        );
+    }
+};
 
 // GET /api/returns
 export const getReturns = async (
@@ -53,12 +117,20 @@ export const createReturn = async (
     next: NextFunction
 ) => {
     try {
-        const { transaction, description, status, condition } = req.body;
+        const { transaction, description, condition } = req.body;
+        const status = 'pending';
 
         // Verify transaction exists
-        const transactionDoc = await TransactionModel.findById(transaction);
+        const transactionDoc = await TransactionModel.findById(transaction)
+             .populate('item')
+             .populate('borrower');
+             
         if (!transactionDoc) {
             throw new NotFoundError('Transaction not found');
+        }
+
+        if (transactionDoc.returned) {
+             throw new BadRequestError('Transaction already marked as returned.');
         }
 
         const returnDoc = new ReturnModel({
@@ -70,12 +142,8 @@ export const createReturn = async (
 
         await returnDoc.save();
 
-        // Mark transaction as returned if not already
-        if (!transactionDoc.returned) {
-            transactionDoc.returned = true;
-            transactionDoc.returnedAt = new Date();
-            await transactionDoc.save();
-        }
+        // Note: status is strictly 'pending' here, so handleReturnCompletion is never called on create
+        // This effectively enforces the Admin Approval workflow
 
         res.status(201).json({ return: returnDoc });
     } catch (error) {
@@ -103,6 +171,11 @@ export const updateReturn = async (
         if (condition) returnDoc.condition = condition;
 
         await returnDoc.save();
+
+        if (status === 'completed') {
+            await handleReturnCompletion(returnDoc);
+       }
+
         res.json({ return: returnDoc });
     } catch (error) {
         next(error);

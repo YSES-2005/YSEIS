@@ -10,7 +10,7 @@ import { validate } from '../../middleware/validate';
 import {
     returnCreateSchema,
     returnUpdateSchema,
-} from './return.schema';
+} from '@schemas/returnSchema';
 
 const returnRouter = express.Router();
 
