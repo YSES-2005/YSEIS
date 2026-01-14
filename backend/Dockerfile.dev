@@ -8,8 +8,8 @@ COPY backend/package.json backend/pnpm-lock.yaml ./
 COPY shared /usr/src/shared
 
 RUN corepack enable && corepack prepare pnpm@latest --activate && \
-    (cd /usr/src/shared && pnpm install --frozen-lockfile && pnpm build) && \
-    pnpm install --frozen-lockfile
+    (cd /usr/src/shared && pnpm install --no-frozen-lockfile && pnpm build) && \
+    pnpm install --no-frozen-lockfile
 
 COPY backend/ .
 
