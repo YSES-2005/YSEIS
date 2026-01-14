@@ -29,6 +29,8 @@ type Props = {
   totalPages: number;
   onPageChange: (page: number) => void;
   onOpenBorrowDetails: (borrow: TransactionPopulated) => void;
+  onApproveBorrow: (borrow: TransactionPopulated) => void;
+  onDisapproveBorrow: (borrow: TransactionPopulated) => void;
 };
 
 export function BorrowTable({
@@ -37,6 +39,8 @@ export function BorrowTable({
   totalPages,
   onPageChange,
   onOpenBorrowDetails,
+  onApproveBorrow,
+  onDisapproveBorrow,
 }: Props) {
   return (
     <div className="space-y-4 bg-card p-2 rounded-2xl">
@@ -53,7 +57,6 @@ export function BorrowTable({
           </TableHeader>
           <TableBody>
             {borrows.map(borrow => {
-              console.log(borrow);
               const isAvailable =
                 borrow.item.status === 'available' && borrow.item.quantity > 0;
               return (
@@ -104,10 +107,23 @@ export function BorrowTable({
                   >
                     {/* Show borrow button for non-admins, edit/delete for admins */}
                     <div className="flex justify-end gap-2">
-                      <Button size="icon" variant="success" onClick={() => {}}>
+                      <Button
+                        disabled={!isAvailable}
+                        size="icon"
+                        variant="success"
+                        onClick={() => {
+                          onApproveBorrow(borrow);
+                        }}
+                      >
                         <Check className="h-4 w-4" />
                       </Button>
-                      <Button size="icon" variant="danger" onClick={() => {}}>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => {
+                          onDisapproveBorrow(borrow);
+                        }}
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>

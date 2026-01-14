@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { transactionService } from '@/services/transactionService';
 
 export function useBorrowsViewModel() {
@@ -17,6 +17,19 @@ export function useBorrowsViewModel() {
 
   // Memoize transactions array for convenience, optional
   const borrows = useMemo(() => data?.transactions ?? [], [data?.transactions]);
+
+  const queryClient = useQueryClient();
+
+  // Refetch borrows when items query changes (e.g. status or quantity updates)
+  useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event: any) => {
+      const key = event?.query?.queryKey;
+      if (Array.isArray(key) && key[0] === 'items') {
+        void refetch();
+      }
+    });
+    return () => unsubscribe();
+  }, [queryClient, refetch]);
 
   const totalPages = data?.pagination?.totalPages ?? 1;
   const totalBorrows = data?.pagination?.totalItems ?? 0;

@@ -34,6 +34,7 @@ export function useEditItemViewModel({
     onSuccess: (data: Item) => {
       // Refetch current paginated items queries so pagination and counts are updated
       void queryClient.refetchQueries({ queryKey: ['items'], type: 'all' });
+      void queryClient.refetchQueries({ queryKey: ['borrows'], type: 'all' });
       toast.success('Item updated successfully');
       setErrors({});
       onSuccess?.(data);

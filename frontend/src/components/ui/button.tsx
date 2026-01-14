@@ -22,9 +22,9 @@ const buttonVariants = cva(
         danger:
           'border-red-500 text-red-500 dark:border-red-400 dark:text-red-400 bg-transparent hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-200',
 
-        // ✅ Custom "success" outline
+        // ✅ Custom "success" (solid green, mirrors destructive style)
         success:
-          'border-green-500 text-green-500 dark:border-green-400 dark:text-green-400 bg-transparent hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-200',
+          'bg-green-500/10 hover:bg-green-500/20 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-500/20 text-green-600 focus-visible:border-green-500/40 dark:hover:bg-green-900/30',
       },
       size: {
         default:

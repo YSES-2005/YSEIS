@@ -6,6 +6,8 @@ import { BorrowTable } from './BorrowTable';
 import { useState } from 'react';
 import type { TransactionPopulated } from '@schemas/transactionSchema';
 import { OpenBorrowModal } from './OpenBorrowModal';
+import { useUpdateTransactionViewModel } from '../viewmodels/useUpdateTransactionViewModel';
+import { ConfirmUpdateBorrowModal } from './ConfirmUpdateBorrowModal';
 
 export function BorrowRequestsView() {
   const { borrows, isLoading, currentPage, setCurrentPage, totalPages } =
@@ -14,10 +16,7 @@ export function BorrowRequestsView() {
   const [borrowDetailsOpen, setBorrowDetailsOpen] = useState(false);
   const [selectedBorrow, setSelectedBorrow] =
     useState<TransactionPopulated | null>(null);
-  const [approvalStatus, setApprovalStatus] = useState<
-    'approved' | 'rejected' | null
-  >(null);
-
+  const [confirmUpdateBorrowOpen, setConfirmUpdateBorrowOpen] = useState(false);
   const handleOpenBorrowDetails = (borrow: TransactionPopulated) => {
     setSelectedBorrow(borrow);
     setBorrowDetailsOpen(true);
@@ -26,6 +25,34 @@ export function BorrowRequestsView() {
   const handleCloseBorrowDetails = () => {
     setSelectedBorrow(null);
     setBorrowDetailsOpen(false);
+  };
+
+  const handleConfirmUpdateBorrowSuccess = () => {
+    setConfirmUpdateBorrowOpen(false);
+    handleCloseBorrowDetails();
+  };
+
+  const { updateTransaction, isUpdating, approvalStatus, setApprovalStatus } =
+    useUpdateTransactionViewModel({
+      transaction: selectedBorrow,
+      onSuccess: handleConfirmUpdateBorrowSuccess,
+    });
+
+  const handleOpenApproveBorrow = (borrow: TransactionPopulated) => {
+    setSelectedBorrow(borrow);
+    setApprovalStatus('approved');
+    setConfirmUpdateBorrowOpen(true);
+  };
+
+  const handleOpenDisapproveBorrow = (borrow: TransactionPopulated) => {
+    setSelectedBorrow(borrow);
+    setApprovalStatus('disapproved');
+    setConfirmUpdateBorrowOpen(true);
+  };
+
+  const handleCloseBorrowUpdate = () => {
+    setConfirmUpdateBorrowOpen(false);
+    setSelectedBorrow(null);
   };
 
   return (
@@ -47,12 +74,25 @@ export function BorrowRequestsView() {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
           onOpenBorrowDetails={handleOpenBorrowDetails}
+          onApproveBorrow={handleOpenApproveBorrow}
+          onDisapproveBorrow={handleOpenDisapproveBorrow}
         />
       )}
       <OpenBorrowModal
         open={borrowDetailsOpen}
         borrow={selectedBorrow!}
         onClose={handleCloseBorrowDetails}
+      />
+      <ConfirmUpdateBorrowModal
+        open={confirmUpdateBorrowOpen}
+        approvalStatus={approvalStatus!}
+        borrow={selectedBorrow}
+        onClose={handleCloseBorrowUpdate}
+        onConfirm={() => {
+          if (selectedBorrow) {
+            updateTransaction();
+          }
+        }}
       />
     </div>
   );
