@@ -104,3 +104,5 @@ export const multiBorrowFormSchema = baseBorrowSchema
 
 export type BorrowFormData = z.infer<typeof borrowFormSchema>;
 export type MultiBorrowFormState = z.infer<typeof multiBorrowFormSchema>;
+
+export const LOW_STOCK_THRESHOLD = 5;

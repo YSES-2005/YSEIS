@@ -3,6 +3,7 @@ import { notify } from './notification.service';
 
 import ItemModel from '../items/item.model';
 import TransactionModel from '../transactions/transaction.model';
+import { LOW_STOCK_THRESHOLD } from '@schemas/itemSchema';
 
 export const startNotificationScheduler = () => {
   console.log('Notification Scheduler Initialized');
@@ -10,7 +11,6 @@ export const startNotificationScheduler = () => {
   // stock checker every 4 hours
   cron.schedule('0 */4 * * *', async () => {
     console.log('Running Low Stock Check...');
-    const LOW_STOCK_THRESHOLD = 5;
 
     try {
       // find items with low stock that are not deleted
