@@ -179,7 +179,7 @@ export const createTransaction = async (
       purpose,
       urgency,
       returnDate,
-      quantity: requestedQty, 
+      quantity: requestedQty,
       approvalStatus: 'pending',
     });
 
@@ -249,7 +249,6 @@ export const updateTransaction = async (
         payload.approvalStatus === 'approved' &&
         transaction.approvalStatus !== 'approved'
       ) {
-        
         const updatedItem = await ItemModel.findOneAndUpdate(
           {
             _id: transaction.item,
@@ -336,10 +335,54 @@ export const updateTransaction = async (
   }
 };
 
+// GET /api/transactions/analytics/most-borrowed
+export const getMostBorrowedItem = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await TransactionModel.aggregate([
+      {
+        $group: {
+          _id: '$item',
+          totalBorrowed: { $sum: '$quantity' },
+          transactionCount: { $sum: 1 },
+        },
+      },
+      { $sort: { totalBorrowed: -1 } },
+      { $limit: 1 },
+      {
+        $lookup: {
+          from: 'items',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'item',
+        },
+      },
+      { $unwind: '$item' },
+      {
+        $project: {
+          _id: 0,
+          name: '$item.name',
+          avatar: '$item.avatar',
+          totalBorrowed: 1,
+          transactionCount: 1,
+        },
+      },
+    ]);
+
+    res.json(result[0] || null);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getTransactions,
   getTransactionsForMe,
   getTransactionById,
   createTransaction,
   updateTransaction,
+  getMostBorrowedItem,
 };

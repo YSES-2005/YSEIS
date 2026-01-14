@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import ItemModel from './item.model';
-import { UserModel } from '../users/user.model'; 
+import TransactionModel from '../transactions/transaction.model';
+import { UserModel } from '../users/user.model';
 import { NotFoundError } from '../../errors';
 
 // GET api/items
@@ -14,6 +15,7 @@ export const getItems = async (
       search,
       status,
       type,
+      quantity,
       custodian,
       startDate,
       endDate,
@@ -39,6 +41,21 @@ export const getItems = async (
 
     if (type) query.type = type;
 
+    if (quantity?.length) {
+      const isMaxLimit = quantity.startsWith('-');
+      const val = Math.abs(parseInt(quantity));
+
+      if (!isNaN(val)) {
+        query.quantity = query.quantity || {};
+
+        if (isMaxLimit) {
+          query.quantity.$lte = val;
+        } else {
+          query.quantity.$gte = val;
+        }
+      }
+    }
+
     if (search) query.name = { $regex: new RegExp(search, 'i') };
 
     if (startDate || endDate) {
@@ -55,10 +72,10 @@ export const getItems = async (
     if (custodian) {
       const matchingUsers = await UserModel.find({
         $or: [
-            { name: { $regex: new RegExp(custodian, 'i') } },
-            { email: { $regex: new RegExp(custodian, 'i') } }
-        ]
-      }).select('_id'); 
+          { name: { $regex: new RegExp(custodian, 'i') } },
+          { email: { $regex: new RegExp(custodian, 'i') } },
+        ],
+      }).select('_id');
 
       const userIds = matchingUsers.map(u => u._id);
       query.custodian = { $in: userIds };
@@ -69,12 +86,12 @@ export const getItems = async (
     const skip = (pageNumber - 1) * limitNumber;
 
     const [items, totalCount] = await Promise.all([
-        ItemModel.find(query)
-            .populate('custodian', 'name email avatar')
-            .sort({ updated_at: -1 })
-            .skip(skip)
-            .limit(limitNumber),
-        ItemModel.countDocuments(query)
+      ItemModel.find(query)
+        .populate('custodian', 'name email avatar')
+        .sort({ updated_at: -1 })
+        .skip(skip)
+        .limit(limitNumber),
+      ItemModel.countDocuments(query),
     ]);
 
     res.json({
@@ -196,4 +213,42 @@ export const deleteItem = async (
   }
 };
 
-export default { getItems, getItemById, createItem, updateItem, deleteItem };
+// GET api/items/analytics/inventory-stats
+export const getInventoryStats = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const [totalItemsResult, releasedTransactions] = await Promise.all([
+      ItemModel.aggregate([
+        { $match: { status: { $ne: 'deleted' } } },
+        { $group: { _id: null, totalQuantity: { $sum: '$quantity' } } },
+      ]),
+      TransactionModel.find({ approvalStatus: 'released' }),
+    ]);
+
+    const totalInventory = totalItemsResult[0]?.totalQuantity || 0;
+    const totalInField = releasedTransactions.reduce(
+      (sum, t) => sum + (t.quantity || 0),
+      0
+    );
+    const totalInShelf = totalInventory - totalInField;
+
+    res.json({
+      inField: totalInField,
+      inShelf: totalInShelf,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getItems,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem,
+  getInventoryStats,
+};

@@ -12,6 +12,7 @@ export const badgeVariants = cva(
         default: 'bg-primary text-primary-foreground [a]:hover:bg-primary/80',
         secondary:
           'bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80',
+        neutral: 'bg-neutral text-neutral-foreground [a]:hover:bg-neutral/80',
         success:
           'bg-success/10 [a]:hover:bg-success/20 focus-visible:ring-success/20 dark:focus-visible:ring-success/40 text-success-foreground dark:text-success dark:bg-success/20',
         warning:
@@ -29,7 +30,7 @@ export const badgeVariants = cva(
         outline:
           'border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground bg-input/20 dark:bg-input/30',
         'outlined-warning':
-          'border-warning text-warning [a]:hover:bg-warning/10',
+          'border-warning-foreground dark:border-warning text-warning-foreground dark:text-warning [a]:hover:bg-warning/10',
         'outlined-destructive':
           'border-destructive text-destructive [a]:hover:bg-destructive/10 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
         ghost:

@@ -3,6 +3,7 @@ import type {
   TransactionPopulated,
   TransactionCreate,
   TransactionUpdate,
+  Transaction,
 } from '@schemas/transactionSchema';
 
 type TransactionsResponse = {
@@ -17,6 +18,13 @@ type TransactionsResponse = {
 
 type TransactionResponse = { transaction: TransactionPopulated };
 
+export type MostBorrowedItem = {
+  name: string;
+  avatar: string;
+  totalBorrowed: number;
+  transactionCount: number;
+};
+
 export const transactionService = {
   async createTransaction(
     payload: TransactionCreate
@@ -30,7 +38,9 @@ export const transactionService = {
   },
 
   async getTransactions(params?: {
-    status?: string;
+    startDate?: Date;
+    endDate?: Date;
+    status?: Transaction['approvalStatus'];
     page?: number;
     limit?: number;
   }): Promise<{
@@ -68,5 +78,12 @@ export const transactionService = {
       data
     );
     return transaction;
+  },
+
+  async getMostBorrowedItem(): Promise<MostBorrowedItem | null> {
+    const response = await api.get<MostBorrowedItem | null>(
+      '/transactions/analytics/most-borrowed'
+    );
+    return response;
   },
 };

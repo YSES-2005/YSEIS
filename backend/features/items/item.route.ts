@@ -5,6 +5,7 @@ import {
   updateItem,
   getItemById,
   deleteItem,
+  getInventoryStats,
 } from './item.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
@@ -82,6 +83,8 @@ const fillCustodianFromAuth = (
  *                 $ref: '#/components/schemas/Item'
  */
 itemsRouter.get('/', getItems);
+
+itemsRouter.get('/analytics/inventory-stats', getInventoryStats);
 
 itemsRouter.get('/:id', getItemById);
 

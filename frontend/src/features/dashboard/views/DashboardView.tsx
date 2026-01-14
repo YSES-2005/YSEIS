@@ -11,8 +11,6 @@ export function DashboardView() {
     transactionCounts,
     currentlyInUseItems,
     readyForPickupItems,
-    currentItemIndex,
-    setCurrentItemIndex,
     markAsReleased,
     cancelRequest,
   } = useDashboardViewModel();
@@ -23,7 +21,7 @@ export function DashboardView() {
         counts={transactionCounts}
         className="row-span-2 col-start-1 row-start-1 col-span-8 pb-6"
       />
-      <div className="flex flex-col sm:flex-row gap-1 col-span-8 row-span-5 col-start-1 row-start-3 sm:max-xl:aspect-video sm:max-h-80">
+      <div className="flex flex-col xs:flex-row gap-1 col-span-8 row-span-5 col-start-1 row-start-3 sm:max-xl:aspect-video sm:max-h-80">
         <ReleasedItems
           className="w-full min-h-60"
           releasedItems={currentlyInUseItems}
