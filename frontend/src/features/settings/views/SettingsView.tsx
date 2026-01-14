@@ -44,7 +44,7 @@ export function SettingsView() {
 
       <Separator />
 
-      {/* 1. Profile Section */}
+      {/* Profile Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export function SettingsView() {
         </CardContent>
       </Card>
 
-      {/* 2. Notifications Section */}
+      {/* Notifications Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -104,21 +104,23 @@ export function SettingsView() {
             Configure how you receive alerts for borrow requests and due dates.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="flex items-center justify-between space-x-2 rounded-lg border p-4 bg-background">
-            <div className="space-y-0.5">
-              <Label className="text-base">Email Alerts</Label>
-              <p className="text-sm text-muted-foreground">
+        <CardContent className="grid gap-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label htmlFor="email-alerts" className="font-medium cursor-pointer">
+                Email Alerts
+              </Label>
+              <span className="font-normal text-muted-foreground">
                 Receive emails about your account activity.
-              </p>
+              </span>
             </div>
             <Switch
+              id="email-alerts"
               checked={emailAlerts}
               onCheckedChange={setEmailAlerts}
             />
           </div>
-          
-          <div className="grid gap-4 pl-2 pt-2">
+          <div className="grid gap-5">
             <div className="flex items-center justify-between">
               <Label htmlFor="due-date" className="font-normal cursor-pointer">
                 Due Date Reminders (1 day before)
@@ -130,10 +132,11 @@ export function SettingsView() {
               />
             </div>
           </div>
+
         </CardContent>
       </Card>
 
-      {/* 3. Appearance & Security Grid */}
+      {/* Appearance & Security Grid */}
       <div className="grid md:grid-cols-2 gap-6">
          {/* Appearance */}
          <Card>
