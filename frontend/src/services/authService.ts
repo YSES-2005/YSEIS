@@ -1,7 +1,7 @@
 import { api } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
 import { router, userQueryKey } from '@/lib/router';
-import { type User } from '@schemas/userSchema';
+import { type User, type UserListItem } from '@schemas/userSchema';
 import type { AxiosRequestConfig } from 'axios';
 
 export const authService = {
@@ -22,6 +22,21 @@ export const authService = {
   async getCurrentUser(config?: AxiosRequestConfig): Promise<User | null> {
     const { user } = await api.get<{ user: User }>('/users/me', config);
 
+    return user;
+  },
+
+
+  async getAllUsers(): Promise<UserListItem[]> {
+    const { users } = await api.get<{ users: UserListItem[] }>('/users');
+
+    return users;
+  },
+
+  async updateProfile(
+    data: Partial<User>
+  ): Promise<User> {
+    const { user } = await api.patch<{ user: User }>('/users/me', data);
+    await queryClient.invalidateQueries({ queryKey: [userQueryKey] });
     return user;
   },
 };

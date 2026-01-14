@@ -11,7 +11,7 @@ export function useItemsViewModel() {
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<
     'available' | 'unavailable' | null
-  >('available');
+  >(null);
   const [startDateFilter, setStartDateFilter] = useState('');
   const [endDateFilter, setEndDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);

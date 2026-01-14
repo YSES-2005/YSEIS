@@ -40,7 +40,7 @@ export function useDashboardViewModel() {
     const approved = [];
     const other = [];
 
-    for (const t of transactions) {
+    for (const t of transactions.transactions) {
       counts[t.approvalStatus] = (counts[t.approvalStatus] || 0) + 1;
 
       if (t.approvalStatus === 'released') {

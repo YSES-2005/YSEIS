@@ -25,6 +25,12 @@ import {
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Package, Search, Filter, Layers, Plus } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
+import { useCreateItemViewModel } from '../viewmodels/useCreateItemViewModel';
+import { CreateItemModal } from './CreateItemModal';
+import { useEditItemViewModel } from '../viewmodels/useEditItemViewModel';
+import { EditItemModal } from './EditItemModal';
+import { useDeleteViewModel } from '../viewmodels/useDeleteViewModel';
+import DeleteItemModal from './DeleteItemModal';
 
 export function ItemsView() {
   const { user } = useUser();
@@ -54,7 +60,7 @@ export function ItemsView() {
   const [tempType, setTempType] = useState<string | null>(null);
   const [tempStatus, setTempStatus] = useState<
     'available' | 'unavailable' | null
-  >('available');
+  >(null);
   const [tempStartDate, setTempStartDate] = useState('');
   const [tempEndDate, setTempEndDate] = useState('');
 
@@ -64,6 +70,10 @@ export function ItemsView() {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [multiBorrowOpen, setMultiBorrowOpen] = useState(false);
+  const [createItemOpen, setCreateItemOpen] = useState(false);
+  const [editItemOpen, setEditItemOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
 
   const availableItems = items.filter(
     item => item.status === 'available' && item.quantity > 0
@@ -187,6 +197,74 @@ export function ItemsView() {
     setTempEndDate('');
   };
 
+  const handleCreateItemSuccess = () => {
+    setCreateItemOpen(false);
+    resetCreateItem();
+  };
+
+  const {
+    form: createItemForm,
+    errors: createItemErrors,
+    setField: setCreateItemField,
+    submit: submitCreateItem,
+    reset: resetCreateItem,
+    isLoading: isCreatingItem,
+  } = useCreateItemViewModel({
+    onSuccess: handleCreateItemSuccess,
+  });
+
+  const handleOpenCreateItem = () => {
+    resetCreateItem();
+    setCreateItemOpen(true);
+  };
+
+  const handleCloseCreateItem = () => {
+    setCreateItemOpen(false);
+    resetCreateItem();
+  };
+
+  const editItemSuccess = () => {
+    setEditItemOpen(false);
+    resetEditItem();
+  };
+
+  const {
+    form: editItemForm,
+    errors: editItemErrors,
+    setField: setEditItemField,
+    submit: submitEditItem,
+    reset: resetEditItem,
+  } = useEditItemViewModel({
+    item: selectedItem,
+    onSuccess: editItemSuccess,
+  });
+
+  const handleOpenEditItem = (item: Item) => {
+    setSelectedItem(item);
+    resetEditItem();
+    setEditItemOpen(true);
+  };
+
+  const handleCloseEditItem = () => {
+    setEditItemOpen(false);
+    setSelectedItem(null);
+    resetEditItem();
+  };
+
+  const { deleteItem, isDeleting } = useDeleteViewModel();
+
+  const handleDeleteItem = (item: Item) => {
+    setItemToDelete(item);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!itemToDelete) return;
+    deleteItem(itemToDelete.id!);
+    setDeleteOpen(false);
+    setItemToDelete(null);
+  };
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -307,7 +385,7 @@ export function ItemsView() {
 
           {/* Show multi-borrow button for non-admin users */}
           {user?.role === 'admin' ? (
-            <Button variant="neutral">
+            <Button variant="neutral" onClick={handleOpenCreateItem}>
               <Plus className="mr-2 h-4 w-4" />
               Add Item
             </Button>
@@ -335,6 +413,8 @@ export function ItemsView() {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
           onBorrow={handleOpenBorrow}
+          onEdit={handleOpenEditItem}
+          onDelete={handleDeleteItem}
           selectedItems={selectedItems}
           onToggleSelection={handleToggleSelection}
           onToggleAll={handleToggleAll}
@@ -365,6 +445,37 @@ export function ItemsView() {
         updateItemQuantity={updateItemQuantity}
         currentImageIndex={currentImageIndex}
         setCurrentImageIndex={setCurrentImageIndex}
+      />
+
+      <CreateItemModal
+        open={createItemOpen}
+        form={createItemForm}
+        errors={createItemErrors}
+        isCreating={isCreatingItem}
+        onClose={handleCloseCreateItem}
+        onSubmit={submitCreateItem}
+        setField={setCreateItemField}
+      />
+
+      <EditItemModal
+        open={editItemOpen}
+        form={editItemForm}
+        errors={editItemErrors}
+        isCreating={false}
+        onClose={handleCloseEditItem}
+        onSubmit={submitEditItem}
+        setField={setEditItemField}
+      />
+
+      <DeleteItemModal
+        open={deleteOpen}
+        item={itemToDelete}
+        onClose={() => {
+          setDeleteOpen(false);
+          setItemToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );

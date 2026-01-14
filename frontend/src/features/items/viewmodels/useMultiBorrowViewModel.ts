@@ -2,7 +2,6 @@ import { queryClient } from '@/lib/queryClient';
 import { transactionService } from '@/services/transactionService';
 import type {
   ItemPopulated as Item,
-  Item as SchemaItem,
 } from '@schemas/itemSchema';
 import {
   multiBorrowFormSchema,
@@ -16,7 +15,7 @@ type MultiBorrowValidationErrors = Partial<
   Record<keyof MultiBorrowFormState, string>
 >;
 
-const normalizeToSchemaItem = (item: Item): SchemaItem => ({
+const normalizeToSchemaItem = (item: Item) => ({
   ...item,
   custodian:
     typeof item.custodian === 'string'

@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 const GradientBlur = ({ style = {}, className = '' }) => {
   return (
     <div
@@ -13,7 +15,7 @@ const GradientBlur = ({ style = {}, className = '' }) => {
   );
 };
 
-const styles = {
+const styles: { [key: string]: CSSProperties } = {
   container: {
     position: 'absolute',
     width: '100%',

@@ -11,6 +11,23 @@ export const userSchema = z.object({
     .int()
     .min(0, 'Urgent borrow uses must be 0 or more')
     .optional(),
+  preferences: z
+    .object({
+      emailAlerts: z.boolean().default(true),
+      dueDateReminders: z.boolean().default(true),
+    })
+    .optional(),
 });
+
+const objectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
+
+export const userListSchema = z.object({
+  _id: objectIdSchema,
+  name: z.string().min(1, 'Name is required'),
+});
+
+export type UserListItem = z.infer<typeof userListSchema>;
 
 export type User = z.infer<typeof userSchema>;
