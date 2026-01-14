@@ -32,6 +32,8 @@ export const transactionService = {
   async getTransactions(params?: {
     status?: string;
     search?: string;
+    type?: string;
+    borrower?: string;
     startDate?: string;
     endDate?: string;
     page?: number;
@@ -49,9 +51,17 @@ export const transactionService = {
     return { transactions, pagination };
   },
 
-  async getTransactionsForMe(): Promise<{ transactions: TransactionPopulated[] }> {
+  async getTransactionsForMe(params?: {
+    status?: string;
+    search?: string;
+    type?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{ transactions: TransactionPopulated[] }> {
     const { transactions } =
-      await api.get<TransactionsResponse>('/transactions/me');
+      await api.get<TransactionsResponse>('/transactions/me', {
+        params,
+      });
     return { transactions };
   },
 
