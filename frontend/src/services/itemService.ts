@@ -1,5 +1,5 @@
 import { api } from '@/lib/apiClient';
-import type { ItemPopulated } from '@schemas/itemSchema';
+import type { ItemPopulated, Item, ItemUpdate } from '@schemas/itemSchema';
 import type { ApiResponse } from '@schemas/apiTypes';
 
 export type GetItemsParams = {
@@ -12,6 +12,8 @@ export type GetItemsParams = {
   page?: number;
   limit?: number;
 };
+
+type ItemResponse = { data: ItemPopulated };
 
 export const itemService = {
   async getItems(
@@ -35,6 +37,20 @@ export const itemService = {
       data: Array.isArray(response.data) ? response.data : [],
       pagination: response.pagination,
     };
+  },
+  async createItem(payload: Item): Promise<ItemPopulated> {
+    const { data } = await api.post<ItemResponse>('/items', payload);
+
+    return data;
+  },
+
+  async updateItem(id: string, data: ItemUpdate): Promise<ItemPopulated> {
+    const { data: item } = await api.put<ItemResponse>(`/items/${id}`, data);
+    return item;
+  },
+
+  async deleteItem(id: string): Promise<void> {
+    await api.delete(`/items/${id}`);
   },
 
   async getItemById(id: string): Promise<ItemPopulated> {
