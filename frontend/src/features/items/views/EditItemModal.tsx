@@ -32,7 +32,7 @@ import {
   ComboboxItem,
   ComboboxEmpty,
 } from '@/components/ui/combobox';
-import React, { useState } from 'react';
+import React from 'react';
 
 type Props = {
   open: boolean;

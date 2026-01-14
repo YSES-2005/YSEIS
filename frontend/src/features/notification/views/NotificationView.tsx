@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Bell, Circle, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { formatDistanceToNow, formatRelative } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 export interface NotificationItemProps {
   id: string;
