@@ -19,6 +19,12 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30',
         link: 'text-primary underline-offset-4 hover:underline',
+        danger:
+          'border-red-500 text-red-500 dark:border-red-400 dark:text-red-400 bg-transparent hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-200',
+
+        // ✅ Custom "success" outline
+        success:
+          'border-green-500 text-green-500 dark:border-green-400 dark:text-green-400 bg-transparent hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-200',
       },
       size: {
         default:

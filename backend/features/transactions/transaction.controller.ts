@@ -77,7 +77,7 @@ export const getTransactions = async (
 
     const [transactions, total] = await Promise.all([
       TransactionModel.find(filter)
-        .populate('item', 'name')
+        .populate('item', 'avatar name quantity status')
         .populate('borrower', 'name email')
         .sort({ created_at: -1 })
         .skip(skip)
@@ -179,7 +179,7 @@ export const createTransaction = async (
       purpose,
       urgency,
       returnDate,
-      quantity: requestedQty, 
+      quantity: requestedQty,
       approvalStatus: 'pending',
     });
 
@@ -249,7 +249,6 @@ export const updateTransaction = async (
         payload.approvalStatus === 'approved' &&
         transaction.approvalStatus !== 'approved'
       ) {
-        
         const updatedItem = await ItemModel.findOneAndUpdate(
           {
             _id: transaction.item,
