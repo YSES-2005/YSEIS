@@ -153,7 +153,7 @@ export const updateItem = async (
     if (payload.quantity !== undefined) {
       if (payload.quantity === 0) {
         payload.status = 'unavailable';
-      } else if (payload.quantity > 0 && payload.status === 'unavailable') {
+      } else if (payload.quantity > 0) {
         payload.status = 'available';
       }
     }

@@ -19,6 +19,12 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30',
         link: 'text-primary underline-offset-4 hover:underline',
+        danger:
+          'border-red-500 text-red-500 dark:border-red-400 dark:text-red-400 bg-transparent hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-200',
+
+        // ✅ Custom "success" (solid green, mirrors destructive style)
+        success:
+          'bg-green-500/10 hover:bg-green-500/20 focus-visible:ring-green-500/20 dark:focus-visible:ring-green-400/40 dark:bg-green-500/20 text-green-600 focus-visible:border-green-500/40 dark:hover:bg-green-900/30',
       },
       size: {
         default:
