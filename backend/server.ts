@@ -22,6 +22,7 @@ import transactionRouter from './features/transactions/transaction.route';
 import usersRouter from './features/users/user.route';
 import authRouter from './features/auth/auth.route';
 import notificationRouter from './features/notifications/notification.route';
+import returnRouter from './features/returns/return.route';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/error';
@@ -86,6 +87,7 @@ app.use('/api/transactions', transactionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/returns', returnRouter);
 
 // Error Handler
 app.use(
@@ -95,7 +97,7 @@ app.use(
 );
 
 const MONGO_URI =
-  process.env.MONGO_URI || 'mongodb://localhost:27017/inventory';
+  process.env.MONGO_URI || 'mongodb://mongo:27017/inventory';
 
 mongoose
   .connect(MONGO_URI)

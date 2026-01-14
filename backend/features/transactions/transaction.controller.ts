@@ -77,7 +77,7 @@ export const getTransactions = async (
 
     const [transactions, total] = await Promise.all([
       TransactionModel.find(filter)
-        .populate('item', 'name')
+        .populate('item', 'name type avatar')
         .populate('borrower', 'name email')
         .sort({ created_at: -1 })
         .skip(skip)
@@ -88,9 +88,10 @@ export const getTransactions = async (
     res.json({
       transactions,
       pagination: {
-        total,
-        page: pageNum,
-        pages: Math.ceil(total / limitNum),
+        totalItems: total,
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        limit: limitNum,
       },
     });
   } catch (error) {
@@ -112,7 +113,7 @@ export const getTransactionsForMe = async (
     if (status) filter.approvalStatus = status;
 
     const transactions = await TransactionModel.find(filter)
-      .populate('item', 'name')
+      .populate('item', 'name type avatar')
       .populate('borrower', 'name email')
       .sort({ created_at: -1 });
 
@@ -179,7 +180,7 @@ export const createTransaction = async (
       purpose,
       urgency,
       returnDate,
-      quantity: requestedQty, 
+      quantity: requestedQty,
       approvalStatus: 'pending',
     });
 
@@ -249,7 +250,7 @@ export const updateTransaction = async (
         payload.approvalStatus === 'approved' &&
         transaction.approvalStatus !== 'approved'
       ) {
-        
+
         const updatedItem = await ItemModel.findOneAndUpdate(
           {
             _id: transaction.item,
@@ -322,6 +323,11 @@ export const updateTransaction = async (
           );
         }
       }
+    }
+
+    if (payload.returned === false && role === 'admin') {
+      transaction.returned = false;
+      transaction.returnedAt = undefined;
     }
 
     // Update other fields if provided
