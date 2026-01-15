@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -5,6 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { MarkAsReturnDialog } from './MarkAsReturnDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Separator } from '@/components/ui/separator';
@@ -12,7 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { type Transaction } from './columns';
-import { Calendar, User, Hash, FileText, Layers } from 'lucide-react';
+import { Calendar, User, Hash, FileText, Layers, RotateCcw } from 'lucide-react';
+import { useUser } from '@/hooks/useUser';
 
 interface TransactionDetailsDialogProps {
   transaction: Transaction | null;
@@ -25,16 +29,28 @@ export function TransactionDetailsDialog({
   open,
   onOpenChange,
 }: TransactionDetailsDialogProps) {
+  const { user } = useUser();
+  const [returnDialogOpen, setReturnDialogOpen] = useState(false);
+
   if (!transaction) return null;
 
-  const { id, item, borrower, quantity, returnDate, purpose } = transaction;
+  const { id, item, borrower, quantity, returnDate, purpose, approvalStatus, returned } = transaction;
+
+  const canReturn = user?.role === 'admin' && ['released', 'approved'].includes(approvalStatus) && !returned;
 
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     dateStyle: 'long',
   }).format(new Date(returnDate));
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <MarkAsReturnDialog
+        transactionId={id!}
+        itemName={item.name}
+        open={returnDialogOpen}
+        onOpenChange={setReturnDialogOpen}
+      />
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="md:max-w-3xl p-0 gap-0 border-border overflow-hidden">
         <DialogHeader className="sr-only">
           <DialogTitle>Transaction Details</DialogTitle>
@@ -128,11 +144,24 @@ export function TransactionDetailsDialog({
                   </div>
                 </div>
               </div>
+
+              {canReturn && (
+                <div className="mt-8 pt-6 border-t">
+                  <Button
+                    className="w-full"
+                    onClick={() => setReturnDialogOpen(true)}
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Mark as Return
+                  </Button>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
 
