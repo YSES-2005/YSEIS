@@ -15,7 +15,7 @@ RUN cd /usr/src/shared && \
 
 # 2. Install Frontend Dependencies
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --os=linux --cpu=x64 --dangerously-allow-all-builds
 
 # 3. Build Frontend
 # Capture the API URL at build time

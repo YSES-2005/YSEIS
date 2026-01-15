@@ -14,7 +14,7 @@ RUN cd /usr/src/shared && \
 
 # 2. Install Backend Dependencies
 COPY backend/package.json backend/pnpm-lock.yaml ./
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --os=linux --cpu=x64 --dangerously-allow-all-builds
 
 # 3. Build Backend
 COPY backend/ .
@@ -40,8 +40,7 @@ COPY --from=builder /usr/src/app/package.json ./
 # Check your tsconfig.json to confirm if output is 'dist' or 'build'
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Security: Run as non-root user
-USER node
+COPY --from=builder /usr/src/app/scripts/seed.js ./scripts/seed.js
 
 EXPOSE 5000
 
