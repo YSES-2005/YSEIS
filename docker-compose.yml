@@ -1,25 +1,17 @@
 services:
-  devcontainer:
-    image: mcr.microsoft.com/devcontainers/base:ubuntu
-    volumes:
-      - .:/workspace:cached
-    network_mode: service:mongo
-    command: sleep infinity
-
   mongo:
     image: mongo:7
-    restart: unless-stopped
+    restart: always
     volumes:
       - mongo-data:/data/db
-    ports:
-      - '27017:27017'
 
   backend:
     build:
       context: .
-      dockerfile: ./backend/Dockerfile.dev
+      dockerfile: ./backend/Dockerfile
+    restart: always
     environment:
-      NODE_ENV: ${NODE_ENV}
+      NODE_ENV: production
       MONGO_URI: ${MONGO_URI}
       FRONTEND_URL: ${FRONTEND_URL}
       EMAIL_USER: ${EMAIL_USER}
@@ -27,31 +19,20 @@ services:
       PORT: 5000
     ports:
       - '5000:5000'
-    volumes:
-      - ./backend:/usr/src/app:z,cached
-      - ./shared:/usr/src/shared:z,cached
-      - backend_node_modules:/usr/src/app/node_modules
     depends_on:
       - mongo
 
   frontend:
     build:
       context: .
-      dockerfile: ./frontend/Dockerfile.dev
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      CHOKIDAR_USEPOLLING: true
-      VITE_API_URL: ${API_URL}
+      dockerfile: ./frontend/Dockerfile
+      args:
+        VITE_API_URL: ${API_URL}
+    restart: always
     ports:
-      - '5173:5173'
-    volumes:
-      - ./frontend:/usr/src/app:z,cached
-      - ./shared:/usr/src/shared:z,cached
-      - frontend_node_modules:/usr/src/app/node_modules
+      - '80:80'
     depends_on:
       - backend
 
 volumes:
   mongo-data:
-  backend_node_modules:
-  frontend_node_modules:
