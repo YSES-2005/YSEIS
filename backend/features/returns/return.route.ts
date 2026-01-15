@@ -144,7 +144,6 @@ returnRouter.get('/:id', authenticate, getReturnById);
 returnRouter.post(
     '/',
     authenticate,
-    authorize(Role.ADMIN),
     validate(returnCreateSchema),
     createReturn
 );

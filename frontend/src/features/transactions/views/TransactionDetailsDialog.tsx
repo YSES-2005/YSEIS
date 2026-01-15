@@ -16,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { type Transaction } from './columns';
 import { Calendar, User, Hash, FileText, Layers, RotateCcw } from 'lucide-react';
-import { useUser } from '@/hooks/useUser';
 
 interface TransactionDetailsDialogProps {
   transaction: Transaction | null;
@@ -29,14 +28,13 @@ export function TransactionDetailsDialog({
   open,
   onOpenChange,
 }: TransactionDetailsDialogProps) {
-  const { user } = useUser();
   const [returnDialogOpen, setReturnDialogOpen] = useState(false);
 
   if (!transaction) return null;
 
   const { id, item, borrower, quantity, returnDate, purpose, approvalStatus, returned } = transaction;
 
-  const canReturn = user?.role === 'admin' && ['released', 'approved'].includes(approvalStatus) && !returned;
+  const canReturn = ['released', 'approved'].includes(approvalStatus) && !returned;
 
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     dateStyle: 'long',
