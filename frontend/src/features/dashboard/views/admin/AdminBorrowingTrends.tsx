@@ -1,4 +1,4 @@
-import { Area, AreaChart, XAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import {
   Card,
@@ -87,7 +87,7 @@ export function AdminBorrowingTrends({
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto w-full h-56 stroke-none"
+          className="aspect-auto w-full not-xl:h-56 xl:h-full  xl:min-h-48  stroke-none"
         >
           <AreaChart data={borrowingTrends}>
             <defs>
@@ -116,6 +116,7 @@ export function AdminBorrowingTrends({
                 />
               </linearGradient>
             </defs>
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
               tickLine={false}

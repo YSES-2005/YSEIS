@@ -12,7 +12,7 @@ export function AdminScheduledReturns({ toReturnItems, className }: Props) {
   return (
     <Card
       className={cn(
-        'relative h-full flex flex-col overflow-hidden bg-background ring-0 ',
+        'relative h-full flex flex-col overflow-hidden bg-background ring-0 pr-0',
         className
       )}
     >
@@ -21,9 +21,9 @@ export function AdminScheduledReturns({ toReturnItems, className }: Props) {
           For Return
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex w-full gap-1 overflow-y-scroll overflow-x-hidden flex-wrap">
+      <CardContent className="flex w-full gap-1 overflow-y-scroll overflow-x-hidden flex-wrap pr-0">
         {toReturnItems.map(item => (
-          <AdminReturnItem item={item} />
+          <AdminReturnItem item={item} className="xl:w-[calc(33%-1rem)]" />
         ))}
       </CardContent>
     </Card>

@@ -8,9 +8,10 @@ import { Calendar } from 'lucide-react';
 
 type Props = {
   item: ItemWithReturnDate;
+  className: string;
 };
 
-export function AdminReturnItem({ item }: Props) {
+export function AdminReturnItem({ item, className }: Props) {
   const { timeDiff, category } = useTimeAgo(item.returnDate);
 
   if (!timeDiff) return null;
@@ -23,7 +24,9 @@ export function AdminReturnItem({ item }: Props) {
   }[category];
 
   return (
-    <div className={cn('p-2 rounded-md flex w-fit h-fit gap-2', styles)}>
+    <div
+      className={cn('p-2 rounded-md flex w-fit h-fit gap-2', styles, className)}
+    >
       <div>
         <div className="font-medium text-xs max-w-[8ch] text-[0.6rem]">
           {item.name}
@@ -36,7 +39,7 @@ export function AdminReturnItem({ item }: Props) {
           {formatDistanceToNow(item.returnDate)}
         </Badge>
       </div>
-      <div className="flex -space-x-1 shrink-0">
+      <div className="flex -space-x-1 xl:-space-x-3 shrink-0 ml-auto">
         <Avatar className="rounded-full size-4">
           <AvatarImage src={item.custodian.avatar} />
           <AvatarFallback className="rounded-lg text-[0.6rem]">

@@ -32,10 +32,9 @@ export function AdminDashboardView() {
         setGroupBy={setBorrowingTrendsGroupBy}
         className="col-span-8 row-span-9 row-start-2 col-start-1  not-xl:p-2 not-xl:pt-0 not-xl:bg-card/40"
       />
-      <AdminMostBorrowedItem
-        item={mostBorrowedItem}
-        className="col-span-4 row-span-1 col-start-5 row-start-1"
-      />
+      <div className="col-span-8 row-span-1 col-start-1 row-start-1">
+        <AdminMostBorrowedItem item={mostBorrowedItem} />
+      </div>
       <AdminLowStocks
         items={lowStockItems}
         className=" xs:max-xl:aspect-video col-span-4 row-span-6 col-start-9 border-b"

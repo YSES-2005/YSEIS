@@ -42,7 +42,7 @@ export function AdminScheduledPickups({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex w-full h-full flex-col gap-1  overflow-y-scroll overflow-x-hidden">
+      <CardContent className="flex w-full h-full flex-col gap-1  overflow-y-scroll max-h-80   overflow-x-hidden">
         <div className="flex ml-4">
           <DatePicker
             value={pickupDate}
