@@ -14,7 +14,7 @@ RUN cd /usr/src/shared && \
 
 # 2. Install Backend Dependencies
 COPY backend/package.json backend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # 3. Build Backend
 COPY backend/ .

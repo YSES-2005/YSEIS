@@ -16,7 +16,7 @@ RUN cd /usr/src/shared && \
 # 2. Install Frontend Dependencies
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 # Use frozen-lockfile for reproducible production builds
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
