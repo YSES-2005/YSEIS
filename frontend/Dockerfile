@@ -7,7 +7,7 @@ ENV CI=true
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# 1. Build Shared Library (Replicating path structure from dev)
+# 1. Build Shared
 COPY shared /usr/src/shared
 RUN cd /usr/src/shared && \
     pnpm install && \
@@ -15,25 +15,30 @@ RUN cd /usr/src/shared && \
 
 # 2. Install Frontend Dependencies
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-# Use frozen-lockfile for reproducible production builds
 RUN pnpm install --no-frozen-lockfile
 
+# 3. Build Frontend
+# Capture the API URL at build time
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
-# 3. Build Frontend
 COPY frontend/ .
 RUN pnpm run build
 
-# Stage 2: Production Runner (Nginx)
-FROM nginx:stable-alpine
+# Stage 2: Production Runner (Node)
+FROM node:20-slim
 
-# Copy your custom Nginx config
-COPY frontend/nginx.conf /etc/nginx/nginx.conf
+WORKDIR /usr/src/app
 
-# Copy build artifacts
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+# Install a simple static file server
+RUN npm install -g serve
 
-EXPOSE 80
+# Copy the built artifacts from the builder stage
+COPY --from=builder /usr/src/app/dist ./dist
 
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+
+# Start the server
+# -s: Single Page App mode (rewrites 404 to index.html)
+# -l: Listen on port 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
