@@ -8,7 +8,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # 1. Build Shared Library
 COPY shared /usr/src/shared
 RUN cd /usr/src/shared && \
-    pnpm install --frozen-lockfile && \
+    pnpm install && \
     pnpm build && \
     pnpm prune --prod
 

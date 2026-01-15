@@ -10,7 +10,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # 1. Build Shared Library (Replicating path structure from dev)
 COPY shared /usr/src/shared
 RUN cd /usr/src/shared && \
-    pnpm install --frozen-lockfile && \
+    pnpm install && \
     pnpm build
 
 # 2. Install Frontend Dependencies
