@@ -117,8 +117,8 @@ export const createReturn = async (
     next: NextFunction
 ) => {
     try {
-        const { transaction, description, condition } = req.body;
-        const status = 'pending';
+        const { transaction, description, condition, status } = req.body;
+        const returnStatus = status || 'completed';
 
         // Verify transaction exists
         const transactionDoc = await TransactionModel.findById(transaction)
@@ -136,14 +136,15 @@ export const createReturn = async (
         const returnDoc = new ReturnModel({
             transaction,
             description,
-            status,
+            status: returnStatus,
             condition,
         });
 
         await returnDoc.save();
 
-        // Note: status is strictly 'pending' here, so handleReturnCompletion is never called on create
-        // This effectively enforces the Admin Approval workflow
+        if (returnStatus === 'completed') {
+            await handleReturnCompletion(returnDoc);
+        }
 
         res.status(201).json({ return: returnDoc });
     } catch (error) {
