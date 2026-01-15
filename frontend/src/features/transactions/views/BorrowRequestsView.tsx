@@ -32,7 +32,7 @@ export function BorrowRequestsView() {
     handleCloseBorrowDetails();
   };
 
-  const { updateTransaction, isUpdating, approvalStatus, setApprovalStatus } =
+  const { updateTransaction, approvalStatus, setApprovalStatus } =
     useUpdateTransactionViewModel({
       transaction: selectedBorrow,
       onSuccess: handleConfirmUpdateBorrowSuccess,
