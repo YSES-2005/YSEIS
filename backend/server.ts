@@ -62,7 +62,7 @@ io.on('connection', socket => {
 // Express Middleware
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL,
     credentials: true, // Allow cookies/headers to be sent
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   })
@@ -98,8 +98,7 @@ app.use(
   }
 );
 
-const MONGO_URI =
-  process.env.MONGO_URI || 'mongodb://mongo:27017/inventory';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/inventory';
 
 mongoose
   .connect(MONGO_URI)
