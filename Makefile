@@ -1,5 +1,5 @@
 dev:
-	COMPOSE_BAKE=true docker compose up --build & cd shared && pnpm watch
+	COMPOSE_BAKE=true docker compose -f docker-compose.dev.yml up --build & cd shared && pnpm watch
 
 down:
 	 docker compose down -v
