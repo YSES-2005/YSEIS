@@ -89,6 +89,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/returns', returnRouter);
 
 // Error Handler
 app.use(
