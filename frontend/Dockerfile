@@ -28,8 +28,10 @@ RUN pnpm run build
 # Stage 2: Production Runner (Nginx)
 FROM nginx:stable-alpine
 
-# Copy build artifacts from the builder stage
-# Note: Ensure 'dist' matches your framework's output folder (e.g., dist, build, .output/public)
+# Copy your custom Nginx config
+COPY frontend/nginx.conf /etc/nginx/nginx.conf
+
+# Copy build artifacts
 COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
 
 EXPOSE 80
