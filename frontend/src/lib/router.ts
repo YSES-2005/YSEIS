@@ -2,10 +2,10 @@ import { createRouter } from '@tanstack/react-router';
 import { routeTree } from '../routeTree.gen.ts';
 import { queryClient } from '../lib/queryClient.ts';
 import { queryOptions } from '@tanstack/react-query';
-import { authService } from '../services/authService.ts';
+import { authService, userQueryKey } from '../services/authService.ts';
 import { isAxiosError } from 'axios';
 
-export const userQueryKey = 'user';
+export { userQueryKey };
 
 export const userQueryConfig = queryOptions({
   queryKey: [userQueryKey],

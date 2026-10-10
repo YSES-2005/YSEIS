@@ -26,8 +26,9 @@ import returnRouter from './features/returns/return.route';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/error';
-import { startNotificationScheduler } from './features/notifications/notification.cron';
 import analyticsRouter from './features/analytics/analytics.route';
+import { startNotificationScheduler } from './features/notifications/notification.cron';
+import { setIO } from './lib/socket';
 
 const app = express();
 
@@ -40,6 +41,8 @@ export const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
+setIO(io);
 
 io.on('connection', socket => {
   console.log('Client connected:', socket.id);

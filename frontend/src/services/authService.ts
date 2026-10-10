@@ -1,8 +1,9 @@
 import { api } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
-import { router, userQueryKey } from '@/lib/router';
 import { type User, type UserListItem } from '@yseis/shared/userSchema';
 import type { AxiosRequestConfig } from 'axios';
+
+export const userQueryKey = 'user';
 
 export const authService = {
   async register(user: User) {
@@ -15,7 +16,6 @@ export const authService = {
 
   async logout() {
     await queryClient.invalidateQueries({ queryKey: [userQueryKey] });
-    router.invalidate();
     await api.post('/auth/logout');
   },
 

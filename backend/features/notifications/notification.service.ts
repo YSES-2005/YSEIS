@@ -1,6 +1,6 @@
 import NotificationModel from './notification.model';
 import { UserModel } from '../users/user.model';
-import { io } from '../../server';
+import { getIO } from '../../lib/socket';
 import { sendEmail } from '../../services/email.service';
 
 export const notify = async (
@@ -25,6 +25,7 @@ export const notify = async (
       relatedModel: options?.relatedModel,
     });
 
+    const io = getIO();
     if (io) {
       io.to(recipientId.toString()).emit('new_notification', notification);
     }
