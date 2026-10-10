@@ -20,11 +20,11 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error(
-    '❌ Invalid environment configuration:\n',
-    JSON.stringify(z.flattenError(parsed.error).fieldErrors, null, 2)
-  );
   if (process.env.NODE_ENV !== 'test') {
+    console.error(
+      '❌ Invalid environment configuration:\n',
+      JSON.stringify(z.flattenError(parsed.error).fieldErrors, null, 2)
+    );
     process.exit(1);
   }
 }

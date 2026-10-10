@@ -9,7 +9,8 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       all: true,
-      include: ['schemas/itemSchema.ts', 'schemas/loginSchema.ts'],
+      include: ['schemas/**/*.ts'],
+      exclude: ['schemas/index.ts', 'schemas/apiTypes.ts'],
       thresholds: {
         lines: 80,
         functions: 80,

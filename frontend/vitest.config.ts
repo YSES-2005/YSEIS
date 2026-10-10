@@ -12,7 +12,6 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      include: ['src/lib/utils.ts'],
       exclude: ['src/main.tsx', 'src/routeTree.gen.ts', '**/*.d.ts'],
       thresholds: {
         lines: 80,
