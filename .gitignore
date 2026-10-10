@@ -13,6 +13,9 @@ node_modules
 dist
 build
 coverage
+!shared/dist/
+shared/dist/*
+!shared/dist/.gitkeep
 
 logs
 *.log
