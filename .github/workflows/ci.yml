@@ -25,10 +25,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js (20.x)
+      - name: Setup Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Bootstrap Shared Workspace Directory
@@ -56,10 +56,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js (20.x)
+      - name: Setup Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Bootstrap Shared Workspace Directory
@@ -81,10 +81,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js (20.x)
+      - name: Setup Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Bootstrap Shared Workspace Directory
@@ -106,10 +106,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js (20.x)
+      - name: Setup Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Bootstrap Shared Workspace Directory
@@ -134,10 +134,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js (20.x)
+      - name: Setup Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Bootstrap Shared Workspace Directory
