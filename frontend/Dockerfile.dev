@@ -4,18 +4,18 @@ WORKDIR /usr/src/app
 
 ENV CI=true
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
 
-COPY frontend/package.json frontend/pnpm-lock.yaml  ./
-COPY shared /usr/src/shared
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY shared ./shared
+COPY frontend/package.json ./frontend/
 
-RUN cd /usr/src/shared && \
-    pnpm install --no-frozen-lockfile && \
-    pnpm build
+RUN pnpm install --filter ./shared... --filter ./frontend...
+RUN pnpm --filter ./shared run build
 
-RUN pnpm install --no-frozen-lockfile
+COPY frontend/ ./frontend/
 
-COPY frontend/ .
+WORKDIR /usr/src/app/frontend
 
 EXPOSE 5173
 

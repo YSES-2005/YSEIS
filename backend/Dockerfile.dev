@@ -4,18 +4,21 @@ WORKDIR /usr/src/app
 
 ENV CI=true
 
-COPY backend/package.json backend/pnpm-lock.yaml ./
-COPY shared /usr/src/shared
+RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
 
-RUN corepack enable && corepack prepare pnpm@latest --activate && \
-    (cd /usr/src/shared && pnpm install --no-frozen-lockfile && pnpm build) && \
-    pnpm install --no-frozen-lockfile
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY shared ./shared
+COPY backend/package.json ./backend/
 
-COPY backend/ .
+RUN pnpm install --filter ./shared... --filter ./backend...
+RUN pnpm --filter ./shared run build
+
+COPY backend/ ./backend/
+
+WORKDIR /usr/src/app/backend
 
 EXPOSE 5000
 
 ENV NODE_ENV=development
 
 CMD ["pnpm", "dev"]
-

@@ -3,25 +3,17 @@ FROM node:20-slim AS builder
 
 WORKDIR /usr/src/app
 ENV CI=true
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
 
-# 1. Build Shared Library
-COPY shared /usr/src/shared
-RUN cd /usr/src/shared && \
-    pnpm install && \
-    pnpm build && \
-    pnpm prune --prod
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY shared ./shared
+COPY backend/package.json ./backend/
 
-# 2. Install Backend Dependencies
-COPY backend/package.json backend/pnpm-lock.yaml ./
-RUN pnpm install --no-frozen-lockfile --os=linux --cpu=x64 --dangerously-allow-all-builds
+RUN pnpm install --frozen-lockfile --filter ./shared... --filter ./backend...
+RUN pnpm --filter ./shared run build
 
-# 3. Build Backend
-COPY backend/ .
-RUN pnpm run build
-
-# 4. Prune Backend (Remove devDependencies)
-RUN pnpm prune --prod
+COPY backend/ ./backend/
+RUN pnpm --filter ./backend run build
 
 # Stage 2: Production Runner
 FROM node:20-slim
@@ -29,20 +21,13 @@ FROM node:20-slim
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-# 1. Copy Shared (Must maintain the same path for symlinks to work)
-COPY --from=builder /usr/src/shared /usr/src/shared
-
-# 2. Copy Production Dependencies
+COPY --from=builder /usr/src/app/shared /usr/src/app/shared
+COPY --from=builder /usr/src/app/backend/dist ./dist
+COPY --from=builder /usr/src/app/backend/scripts/seed.js ./scripts/seed.js
+COPY --from=builder /usr/src/app/backend/package.json ./package.json
 COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package.json ./
-
-# 3. Copy Built Artifacts
-# Check your tsconfig.json to confirm if output is 'dist' or 'build'
-COPY --from=builder /usr/src/app/dist ./dist
-
-COPY --from=builder /usr/src/app/scripts/seed.js ./scripts/seed.js
+COPY --from=builder /usr/src/app/backend/node_modules ./backend_node_modules
 
 EXPOSE 5000
 
-# Run the compiled JS file
 CMD ["node", "dist/server.js"]
