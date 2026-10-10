@@ -33,6 +33,7 @@ export function useNotificationViewModel() {
     socket.on('new_notification', handleNewNotification);
 
     return () => {
+      socket.emit('leave_user_room', userId);
       socket.off('new_notification', handleNewNotification);
     };
   }, [userId, queryClient]);

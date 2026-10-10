@@ -54,6 +54,13 @@ io.on('connection', socket => {
     }
   });
 
+  socket.on('leave_user_room', (userId: string) => {
+    if (userId) {
+      socket.leave(userId);
+      console.log(`User left room: ${userId}`);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });

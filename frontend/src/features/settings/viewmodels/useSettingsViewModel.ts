@@ -1,6 +1,6 @@
 import { useUser } from '@/hooks/useUser';
 import { useTheme } from '@/components/ThemeProvider';
-import { useAutoLogout } from '@/features/auth/components/AutoLogoutProvider';
+import { useAutoLogout } from '@/features/auth/context/AutoLogoutContext';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { authService } from '@/services/authService';

@@ -1,34 +1,16 @@
-import React, {
-  useEffect,
-  useRef,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useLogout } from '@/hooks/useLogout';
 import { toast } from 'sonner';
 import { DEFAULT_USER_SETTINGS } from '@/types/userSettings';
 import type { UserSettings } from '@/types/userSettings';
 import { router } from '@/lib/router';
+import { queryClient } from '@/lib/queryClient';
+import { userQueryKey } from '@/services/authService';
+import { AutoLogoutContext } from '../context/AutoLogoutContext';
 
-const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; //logout in half an hour
+const IDLE_TIMEOUT = Number(import.meta.env.VITE_IDLE_TIMEOUT) || 1800 * 1000; // logout in half an hour
 const WARNING_DURATION =
-  Number(import.meta.env.VITE_IDLE_WARNING) || 300 * 1000; //logout warning 5 mins from logout i.e 25 mins
-
-interface AutoLogoutContextType {
-  isEnabled: boolean;
-  setIsEnabled: (enabled: boolean) => void;
-  settings: UserSettings;
-}
-
-const AutoLogoutContext = createContext<AutoLogoutContextType | undefined>(
-  undefined
-);
-
-export const useAutoLogout = () => {
-  const context = useContext(AutoLogoutContext);
-  return context;
-};
+  Number(import.meta.env.VITE_IDLE_WARNING) || 300 * 1000; // logout warning 5 mins from logout i.e 25 mins
 
 export default function AutoLogoutProvider({
   children,
@@ -61,7 +43,7 @@ export default function AutoLogoutProvider({
     setSettings(prev => ({ ...prev, autoLogout: enabled }));
   };
 
-  const clearTimers = () => {
+  const clearTimers = useCallback(() => {
     if (warningTimer.current) {
       window.clearTimeout(warningTimer.current);
       warningTimer.current = null;
@@ -70,20 +52,26 @@ export default function AutoLogoutProvider({
       window.clearTimeout(logoutTimer.current);
       logoutTimer.current = null;
     }
-  };
+  }, []);
 
-  const doLogout = async () => {
+  const doLogout = useCallback(async () => {
     clearTimers();
+    const currentUser = queryClient.getQueryData([userQueryKey]);
+    if (!currentUser) return; // Only trigger logout if user is authenticated
     logout.mutate();
     router.navigate({ to: '/sign-in' });
-  };
+  }, [clearTimers, logout]);
 
-  const showWarning = () => {
+  const showWarning = useCallback(() => {
+    const currentUser = queryClient.getQueryData([userQueryKey]);
+    if (!currentUser) return;
     toast.warning('You will be logged out due to inactivity.');
-  };
+  }, []);
 
-  const resetTimers = () => {
+  const resetTimers = useCallback(() => {
     if (!isEnabled) return;
+    const currentUser = queryClient.getQueryData([userQueryKey]);
+    if (!currentUser) return;
 
     clearTimers();
     warningTimer.current = window.setTimeout(
@@ -91,7 +79,7 @@ export default function AutoLogoutProvider({
       IDLE_TIMEOUT - WARNING_DURATION
     );
     logoutTimer.current = window.setTimeout(doLogout, IDLE_TIMEOUT);
-  };
+  }, [isEnabled, clearTimers, showWarning, doLogout]);
 
   useEffect(() => {
     if (!isEnabled) {
@@ -127,7 +115,7 @@ export default function AutoLogoutProvider({
       for (const ev of events) window.removeEventListener(ev, onActivity);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isEnabled]);
+  }, [isEnabled, clearTimers, resetTimers]);
 
   return (
     <AutoLogoutContext.Provider value={{ isEnabled, setIsEnabled, settings }}>
