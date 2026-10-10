@@ -17,7 +17,7 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, password, role, avatar } = req.body;
+    const { name, email, password, avatar } = req.body;
     if (!name || !email || !password) {
       throw new BadRequestError('Name, email and password are required');
     }
@@ -25,7 +25,13 @@ export const register = async (
     if (existingUser) {
       throw new BadRequestError('User already exists');
     }
-    const user = new UserModel({ name, email, password, role, avatar });
+    const user = new UserModel({
+      name,
+      email,
+      password,
+      role: 'user',
+      avatar,
+    });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {

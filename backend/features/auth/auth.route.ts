@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { register, login, logout } from './auth.controller';
 import { validate } from '../../middleware/validate';
-import { userSchema } from '@yseis/shared/userSchema';
+import { userRegisterSchema } from '@yseis/shared/userSchema';
 import { loginSchema } from '@yseis/shared/loginSchema';
 const authRouter = Router();
 
@@ -30,7 +30,7 @@ const authRouter = Router();
  *       '400':
  *         description: Bad request (e.g., user already exists, invalid input)
  */
-authRouter.post('/register', validate(userSchema), register);
+authRouter.post('/register', validate(userRegisterSchema), register);
 
 /**
  * @swagger

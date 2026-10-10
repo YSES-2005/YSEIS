@@ -19,6 +19,13 @@ export const userSchema = z.object({
     .optional(),
 });
 
+export const userRegisterSchema = userSchema.omit({
+  role: true,
+  urgent_borrow_uses: true,
+});
+
+export type UserRegister = z.infer<typeof userRegisterSchema>;
+
 const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
