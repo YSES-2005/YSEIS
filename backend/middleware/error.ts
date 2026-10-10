@@ -7,7 +7,16 @@ import {
 } from '../errors';
 import mongoose from 'mongoose';
 
-export const errorHandler = (err: Error, res: express.Response) => {
+export const errorHandler = (
+  err: Error,
+  _req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
   if (err instanceof CustomError) {
     res.status(err.statusCode).json({ message: err.message });
   } else {

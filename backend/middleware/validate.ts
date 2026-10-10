@@ -9,7 +9,6 @@ export const validate =
     next: express.NextFunction
   ) => {
     try {
-      console.dir(req.body);
       await schema.parseAsync({
         ...req.body,
       });

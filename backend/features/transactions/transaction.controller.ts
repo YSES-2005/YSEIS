@@ -314,6 +314,7 @@ export const updateTransaction = async (
     const populatedItem = transaction.item as unknown as PopulatedItem;
 
     const transactionQty = (transaction as any).quantity || 1;
+    let stockDecremented = false;
 
     if (payload.approvalStatus) {
       const isOwner = uid === (transaction.borrower as any)._id.toString();
@@ -350,6 +351,8 @@ export const updateTransaction = async (
           );
         }
 
+        stockDecremented = true;
+
         if (updatedItem.quantity === 0) {
           updatedItem.status = 'unavailable';
           await updatedItem.save();
@@ -360,13 +363,20 @@ export const updateTransaction = async (
 
       if (['approved', 'disapproved'].includes(payload.approvalStatus)) {
         const isApproved = payload.approvalStatus === 'approved';
-        await notify(
-          populatedBorrower._id.toString(),
-          isApproved ? 'Request Approved' : 'Request Declined',
-          `Your request for ${transactionQty}x "${populatedItem.name}" has been ${payload.approvalStatus}.`,
-          isApproved ? 'SUCCESS' : 'ERROR',
-          { shouldEmail: true }
-        );
+        try {
+          await notify(
+            populatedBorrower._id.toString(),
+            isApproved ? 'Request Approved' : 'Request Declined',
+            `Your request for ${transactionQty}x "${populatedItem.name}" has been ${payload.approvalStatus}.`,
+            isApproved ? 'SUCCESS' : 'ERROR',
+            { shouldEmail: true }
+          );
+        } catch (notifyErr) {
+          console.error(
+            'Failed to notify borrower on approval status change:',
+            notifyErr
+          );
+        }
       }
     }
 
@@ -385,7 +395,16 @@ export const updateTransaction = async (
     if (payload.returnDate) transaction.returnDate = payload.returnDate;
     if (payload.urgency !== undefined) transaction.urgency = payload.urgency;
 
-    await transaction.save();
+    try {
+      await transaction.save();
+    } catch (saveError) {
+      if (stockDecremented) {
+        await ItemModel.findByIdAndUpdate(transaction.item, {
+          $inc: { quantity: transactionQty },
+        });
+      }
+      throw saveError;
+    }
     res.json({ transaction });
   } catch (error) {
     next(error);

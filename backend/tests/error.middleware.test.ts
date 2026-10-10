@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { errorHandler, handleInternalError } from '../middleware/error';
 import {
@@ -10,13 +10,26 @@ import {
 
 describe('Error Middleware (backend/middleware/error.ts)', () => {
   describe('errorHandler', () => {
+    it('delegates to next when res.headersSent is true', () => {
+      const error = new Error('Streaming failure');
+      const req = {} as Request;
+      const res = { headersSent: true } as Response;
+      const next = vi.fn() as unknown as NextFunction;
+
+      errorHandler(error, req, res, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+
     it('handles CustomError by sending status and message', () => {
       const error = new BadRequestError('Invalid item ID');
       const json = vi.fn();
       const status = vi.fn().mockReturnValue({ json });
-      const res = { status } as unknown as Response;
+      const req = {} as Request;
+      const res = { headersSent: false, status } as unknown as Response;
+      const next = vi.fn() as unknown as NextFunction;
 
-      errorHandler(error, res);
+      errorHandler(error, req, res, next);
 
       expect(status).toHaveBeenCalledWith(400);
       expect(json).toHaveBeenCalledWith({ message: 'Invalid item ID' });
@@ -26,9 +39,11 @@ describe('Error Middleware (backend/middleware/error.ts)', () => {
       const error = new Error('Database crash');
       const json = vi.fn();
       const status = vi.fn().mockReturnValue({ json });
-      const res = { status } as unknown as Response;
+      const req = {} as Request;
+      const res = { headersSent: false, status } as unknown as Response;
+      const next = vi.fn() as unknown as NextFunction;
 
-      errorHandler(error, res);
+      errorHandler(error, req, res, next);
 
       expect(status).toHaveBeenCalledWith(500);
       expect(json).toHaveBeenCalledWith({ error: 'Internal Server Error' });

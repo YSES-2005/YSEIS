@@ -19,12 +19,22 @@ interface PopulatedItem {
 }
 
 const handleReturnCompletion = async (returnDoc: any) => {
-  const transactionDoc = await TransactionModel.findById(returnDoc.transaction)
+  // Atomically claim the transaction return if it has not yet been marked returned
+  const transactionDoc = await TransactionModel.findOneAndUpdate(
+    { _id: returnDoc.transaction, returned: { $ne: true } },
+    {
+      $set: {
+        returned: true,
+        returnedAt: new Date(),
+        approvalStatus: 'completed',
+      },
+    },
+    { new: true }
+  )
     .populate('item')
     .populate('borrower');
 
   if (!transactionDoc) return;
-  if (transactionDoc.returned) return;
 
   const transactionQty = (transactionDoc as any).quantity || 1;
 
@@ -41,29 +51,27 @@ const handleReturnCompletion = async (returnDoc: any) => {
     await updatedItem.save();
   }
 
-  // Mark transaction as returned
-  transactionDoc.returned = true;
-  transactionDoc.returnedAt = new Date();
-  transactionDoc.approvalStatus = 'completed'; // Sync status
-  await transactionDoc.save();
-
   // Notify Admins
   const populatedBorrower = transactionDoc.borrower as unknown as PopulatedUser;
   const populatedItem = transactionDoc.item as unknown as PopulatedItem;
 
-  const admins = await UserModel.find({ role: 'admin' });
-  if (admins.length > 0) {
-    await Promise.all(
-      admins.map(admin =>
-        notify(
-          (admin._id as Types.ObjectId).toString(),
-          'Item Returned',
-          `${populatedBorrower.name} returned ${transactionQty}x "${populatedItem.name}".`,
-          'INFO',
-          { shouldEmail: false }
+  try {
+    const admins = await UserModel.find({ role: 'admin' });
+    if (admins.length > 0) {
+      await Promise.all(
+        admins.map(admin =>
+          notify(
+            (admin._id as Types.ObjectId).toString(),
+            'Item Returned',
+            `${populatedBorrower?.name || 'A user'} returned ${transactionQty}x "${populatedItem?.name || 'Item'}".`,
+            'INFO',
+            { shouldEmail: false }
+          )
         )
-      )
-    );
+      );
+    }
+  } catch (notifyErr) {
+    console.error('Failed to notify admins on return completion:', notifyErr);
   }
 };
 

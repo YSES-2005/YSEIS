@@ -99,11 +99,7 @@ app.use('/api/analytics', analyticsRouter);
 app.use('/api/returns', returnRouter);
 
 // Error Handler
-app.use(
-  (err: Error, _req: Request, res: Response, _next: express.NextFunction) => {
-    errorHandler(err, res);
-  }
-);
+app.use(errorHandler);
 
 mongoose
   .connect(env.MONGO_URI)
