@@ -12,7 +12,7 @@ interface JWTPayload {
 export function verifyToken(token: string): JWTPayload | null {
   try {
     return jwt.verify(token, JWT_SECRET) as JWTPayload;
-  } catch (err) {
+  } catch {
     return null;
   }
 }

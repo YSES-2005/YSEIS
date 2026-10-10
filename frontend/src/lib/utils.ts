@@ -8,7 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getCustodianDisplay = (
-  custodian: ItemPopulated['custodian'] | TransactionPopulated['borrower']
+  custodian?:
+    | ItemPopulated['custodian']
+    | TransactionPopulated['borrower']
+    | string
+    | null
 ) => {
   if (!custodian) return '—';
   if (typeof custodian === 'string') return custodian;

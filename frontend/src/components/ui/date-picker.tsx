@@ -15,7 +15,7 @@ type DatePickerProps = {
   relative?: boolean;
   onChange: (date: Date) => void;
 } & React.ComponentProps<typeof DayPicker> &
-  Omit<React.ComponentProps<typeof Button>, 'disabled' | 'onChange'>;
+  Omit<React.ComponentProps<typeof Button>, 'disabled' | 'onChange' | 'value'>;
 
 export function DatePicker({
   value,

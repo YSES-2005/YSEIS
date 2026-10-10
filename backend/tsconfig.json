@@ -6,22 +6,16 @@
     "rootDir": "./",
     "baseUrl": "./",
     "strict": true,
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "paths": {
+      "@schemas/*": ["../shared/dist/*"]
+    }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["**/*.ts", "**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "tests", "vitest.config.ts"]
 }

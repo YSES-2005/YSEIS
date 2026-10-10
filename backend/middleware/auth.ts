@@ -1,5 +1,5 @@
 import express from 'express';
-import { userIdFromJWT, roleFromJWT, verifyToken } from '../config/jwt';
+import { verifyToken } from '../config/jwt';
 import { UnauthorizedError } from '../errors';
 
 export enum Role {
@@ -40,7 +40,7 @@ export const authenticate = (
     req.userId = payload.sub;
     req.userRole = payload.role;
     next();
-  } catch (error) {
+  } catch {
     next(new UnauthorizedError('Invalid token.'));
   }
 };

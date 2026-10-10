@@ -60,7 +60,7 @@ export const transactionUpdateSchema = z
   });
 
 //  common fields for both modes
-const baseRequestFields = z.object({
+export const baseRequestFields = z.object({
   purpose: z.string().min(1, 'Purpose is required'),
   urgency: z.boolean().default(false),
   returnDate: futureDateSchema,

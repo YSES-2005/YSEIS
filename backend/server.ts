@@ -93,7 +93,7 @@ app.use('/api/returns', returnRouter);
 
 // Error Handler
 app.use(
-  (err: Error, req: Request, res: Response, next: express.NextFunction) => {
+  (err: Error, _req: Request, res: Response, _next: express.NextFunction) => {
     errorHandler(err, res);
   }
 );
