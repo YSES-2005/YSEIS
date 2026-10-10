@@ -4,7 +4,7 @@ import type {
   TransactionCreate,
   TransactionUpdate,
   Transaction,
-} from '@schemas/transactionSchema';
+} from '@yseis/shared/transactionSchema';
 
 type TransactionsResponse = {
   transactions: TransactionPopulated[];

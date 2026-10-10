@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { authService } from '@/services/authService';
-import type { UserListItem } from '@schemas/userSchema';
+import type { UserListItem } from '@yseis/shared/userSchema';
 import { useUser } from '@/hooks/useUser';
 
 export function useUsersViewModel() {

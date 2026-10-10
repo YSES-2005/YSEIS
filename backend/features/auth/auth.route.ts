@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { register, login, logout } from './auth.controller';
 import { validate } from '../../middleware/validate';
-import { userSchema } from '@schemas/userSchema';
-import { loginSchema } from '@schemas/loginSchema';
+import { userSchema } from '@yseis/shared/userSchema';
+import { loginSchema } from '@yseis/shared/loginSchema';
 const authRouter = Router();
 
 /**

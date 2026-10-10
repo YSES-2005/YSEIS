@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import type { ItemPopulated as Item } from '@schemas/itemSchema';
+import type { ItemPopulated as Item } from '@yseis/shared/itemSchema';
 
 type Props = {
   open: boolean;

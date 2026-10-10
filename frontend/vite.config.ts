@@ -24,6 +24,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@yseis/shared': path.resolve(__dirname, '../shared/dist'),
       '@schemas': path.resolve(__dirname, '../shared/dist'),
     },
   },

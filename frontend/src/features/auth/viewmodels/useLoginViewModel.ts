@@ -1,7 +1,7 @@
 import { queryClient } from '@/lib/queryClient';
 import { userQueryKey } from '@/lib/router';
 import { authService } from '@/services/authService';
-import { loginSchema } from '@schemas/loginSchema';
+import { loginSchema } from '@yseis/shared/loginSchema';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 

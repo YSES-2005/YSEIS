@@ -1,7 +1,7 @@
 import { useTransactionItems } from '@/hooks/useTransactionItems';
 import { queryClient } from '@/lib/queryClient';
 import { transactionService } from '@/services/transactionService';
-import type { ItemPopulated } from '@schemas/itemSchema';
+import type { ItemPopulated } from '@yseis/shared/itemSchema';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { toast } from 'sonner';

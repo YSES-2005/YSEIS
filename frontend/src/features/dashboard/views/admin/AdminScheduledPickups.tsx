@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { EmptyIndicatorWithMessage } from '@/components/EmptyIndicatorWithMessage';
 import { DatePicker } from '@/components/ui/date-picker';
-import type { ItemPopulated } from '@schemas/itemSchema';
+import type { ItemPopulated } from '@yseis/shared/itemSchema';
 import { formatRelative } from 'date-fns';
 
 type Props = {

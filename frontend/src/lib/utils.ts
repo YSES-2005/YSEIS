@@ -1,5 +1,5 @@
-import type { ItemPopulated } from '@schemas/itemSchema';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { ItemPopulated } from '@yseis/shared/itemSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

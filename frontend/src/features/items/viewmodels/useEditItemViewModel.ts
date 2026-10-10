@@ -1,10 +1,10 @@
 import { queryClient } from '@/lib/queryClient';
 import { itemService } from '@/services/itemService';
-import { updateItemSchema } from '@schemas/itemSchema';
+import { updateItemSchema } from '@yseis/shared/itemSchema';
 import type {
   ItemPopulated as Item,
   ItemUpdate as SchemaUpdateItem,
-} from '@schemas/itemSchema';
+} from '@yseis/shared/itemSchema';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';

@@ -1,8 +1,11 @@
 import { useTransactionItems } from '@/hooks/useTransactionItems';
 import { queryClient } from '@/lib/queryClient';
 import { transactionService } from '@/services/transactionService';
-import { LOW_STOCK_THRESHOLD, type ItemPopulated } from '@schemas/itemSchema';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import {
+  LOW_STOCK_THRESHOLD,
+  type ItemPopulated,
+} from '@yseis/shared/itemSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo, useState, useCallback } from 'react';
 import { toast } from 'sonner';

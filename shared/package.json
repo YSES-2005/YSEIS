@@ -1,11 +1,23 @@
 {
-  "name": "shared",
+  "name": "@yseis/shared",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "require": "./dist/cjs/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json",
     "watch": "tsc --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

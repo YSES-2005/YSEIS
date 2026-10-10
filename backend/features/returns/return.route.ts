@@ -7,7 +7,10 @@ import {
 } from './return.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
-import { returnCreateSchema, returnUpdateSchema } from '@schemas/returnSchema';
+import {
+  returnCreateSchema,
+  returnUpdateSchema,
+} from '@yseis/shared/returnSchema';
 
 const returnRouter = express.Router();
 

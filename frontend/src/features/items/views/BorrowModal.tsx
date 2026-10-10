@@ -2,7 +2,7 @@ import * as React from 'react';
 import type {
   BorrowFormData,
   ItemPopulated as Item,
-} from '@schemas/itemSchema';
+} from '@yseis/shared/itemSchema';
 import {
   Dialog,
   DialogContent,

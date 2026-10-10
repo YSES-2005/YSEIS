@@ -1,7 +1,7 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { QueryClient } from '@tanstack/react-query';
-import { type User } from '@schemas/userSchema';
+import { type User } from '@yseis/shared/userSchema';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
 

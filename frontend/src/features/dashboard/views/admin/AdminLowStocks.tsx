@@ -1,7 +1,7 @@
 import { EmptyIndicator } from '@/components/EmptyIndicator';
 import { Badge } from '@/components/ui/badge';
 import { cn, getCustodianDisplay } from '@/lib/utils';
-import type { ItemPopulated } from '@schemas/itemSchema';
+import type { ItemPopulated } from '@yseis/shared/itemSchema';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import {

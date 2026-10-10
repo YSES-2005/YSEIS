@@ -3,7 +3,7 @@ import { notify } from './notification.service';
 
 import ItemModel from '../items/item.model';
 import TransactionModel from '../transactions/transaction.model';
-import { LOW_STOCK_THRESHOLD } from '@schemas/itemSchema';
+import { LOW_STOCK_THRESHOLD } from '@yseis/shared/itemSchema';
 
 export const startNotificationScheduler = () => {
   console.log('Notification Scheduler Initialized');

@@ -24,6 +24,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@yseis/shared": ["../shared/dist/index.d.ts"],
+      "@yseis/shared/*": ["../shared/dist/*"],
       "@schemas/*": ["../shared/dist/*"]
     }
   },

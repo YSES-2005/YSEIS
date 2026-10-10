@@ -1,6 +1,6 @@
 import { api } from '@/lib/apiClient';
-import type { ItemPopulated, Item, ItemUpdate } from '@schemas/itemSchema';
-import type { ApiResponse } from '@schemas/apiTypes';
+import type { ItemPopulated, Item, ItemUpdate } from '@yseis/shared/itemSchema';
+import type { ApiResponse } from '@yseis/shared/apiTypes';
 
 export type InventoryStats = {
   totalItems: number;

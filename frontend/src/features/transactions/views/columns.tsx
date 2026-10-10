@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { ArrowUpDown } from 'lucide-react';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import type { BadgeVariantKey } from '@/components/ui/badge.variants';
 
 export type Transaction = TransactionPopulated;

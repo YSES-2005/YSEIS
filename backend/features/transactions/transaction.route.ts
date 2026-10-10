@@ -12,7 +12,7 @@ import { validate } from '../../middleware/validate';
 import {
   transactionCreateSchema,
   transactionUpdateSchema,
-} from '@schemas/transactionSchema';
+} from '@yseis/shared/transactionSchema';
 
 const transactionRouter = express.Router();
 

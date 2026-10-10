@@ -4,7 +4,7 @@ import { ReplaceIcon } from 'lucide-react';
 import { useBorrowsViewModel } from '../viewmodels/useBorrowsViewModel';
 import { BorrowTable } from './BorrowTable';
 import { useState } from 'react';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import { OpenBorrowModal } from './OpenBorrowModal';
 import { useUpdateTransactionViewModel } from '../viewmodels/useUpdateTransactionViewModel';
 import { ConfirmUpdateBorrowModal } from './ConfirmUpdateBorrowModal';

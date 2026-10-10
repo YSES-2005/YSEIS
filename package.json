@@ -2,7 +2,6 @@
   "name": "yseis-monorepo",
   "private": true,
   "scripts": {
-    "preinstall": "node -e \"const fs=require('fs');fs.mkdirSync('shared/dist',{recursive:true})\"",
     "prepare": "husky",
     "build:shared": "pnpm --filter ./shared run build",
     "build": "pnpm --filter ./shared run build && pnpm -r --filter=!./shared run build",

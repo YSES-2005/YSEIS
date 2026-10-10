@@ -19,7 +19,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import { Badge } from '@/components/ui/badge';
 import { type BadgeVariantKey } from '@/components/ui/badge.variants';
 import { ChevronLeft, ChevronRight, CircleX, Clock2, X } from 'lucide-react';

@@ -9,7 +9,7 @@ import {
 } from './item.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
-import { itemSchema, updateItemSchema } from '@schemas/itemSchema';
+import { itemSchema, updateItemSchema } from '@yseis/shared/itemSchema';
 
 const itemsRouter = express.Router();
 

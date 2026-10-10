@@ -1,7 +1,7 @@
 import { api } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
 import { router, userQueryKey } from '@/lib/router';
-import { type User, type UserListItem } from '@schemas/userSchema';
+import { type User, type UserListItem } from '@yseis/shared/userSchema';
 import type { AxiosRequestConfig } from 'axios';
 
 export const authService = {

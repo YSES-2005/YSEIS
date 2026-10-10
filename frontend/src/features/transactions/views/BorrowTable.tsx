@@ -20,7 +20,7 @@ import {
 import type {
   TransactionPopulated as Transaction,
   TransactionPopulated,
-} from '@schemas/transactionSchema';
+} from '@yseis/shared/transactionSchema';
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 type Props = {

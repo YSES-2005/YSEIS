@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import type { Item } from '@schemas/itemSchema';
+import type { Item } from '@yseis/shared/itemSchema';
 
 type Props = {
   open: boolean;

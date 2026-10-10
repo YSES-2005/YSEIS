@@ -4,7 +4,7 @@ import {
   borrowFormSchema,
   type BorrowFormData,
   type ItemPopulated as Item,
-} from '@schemas/itemSchema';
+} from '@yseis/shared/itemSchema';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';

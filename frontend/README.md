@@ -120,7 +120,7 @@ mkdir -p src/features/items/{services,viewmodels,views}
 ```typescript
 // src/features/items/services/itemService.ts
 import { apiClient } from '@/lib/apiClient';
-import { type Item } from '@schemas/itemSchema';
+import { type Item } from '@yseis/shared/itemSchema';
 
 export const itemService = {
   async getItems(): Promise<Item[]> {
@@ -349,8 +349,8 @@ pnpm dev
 The frontend uses shared TypeScript schemas from the `shared` package:
 
 ```typescript
-import { type User } from '@schemas/userSchema';
-import { loginSchema } from '@schemas/loginSchema';
+import { type User } from '@yseis/shared/userSchema';
+import { loginSchema } from '@yseis/shared/loginSchema';
 ```
 
 This ensures type consistency between frontend and backend.

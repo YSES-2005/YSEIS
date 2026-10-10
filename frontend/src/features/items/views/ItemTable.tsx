@@ -1,4 +1,7 @@
-import type { ItemPopulated as Item, ItemPopulated } from '@schemas/itemSchema';
+import type {
+  ItemPopulated as Item,
+  ItemPopulated,
+} from '@yseis/shared/itemSchema';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import {

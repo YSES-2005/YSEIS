@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import type { Item, ItemUpdate } from '@schemas/itemSchema';
+import type { Item, ItemUpdate } from '@yseis/shared/itemSchema';
 import {
   Combobox,
   ComboboxInput,

@@ -3,7 +3,7 @@ import { transactionService } from '@/services/transactionService';
 import type {
   TransactionPopulated as Transaction,
   TransactionUpdate as TransactionUpdatePayload,
-} from '@schemas/transactionSchema';
+} from '@yseis/shared/transactionSchema';
 import { toast } from 'sonner';
 import { useState } from 'react';
 

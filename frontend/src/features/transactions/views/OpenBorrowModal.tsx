@@ -12,7 +12,7 @@ import {
   FieldDescription,
   FieldGroup,
 } from '@/components/ui/field';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 
 type Props = {
   open: boolean;

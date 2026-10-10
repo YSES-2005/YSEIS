@@ -1,5 +1,5 @@
 import { api } from '@/lib/apiClient';
-import type { Notification } from '@schemas/notificationSchema';
+import type { Notification } from '@yseis/shared/notificationSchema';
 
 export interface NotificationsResponse {
   notifications: Notification[];

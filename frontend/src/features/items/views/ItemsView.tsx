@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { ItemPopulated as Item } from '@schemas/itemSchema';
+import type { ItemPopulated as Item } from '@yseis/shared/itemSchema';
 import { useItemsViewModel } from '../viewmodels/useItemsViewModel';
 import { useBorrowViewModel } from '../viewmodels/useBorrowViewModel';
 import { useMultiBorrowViewModel } from '../viewmodels/useMultiBorrowViewModel';

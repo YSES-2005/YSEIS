@@ -6,7 +6,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import type { ItemWithTransactionId } from '@/features/dashboard/viewmodels/useDashboardViewModel';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 
 type Props = {
   open: boolean;

@@ -1,6 +1,6 @@
 import { itemService } from '@/services/itemService';
-import type { ItemPopulated } from '@schemas/itemSchema';
-import type { TransactionPopulated } from '@schemas/transactionSchema';
+import type { ItemPopulated } from '@yseis/shared/itemSchema';
+import type { TransactionPopulated } from '@yseis/shared/transactionSchema';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

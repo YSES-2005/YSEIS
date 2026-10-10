@@ -13,6 +13,8 @@
     "resolveJsonModule": true,
     "sourceMap": false,
     "paths": {
+      "@yseis/shared": ["../shared/dist/index"],
+      "@yseis/shared/*": ["../shared/dist/*"],
       "@schemas/*": ["../shared/dist/*"]
     }
   },
