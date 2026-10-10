@@ -66,10 +66,12 @@ export const transactionService = {
     startDate?: string;
     endDate?: string;
   }): Promise<{ transactions: TransactionPopulated[] }> {
-    const { transactions } =
-      await api.get<TransactionsResponse>('/transactions/me', {
+    const { transactions } = await api.get<TransactionsResponse>(
+      '/transactions/me',
+      {
         params,
-      });
+      }
+    );
     return { transactions };
   },
 

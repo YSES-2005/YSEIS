@@ -33,7 +33,6 @@ export function SettingsView() {
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto pb-20">
-      
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
@@ -58,11 +57,15 @@ export function SettingsView() {
         <CardContent className="grid gap-6">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20 cursor-pointer hover:opacity-80 transition-opacity border">
-              <AvatarImage src={user?.avatar || "https://github.com/shadcn.png"} />
-              <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+              <AvatarImage
+                src={user?.avatar || 'https://github.com/shadcn.png'}
+              />
+              <AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <Button variant="outline" size="sm">Change Avatar</Button>
+              <Button variant="outline" size="sm">
+                Change Avatar
+              </Button>
               <p className="text-[10px] text-muted-foreground">
                 JPG, GIF or PNG. 1MB max.
               </p>
@@ -81,14 +84,13 @@ export function SettingsView() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                defaultValue={user?.email} 
-                disabled 
-                className="bg-muted text-muted-foreground" 
+              <Input
+                id="email"
+                defaultValue={user?.email}
+                disabled
+                className="bg-muted text-muted-foreground"
               />
             </div>
-            
           </div>
         </CardContent>
       </Card>
@@ -107,7 +109,10 @@ export function SettingsView() {
         <CardContent className="grid gap-3">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label htmlFor="email-alerts" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="email-alerts"
+                className="font-medium cursor-pointer"
+              >
                 Email Alerts
               </Label>
               <span className="font-normal text-muted-foreground">
@@ -132,37 +137,37 @@ export function SettingsView() {
               />
             </div>
           </div>
-
         </CardContent>
       </Card>
 
       {/* Appearance & Security Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-         {/* Appearance */}
-         <Card>
+        {/* Appearance */}
+        <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sun className="h-5 w-5 text-primary" />
               <CardTitle>Appearance</CardTitle>
             </div>
-            <CardDescription>
-              Customize the interface theme.
-            </CardDescription>
+            <CardDescription>Customize the interface theme.</CardDescription>
           </CardHeader>
           <CardContent>
-             <div className="flex items-center justify-between space-x-2">
-                <Label htmlFor="dark-mode" className="flex flex-col space-y-1 cursor-pointer items-start text-left">
-                  <span>Dark Mode</span>
-                  <span className="font-normal text-muted-foreground">
-                    Switch between light and dark themes.
-                  </span>
-                </Label>
-                <Switch 
-                  id="dark-mode" 
-                  checked={isDarkMode}
-                  onCheckedChange={toggleTheme}
-                />
-             </div>
+            <div className="flex items-center justify-between space-x-2">
+              <Label
+                htmlFor="dark-mode"
+                className="flex flex-col space-y-1 cursor-pointer items-start text-left"
+              >
+                <span>Dark Mode</span>
+                <span className="font-normal text-muted-foreground">
+                  Switch between light and dark themes.
+                </span>
+              </Label>
+              <Switch
+                id="dark-mode"
+                checked={isDarkMode}
+                onCheckedChange={toggleTheme}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -173,14 +178,14 @@ export function SettingsView() {
               <Shield className="h-5 w-5 text-primary" />
               <CardTitle>Security</CardTitle>
             </div>
-            <CardDescription>
-              Manage your session security.
-            </CardDescription>
+            <CardDescription>Manage your session security.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="auto-logout" className="flex flex-col space-y-1 cursor-pointer items-start text-left">
+              <Label
+                htmlFor="auto-logout"
+                className="flex flex-col space-y-1 cursor-pointer items-start text-left"
+              >
                 <span>Auto Logout</span>
                 <span className="font-normal text-muted-foreground">
                   Automatically log out after 30 minutes of inactivity.
@@ -193,7 +198,7 @@ export function SettingsView() {
               />
             </div>
             <Separator />
-            
+
             <div className="pt-2">
               <Button variant="outline" size="sm" className="w-full">
                 Change Password
@@ -209,7 +214,6 @@ export function SettingsView() {
           Save Changes
         </Button>
       </div>
-
     </div>
   );
 }

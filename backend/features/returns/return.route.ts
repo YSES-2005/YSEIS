@@ -1,16 +1,13 @@
 import express from 'express';
 import {
-    getReturns,
-    getReturnById,
-    createReturn,
-    updateReturn,
+  getReturns,
+  getReturnById,
+  createReturn,
+  updateReturn,
 } from './return.controller';
 import { authenticate, authorize, Role } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
-import {
-    returnCreateSchema,
-    returnUpdateSchema,
-} from '@schemas/returnSchema';
+import { returnCreateSchema, returnUpdateSchema } from '@schemas/returnSchema';
 
 const returnRouter = express.Router();
 
@@ -142,10 +139,10 @@ returnRouter.get('/:id', authenticate, getReturnById);
  *         description: Unauthorized
  */
 returnRouter.post(
-    '/',
-    authenticate,
-    validate(returnCreateSchema),
-    createReturn
+  '/',
+  authenticate,
+  validate(returnCreateSchema),
+  createReturn
 );
 
 /**
@@ -179,10 +176,10 @@ returnRouter.post(
  *         description: Return not found
  */
 returnRouter.put(
-    '/:id',
-    authenticate,
-    validate(returnUpdateSchema),
-    updateReturn
+  '/:id',
+  authenticate,
+  validate(returnUpdateSchema),
+  updateReturn
 );
 
 export default returnRouter;

@@ -1,8 +1,27 @@
 {
   "name": "yseis-monorepo",
   "private": true,
+  "scripts": {
+    "preinstall": "node -e \"const fs=require('fs');fs.mkdirSync('shared/dist',{recursive:true})\"",
+    "prepare": "husky",
+    "build:shared": "pnpm --filter ./shared run build",
+    "build": "pnpm --filter ./shared run build && pnpm -r --filter=!./shared run build",
+    "lint": "pnpm -r --parallel run lint",
+    "lint:fix": "pnpm -r --parallel run lint:fix",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test:coverage"
+  },
   "devDependencies": {
-    "prettier": "3.7.4"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "3.7.4",
+    "typescript-eslint": "^8.71.1"
   },
   "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d"
 }

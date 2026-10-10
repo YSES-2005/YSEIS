@@ -67,7 +67,7 @@ export function MarkAsReturnDialog({
         <DialogHeader>
           <DialogTitle>Mark {itemName} as Returned</DialogTitle>
           <DialogDescription>
-             Please provide details about the return process.
+            Please provide details about the return process.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
@@ -76,7 +76,7 @@ export function MarkAsReturnDialog({
             <Textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={e => setDescription(e.target.value)}
               placeholder="e.g. Returned on time, in good condition."
             />
           </div>
@@ -85,12 +85,16 @@ export function MarkAsReturnDialog({
             <Input
               id="condition"
               value={condition}
-              onChange={(e) => setCondition(e.target.value)}
+              onChange={e => setCondition(e.target.value)}
               placeholder="e.g. Good, Slightly used, Damaged"
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

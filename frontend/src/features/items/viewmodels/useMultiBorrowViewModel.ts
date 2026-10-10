@@ -1,8 +1,6 @@
 import { queryClient } from '@/lib/queryClient';
 import { transactionService } from '@/services/transactionService';
-import type {
-  ItemPopulated as Item,
-} from '@schemas/itemSchema';
+import type { ItemPopulated as Item } from '@schemas/itemSchema';
 import {
   multiBorrowFormSchema,
   type MultiBorrowFormState,

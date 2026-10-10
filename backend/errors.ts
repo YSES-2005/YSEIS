@@ -17,7 +17,7 @@ export class CustomError extends Error {
  * request message framing, or deceptive request routing).
  */
 export class BadRequestError extends CustomError {
-  constructor(message: string = "Bad Request") {
+  constructor(message: string = 'Bad Request') {
     super(message, 400);
   }
 }
@@ -29,7 +29,7 @@ export class BadRequestError extends CustomError {
  * itself to get the requested response.
  */
 export class UnauthorizedError extends CustomError {
-  constructor(message: string = "Unauthorized") {
+  constructor(message: string = 'Unauthorized') {
     super(message, 401);
   }
 }
@@ -41,7 +41,7 @@ export class UnauthorizedError extends CustomError {
  * Unlike 401 Unauthorized, the client's identity is known to the server.
  */
 export class ForbiddenError extends CustomError {
-  constructor(message: string = "Forbidden") {
+  constructor(message: string = 'Forbidden') {
     super(message, 403);
   }
 }
@@ -53,7 +53,7 @@ export class ForbiddenError extends CustomError {
  * is valid but the resource itself does not exist.
  */
 export class NotFoundError extends CustomError {
-  constructor(message: string = "Not Found") {
+  constructor(message: string = 'Not Found') {
     super(message, 404);
   }
 }
@@ -65,7 +65,7 @@ export class NotFoundError extends CustomError {
  * already exists.
  */
 export class ConflictError extends CustomError {
-  constructor(message: string = "Conflict") {
+  constructor(message: string = 'Conflict') {
     super(message, 409);
   }
 }
@@ -76,7 +76,7 @@ export class ConflictError extends CustomError {
  * semantic errors. Often used for validation errors in API responses.
  */
 export class UnprocessableEntityError extends CustomError {
-  constructor(message: string = "Unprocessable Entity") {
+  constructor(message: string = 'Unprocessable Entity') {
     super(message, 422);
   }
 }
@@ -86,7 +86,7 @@ export class UnprocessableEntityError extends CustomError {
  * The user has sent too many requests in a given amount of time ("rate limiting").
  */
 export class TooManyRequestsError extends CustomError {
-  constructor(message: string = "Too Many Requests") {
+  constructor(message: string = 'Too Many Requests') {
     super(message, 429);
   }
 }
@@ -98,7 +98,7 @@ export class TooManyRequestsError extends CustomError {
  * The server has encountered a situation it doesn't know how to handle.
  */
 export class InternalError extends CustomError {
-  constructor(message: string = "Internal Server Error") {
+  constructor(message: string = 'Internal Server Error') {
     super(message, 500);
   }
 }
@@ -109,7 +109,7 @@ export class InternalError extends CustomError {
  * that is down for maintenance or that is overloaded.
  */
 export class ServiceUnavailableError extends CustomError {
-  constructor(message: string = "Service Unavailable") {
+  constructor(message: string = 'Service Unavailable') {
     super(message, 503);
   }
 }

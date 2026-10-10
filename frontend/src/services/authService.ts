@@ -25,16 +25,13 @@ export const authService = {
     return user;
   },
 
-
   async getAllUsers(): Promise<UserListItem[]> {
     const { users } = await api.get<{ users: UserListItem[] }>('/users');
 
     return users;
   },
 
-  async updateProfile(
-    data: Partial<User>
-  ): Promise<User> {
+  async updateProfile(data: Partial<User>): Promise<User> {
     const { user } = await api.patch<{ user: User }>('/users/me', data);
     await queryClient.invalidateQueries({ queryKey: [userQueryKey] });
     return user;

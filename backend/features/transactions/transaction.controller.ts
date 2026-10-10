@@ -50,19 +50,19 @@ export const getTransactions = async (
         filter.approvalStatus = status;
       }
     }
-    
+
     // filter by item type
     if (type && type !== 'any') {
-        const regex = new RegExp(`^${type}$`, 'i');
-        const items = await ItemModel.find({ type: regex }).select('_id');
-        filter.item = { $in: items.map(i => i._id) };
+      const regex = new RegExp(`^${type}$`, 'i');
+      const items = await ItemModel.find({ type: regex }).select('_id');
+      filter.item = { $in: items.map(i => i._id) };
     }
 
     // filter by borrower name
     if (borrower) {
-        const regex = new RegExp(borrower, 'i');
-        const users = await UserModel.find({ name: regex }).select('_id');
-        filter.borrower = { $in: users.map(u => u._id) };
+      const regex = new RegExp(borrower, 'i');
+      const users = await UserModel.find({ name: regex }).select('_id');
+      filter.borrower = { $in: users.map(u => u._id) };
     }
 
     // Date Range Filter (based on created_at or createdAt)
@@ -127,13 +127,10 @@ export const getTransactionsForMe = async (
 ) => {
   try {
     const uid = req.userId;
-    const {
-      status,
-      search,
-      startDate,
-      endDate,
-      type,
-    } = req.query as Record<string, string | undefined>;
+    const { status, search, startDate, endDate, type } = req.query as Record<
+      string,
+      string | undefined
+    >;
 
     const filter: Record<string, any> = { borrower: uid };
 
@@ -148,9 +145,9 @@ export const getTransactionsForMe = async (
 
     // filter by item type
     if (type && type !== 'any') {
-        const regex = new RegExp(`^${type}$`, 'i');
-        const items = await ItemModel.find({ type: regex }).select('_id');
-        filter.item = { $in: items.map(i => i._id) };
+      const regex = new RegExp(`^${type}$`, 'i');
+      const items = await ItemModel.find({ type: regex }).select('_id');
+      filter.item = { $in: items.map(i => i._id) };
     }
 
     // Date Range Filter
@@ -158,9 +155,9 @@ export const getTransactionsForMe = async (
       const dateFilter: Record<string, Date> = {};
       if (startDate) dateFilter.$gte = new Date(startDate);
       if (endDate) {
-         const d = new Date(endDate);
-         d.setHours(23, 59, 59, 999);
-         dateFilter.$lte = d;
+        const d = new Date(endDate);
+        d.setHours(23, 59, 59, 999);
+        dateFilter.$lte = d;
       }
       filter.created_at = dateFilter;
     }
@@ -168,24 +165,24 @@ export const getTransactionsForMe = async (
     if (search) {
       const regex = new RegExp(search, 'i');
       const items = await ItemModel.find({ name: regex }).select('_id');
-      
+
       // Since borrower is fixed to me, search only makes sense for item name
       // We merge this with existing filter.item if type filter exists
-      
+
       const itemIdsFromSearch = items.map(i => i._id);
-      
+
       if (filter.item) {
         // Intersection of existing item filter (from type) and search results
         // This is a bit complex in mongo. Easier to use $and or check if ID is in list.
         // But since filter.item is likely { $in: [...] }, we can modify it.
         const typeIds = (filter.item as any).$in as Types.ObjectId[];
         // intersection strings
-         const intersection = typeIds.filter(tid => 
-            itemIdsFromSearch.some(sid => sid.toString() === tid.toString())
-         );
-         filter.item = { $in: intersection };
+        const intersection = typeIds.filter(tid =>
+          itemIdsFromSearch.some(sid => sid.toString() === tid.toString())
+        );
+        filter.item = { $in: intersection };
       } else {
-         filter.item = { $in: itemIdsFromSearch };
+        filter.item = { $in: itemIdsFromSearch };
       }
     }
 
@@ -320,9 +317,16 @@ export const updateTransaction = async (
 
     if (payload.approvalStatus) {
       const isOwner = uid === (transaction.borrower as any)._id.toString();
-      const isSelfCancel = isOwner && payload.approvalStatus === 'cancelled' && transaction.approvalStatus === 'pending';
+      const isSelfCancel =
+        isOwner &&
+        payload.approvalStatus === 'cancelled' &&
+        transaction.approvalStatus === 'pending';
 
-      if (role !== 'admin' && !isSelfCancel && payload.approvalStatus !== 'released') {
+      if (
+        role !== 'admin' &&
+        !isSelfCancel &&
+        payload.approvalStatus !== 'released'
+      ) {
         throw new ForbiddenError('Admin required to change status');
       }
 
@@ -367,11 +371,13 @@ export const updateTransaction = async (
     }
 
     if (payload.returned === true) {
-      throw new BadRequestError('Please use the /api/returns endpoint to return items.');
+      throw new BadRequestError(
+        'Please use the /api/returns endpoint to return items.'
+      );
     }
 
     if (payload.returned === false) {
-       throw new BadRequestError('Cannot undo return via transaction update.');
+      throw new BadRequestError('Cannot undo return via transaction update.');
     }
 
     // Update other fields if provided

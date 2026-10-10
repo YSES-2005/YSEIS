@@ -9,48 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/_dashboard'
-import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions'
-import { Route as AuthDashboardSettingsRouteImport } from './routes/_auth/_dashboard/settings'
-import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory'
-import { Route as AuthDashboardDashboardRouteImport } from './routes/_auth/_dashboard/dashboard'
 import { Route as AuthDashboardBorrowRouteImport } from './routes/_auth/_dashboard/borrow'
+import { Route as AuthDashboardDashboardRouteImport } from './routes/_auth/_dashboard/dashboard'
+import { Route as AuthDashboardInventoryRouteImport } from './routes/_auth/_dashboard/inventory'
+import { Route as AuthDashboardSettingsRouteImport } from './routes/_auth/_dashboard/settings'
+import { Route as AuthDashboardTransactionsRouteImport } from './routes/_auth/_dashboard/transactions'
 
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthDashboardTransactionsRoute =
-  AuthDashboardTransactionsRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => AuthDashboardRoute,
-  } as any)
-const AuthDashboardSettingsRoute = AuthDashboardSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthDashboardRoute,
-} as any)
-const AuthDashboardInventoryRoute = AuthDashboardInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
+const AuthDashboardBorrowRoute = AuthDashboardBorrowRouteImport.update({
+  id: '/borrow',
+  path: '/borrow',
   getParentRoute: () => AuthDashboardRoute,
 } as any)
 const AuthDashboardDashboardRoute = AuthDashboardDashboardRouteImport.update({
@@ -58,11 +47,22 @@ const AuthDashboardDashboardRoute = AuthDashboardDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthDashboardRoute,
 } as any)
-const AuthDashboardBorrowRoute = AuthDashboardBorrowRouteImport.update({
-  id: '/borrow',
-  path: '/borrow',
+const AuthDashboardInventoryRoute = AuthDashboardInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
   getParentRoute: () => AuthDashboardRoute,
 } as any)
+const AuthDashboardSettingsRoute = AuthDashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthDashboardRoute,
+} as any)
+const AuthDashboardTransactionsRoute =
+  AuthDashboardTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -134,20 +134,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -155,32 +141,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/_dashboard': {
       id: '/_auth/_dashboard'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/_dashboard/transactions': {
-      id: '/_auth/_dashboard/transactions'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof AuthDashboardTransactionsRouteImport
-      parentRoute: typeof AuthDashboardRoute
-    }
-    '/_auth/_dashboard/settings': {
-      id: '/_auth/_dashboard/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthDashboardSettingsRouteImport
-      parentRoute: typeof AuthDashboardRoute
-    }
-    '/_auth/_dashboard/inventory': {
-      id: '/_auth/_dashboard/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof AuthDashboardInventoryRouteImport
+    '/_auth/_dashboard/borrow': {
+      id: '/_auth/_dashboard/borrow'
+      path: '/borrow'
+      fullPath: '/borrow'
+      preLoaderRoute: typeof AuthDashboardBorrowRouteImport
       parentRoute: typeof AuthDashboardRoute
     }
     '/_auth/_dashboard/dashboard': {
@@ -190,11 +176,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardDashboardRouteImport
       parentRoute: typeof AuthDashboardRoute
     }
-    '/_auth/_dashboard/borrow': {
-      id: '/_auth/_dashboard/borrow'
-      path: '/borrow'
-      fullPath: '/borrow'
-      preLoaderRoute: typeof AuthDashboardBorrowRouteImport
+    '/_auth/_dashboard/inventory': {
+      id: '/_auth/_dashboard/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthDashboardInventoryRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
+    '/_auth/_dashboard/settings': {
+      id: '/_auth/_dashboard/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthDashboardSettingsRouteImport
+      parentRoute: typeof AuthDashboardRoute
+    }
+    '/_auth/_dashboard/transactions': {
+      id: '/_auth/_dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthDashboardTransactionsRouteImport
       parentRoute: typeof AuthDashboardRoute
     }
   }

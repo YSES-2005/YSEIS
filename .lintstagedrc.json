@@ -1,0 +1,15 @@
+{
+  "backend/**/*.{js,ts}": [
+    "eslint --config backend/eslint.config.mjs --fix",
+    "prettier --write"
+  ],
+  "frontend/**/*.{js,jsx,ts,tsx}": [
+    "eslint --config frontend/eslint.config.js --fix",
+    "prettier --write"
+  ],
+  "shared/**/*.{js,ts}": [
+    "eslint --config shared/eslint.config.mjs --fix",
+    "prettier --write"
+  ],
+  "**/*.{json,md,yml,yaml,css,scss}": ["prettier --write"]
+}
