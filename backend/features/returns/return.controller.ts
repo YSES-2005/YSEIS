@@ -5,7 +5,7 @@ import TransactionModel from '../transactions/transaction.model';
 import ItemModel from '../items/item.model';
 import { UserModel } from '../users/user.model';
 import { notify } from '../notifications/notification.service';
-import { NotFoundError, BadRequestError } from '../../errors';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../../errors';
 
 interface PopulatedUser {
   _id: Types.ObjectId;
@@ -117,6 +117,8 @@ export const createReturn = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.userId;
+    const userRole = req.userRole;
     const { transaction, description, condition, status } = req.body;
     const returnStatus = status || 'completed';
 
@@ -127,6 +129,16 @@ export const createReturn = async (
 
     if (!transactionDoc) {
       throw new NotFoundError('Transaction not found');
+    }
+
+    const borrowerId =
+      (transactionDoc.borrower as any)?._id?.toString() ||
+      transactionDoc.borrower?.toString();
+
+    if (userRole !== 'admin' && borrowerId !== userId) {
+      throw new ForbiddenError(
+        'You can only create return requests for your own transactions.'
+      );
     }
 
     if (transactionDoc.returned) {

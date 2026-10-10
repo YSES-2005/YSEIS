@@ -181,6 +181,7 @@ returnRouter.post(
 returnRouter.put(
   '/:id',
   authenticate,
+  authorize(Role.ADMIN),
   validate(returnUpdateSchema),
   updateReturn
 );
