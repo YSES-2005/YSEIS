@@ -7,7 +7,7 @@ import prettierConfig from 'eslint-config-prettier';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'coverage/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -26,6 +26,7 @@ export default defineConfig([
         { allowConstantExport: true },
       ],
       'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/incompatible-library': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
