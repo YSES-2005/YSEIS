@@ -15,3 +15,5 @@ package-lock.json
 .vscode
 .idea
 **/*.gen.ts
+graphify-out/
+docs/

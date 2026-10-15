@@ -15,9 +15,30 @@ const envSchema = z.object({
   FRONTEND_URL: z.string().default('http://localhost:5173'),
   EMAIL_USER: z.string().optional(),
   EMAIL_PASS: z.string().optional(),
+  // Google OAuth 2.0
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  // Cloudinary
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+  CLOUDINARY_URL: z.string().optional(),
+  // MongoDB Atlas credentials
+  MONGODB_USERNAME: z.string().optional(),
+  MONGODB_PASSWORD: z.string().optional(),
 });
 
-const parsed = envSchema.safeParse(process.env);
+const rawEnv = {
+  ...process.env,
+  MONGO_URI: process.env.MONGO_URI || process.env.MONGODB_URI,
+  CLOUDINARY_CLOUD_NAME:
+    process.env.CLOUDINARY_CLOUD_NAME ||
+    (process.env.CLOUDINARY_URL
+      ? process.env.CLOUDINARY_URL.split('@').pop()
+      : undefined),
+};
+
+const parsed = envSchema.safeParse(rawEnv);
 
 if (!parsed.success) {
   if (process.env.NODE_ENV !== 'test') {
